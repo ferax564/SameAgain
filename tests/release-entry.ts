@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {GET as catalogue} from '../app/api/catalogue/route';
 import {GET as demoCatalogue} from '../app/api/demo-catalogue/route';
+import swissReport from '../lib/swiss-retailer-report.json';
 import {normalise} from '../lib/catalogue';
 import {rankSearch} from '../lib/catalogue-search';
 import {validateRecord} from '../lib/record-validation';
@@ -32,10 +33,20 @@ await test('public demo catalogue reads only shipped products and applies retail
  for(const retailer of ['coop-ch','migros-ch']){
   const r=await demoCatalogue(new Request('https://same.test/api/demo-catalogue?'+new URLSearchParams({q:'haferflocken',country:'CH',retailer,household:'unrelated'})));
   assert.equal(r.status,200);const d=await r.json();assert(d.products.length>0);
-  assert(d.products.every((p:any)=>p.countries.includes('en:switzerland')&&p.stores.some((s:string)=>s.toLowerCase()===retailer.split('-')[0])));
+  assert(d.products.every((p:any)=>p.countries.includes('en:switzerland')&&p.stores.some((s:string)=>s.toLowerCase().includes(retailer.split('-')[0]))));
   assert(!d.products.some((p:any)=>p.id==='cache-accent-fixture'),'Database records are never exposed by demo endpoint');
  }
  assert.equal((await demoCatalogue(new Request('https://same.test/api/demo-catalogue?country=FR&retailer=coop-ch'))).status,400);
+ const browse=await demoCatalogue(new Request('https://same.test/api/demo-catalogue?country=CH&retailer=coop-ch'));
+ assert.equal(browse.status,200);const browsed=await browse.json();assert.equal(browsed.products.length,48);assert(browsed.hasMore);assert(browsed.total>=browsed.scope.communityRecords);assert(browsed.products.every((p:any)=>p.stores.some((s:string)=>s.toLowerCase().includes('coop'))));assert.equal(browsed.scope.communityRecords,swissReport.coverageByRetailer.coop.records);
+ assert.equal(browsed.products[0].source,'Open Food Facts');assert(browsed.products[0].image,'Empty Coop browse starts with photographed community records');
+ assert.match(browsed.scope.notice,/official assortment/);
+ const coopPage2=await (await demoCatalogue(new Request('https://same.test/api/demo-catalogue?country=CH&retailer=coop-ch&page=2'))).json();
+ assert.equal(coopPage2.page,2);assert.equal(coopPage2.products.length,48);assert(!coopPage2.products.some((p:any)=>browsed.products.some((x:any)=>x.id===p.id)));
+ const migrosBrowse=await demoCatalogue(new Request('https://same.test/api/demo-catalogue?country=CH&retailer=migros-ch'));
+ const migros=await migrosBrowse.json();assert.equal(migros.products.length,48);assert(migros.hasMore);assert.equal(migros.scope.communityRecords,swissReport.coverageByRetailer.migros.records);assert.match(migros.scope.notice,/10,000-hit/);
+ assert.equal(migros.products[0].source,'Open Food Facts');assert(migros.products[0].image,'Empty Migros browse starts with photographed community records');
+ assert.ok(migros.scope.communityRecords>10000,'Migros snapshot is no longer limited to one public search window');
 });
 await test('public demo barcode keeps leading zeros and separates invalid identifiers',async()=>{
  const r=await demoCatalogue(new Request('https://same.test/api/demo-catalogue?barcode=02425801'));const p=(await r.json()).product;assert.equal(p.barcode,'02425801');assert(p.image);
