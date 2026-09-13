@@ -7,6 +7,7 @@ import {point,places} from '../lib/places';
 import {drain,conflictDraft,currentRefresh,correctedQueue} from '../lib/outbox';
 import {ScanSession,cameraError} from '../lib/scan-session';
 import {asUser,run,one} from './server-shim';
+import {hasStore} from '../lib/retailers';
 const fixture={code:'0036000291452',product_name:'Test cereal',brands:['Fixture','Foods'],quantity:'500 g',countries_tags:['en:france'],categories_tags:['en:cereals'],stores:['Coop'],last_modified_t:1000,last_indexed_datetime:'2024-02-01',image_front_url:'https://images.openfoodfacts.org/example.jpg'};
 const originalFetch=globalThis.fetch;let requests=0;
 await test('search uses supported endpoint, escapes text and enforces country evidence',async()=>{
@@ -66,4 +67,6 @@ await test('imported catalogue persists, paginates and separates titles from pag
  const coop=await (await request('retailer=coop-ch')).json();assert(coop.products.filter((p:any)=>p.evidence==='indexed-link').every((p:any)=>!p.nutrition&&!p.barcode&&!p.image));const bread=coop.products.find((p:any)=>p.id==='coop:6589691');assert.equal(bread.evidence,'retailer-page');assert.equal(bread.pack,'500 g');assert.equal(bread.nutrition.proteins,6.8);assert(!bread.image&&!bread.barcode,'No unverified image or GTIN is invented');
  const record=await one('SELECT data FROM catalogue WHERE id=?',first.products[0].id);assert(record);
  const none=await (await request('retailer=migros-ch&q=%25')).json();assert.equal(none.products.length,0,'SQL wildcard in user input is treated literally');
+ const accent=await (await request('retailer=coop-ch&q=stackebrot')).json();assert(accent.products.some((p:any)=>p.id==='coop:5605637'));assert.equal(accent.products.find((p:any)=>p.id==='coop:5605637').pack,'500 g');
+ assert(hasStore(['en:coop'],'coop'));
 });

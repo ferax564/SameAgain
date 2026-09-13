@@ -94,3 +94,28 @@
 .modal .choice [data-slot=select-value]{flex:1}
 .modal [data-slot=dialog-header]{text-align:left}
 @media(max-width:370px){.modal .formgrid{grid-template-columns:1fr}}
+.list-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px 12px;padding:12px 23px 10px}
+.list-toolbar .list-menu{justify-self:end}
+.list-toolbar .shopper-bar{grid-column:1/-1}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--border);background:var(--background);color:var(--muted-foreground);border-radius:999px;padding:7px 12px;min-height:40px;font:inherit;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{border-color:var(--primary);color:var(--foreground)}
+.chip.active{background:var(--primary);border-color:var(--primary);color:var(--primary-foreground)}
+.chip span{font-size:11px;font-weight:700;background:var(--muted);color:var(--foreground);padding:1px 6px;border-radius:999px}
+.chip.active span{background:rgb(255 255 255 / 18%);color:inherit}
+.item-row{transition:background .16s ease}
+.item-row.mine{background:color-mix(in srgb,var(--secondary) 78%,transparent)}
+.coverage-card{margin:16px 0 10px;padding:16px 18px;border:1px solid var(--border);border-radius:14px;background:var(--card);font-size:13px;line-height:1.65;max-width:800px}
+.coverage-card p{margin:8px 0 0;color:var(--muted-foreground);font-size:12px}
+.retailer-shortcuts{margin:0 0 16px}
+.discover-filters{max-width:280px;margin-top:12px}
+.discover-manual{margin-top:16px}
+.household-picker>div{flex:1;min-width:0}
+.household-picker .choice{min-height:38px!important;font-size:13px!important}
+.product-card,.btn{transition:border-color .16s ease,box-shadow .16s ease,filter .16s ease}
+.list-surface{box-shadow:0 8px 30px rgb(35 60 52 / 4%)}
+@media(max-width:760px){
+ .list-toolbar{padding:8px 14px 10px;grid-template-columns:minmax(0,1fr) auto}
+ .chip{min-height:38px;font-size:12px;padding:6px 10px}
+ .coverage-card{padding:14px}
+}

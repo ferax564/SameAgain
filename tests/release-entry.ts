@@ -36,6 +36,11 @@ await test('public demo catalogue reads only shipped products and applies retail
   assert(!d.products.some((p:any)=>p.id==='cache-accent-fixture'),'Database records are never exposed by demo endpoint');
  }
  assert.equal((await demoCatalogue(new Request('https://same.test/api/demo-catalogue?country=FR&retailer=coop-ch'))).status,400);
+ const browse=await demoCatalogue(new Request('https://same.test/api/demo-catalogue?country=CH&retailer=coop-ch'));
+ assert.equal(browse.status,200);const browsed=await browse.json();assert(browsed.products.length>0);assert(browsed.products.every((p:any)=>p.stores.some((s:string)=>s.toLowerCase().includes('coop'))));assert.equal(browsed.scope.communityRecords,3534);
+ assert.match(browsed.scope.notice,/not the full Coop assortment/);
+ const migrosBrowse=await demoCatalogue(new Request('https://same.test/api/demo-catalogue?country=CH&retailer=migros-ch'));
+ const migros=await migrosBrowse.json();assert.equal(migros.scope.communityRecords,9759);assert.match(migros.scope.notice,/10,000-hit/);
 });
 await test('public demo barcode keeps leading zeros and separates invalid identifiers',async()=>{
  const r=await demoCatalogue(new Request('https://same.test/api/demo-catalogue?barcode=02425801'));const p=(await r.json()).product;assert.equal(p.barcode,'02425801');assert(p.image);
