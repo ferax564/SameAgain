@@ -1,0 +1,543 @@
+[
+  {
+    "id": "demo-oats",
+    "name": "Blueberry & walnut oats",
+    "description": "A slow morning favourite, ready in twenty minutes. Example recipe; photo is illustrative.",
+    "image": "/recipes/blueberry-oatmeal.jpg",
+    "photoCredit": "Blueberry oatmeal 2 · Shisma · CC BY 4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Blueberry_oatmeal_2.jpg",
+    "servings": 2,
+    "minutes": 20,
+    "ingredients": [
+      {
+        "id": "ingredient-198",
+        "name": "Oat flakes",
+        "amount": 100,
+        "unit": "g",
+        "product": {
+          "id": "swiss:198",
+          "name": "Oat flakes",
+          "categories": [
+            "Bread, flakes and breakfast cereals/Flakes, bran and germs"
+          ],
+          "countries": [],
+          "nutrition": {
+            "energy-kcal": 381,
+            "fat": 7.5,
+            "saturated-fat": 0.9,
+            "carbohydrates": 59.5,
+            "sugars": 1,
+            "fiber": 10.5,
+            "proteins": 13.5,
+            "salt": 0,
+            "vitamin-a": 0,
+            "vitamin-b1": 0.34,
+            "vitamin-b2": 0.05,
+            "vitamin-b6": 0.09,
+            "vitamin-b12": 0,
+            "vitamin-b9": 20.5,
+            "vitamin-c": 0,
+            "vitamin-d": 0,
+            "vitamin-e": 0.79,
+            "potassium": 390,
+            "sodium": 19,
+            "calcium": 54,
+            "magnesium": 130,
+            "phosphorus": 440,
+            "iron": 3.5,
+            "iodine": 0.5,
+            "zinc": 3.2,
+            "selenium": 2.1
+          },
+          "basis": "100g",
+          "source": "Swiss Food Composition Database · FSVO · v7.1 (generic food)",
+          "sourceUrl": "https://valeursnutritives.ch/en/downloads/",
+          "retrieved": 1788566400000
+        }
+      },
+      {
+        "id": "ingredient-62",
+        "name": "Whole milk, pasteurized",
+        "amount": 350,
+        "unit": "g",
+        "product": {
+          "id": "swiss:62",
+          "name": "Whole milk, pasteurized",
+          "categories": [
+            "Milk and dairy products/Milk"
+          ],
+          "countries": [],
+          "nutrition": {
+            "energy-kcal": 68,
+            "fat": 4,
+            "saturated-fat": 2.4,
+            "carbohydrates": 4.7,
+            "sugars": 4.7,
+            "fiber": 0,
+            "proteins": 3.2,
+            "salt": 0.1,
+            "vitamin-a": 49,
+            "vitamin-b1": 0.02,
+            "vitamin-b2": 0.2,
+            "vitamin-b6": 0.03,
+            "vitamin-b12": 0.32,
+            "vitamin-b9": 5.1,
+            "vitamin-c": 1,
+            "vitamin-d": 0.1,
+            "vitamin-e": 0.11,
+            "potassium": 160,
+            "sodium": 39,
+            "calcium": 120,
+            "magnesium": 10,
+            "phosphorus": 92,
+            "iron": 0,
+            "iodine": 10,
+            "zinc": 0.4,
+            "selenium": 1.2
+          },
+          "basis": "100g",
+          "source": "Swiss Food Composition Database · FSVO · v7.1 (generic food)",
+          "sourceUrl": "https://valeursnutritives.ch/en/downloads/",
+          "retrieved": 1788566400000
+        }
+      },
+      {
+        "id": "ingredient-389",
+        "name": "Blueberry, raw",
+        "amount": 100,
+        "unit": "g",
+        "product": {
+          "id": "swiss:389",
+          "name": "Blueberry, raw",
+          "categories": [
+            "Fruit/Fresh fruit"
+          ],
+          "countries": [],
+          "nutrition": {
+            "energy-kcal": 51,
+            "fat": 0.2,
+            "saturated-fat": 0,
+            "carbohydrates": 10.6,
+            "sugars": 10,
+            "fiber": 1.5,
+            "proteins": 0.9,
+            "salt": 0,
+            "vitamin-a": 4,
+            "vitamin-b1": 0.03,
+            "vitamin-b2": 0.03,
+            "vitamin-b6": 0.05,
+            "vitamin-b12": 0,
+            "vitamin-b9": 9,
+            "vitamin-c": 7.5,
+            "vitamin-d": 0,
+            "vitamin-e": 1.34,
+            "potassium": 66,
+            "sodium": 2,
+            "calcium": 10,
+            "magnesium": 5,
+            "phosphorus": 16,
+            "iron": 0.6,
+            "iodine": 2,
+            "zinc": 0.1
+          },
+          "basis": "100g",
+          "source": "Swiss Food Composition Database · FSVO · v7.1 (generic food)",
+          "sourceUrl": "https://valeursnutritives.ch/en/downloads/",
+          "retrieved": 1788566400000
+        }
+      },
+      {
+        "id": "ingredient-271",
+        "name": "Walnut",
+        "amount": 30,
+        "unit": "g",
+        "product": {
+          "id": "swiss:271",
+          "name": "Walnut",
+          "categories": [
+            "Nuts, seeds and oleaginous fruit"
+          ],
+          "countries": [],
+          "nutrition": {
+            "energy-kcal": 709,
+            "fat": 67.3,
+            "saturated-fat": 6.5,
+            "carbohydrates": 6.9,
+            "sugars": 3,
+            "fiber": 6.7,
+            "proteins": 15.7,
+            "salt": 0,
+            "vitamin-a": 3,
+            "vitamin-b1": 0.42,
+            "vitamin-b2": 0.05,
+            "vitamin-b6": 0.19,
+            "vitamin-b12": 0,
+            "vitamin-b9": 112.1,
+            "vitamin-c": 0.8,
+            "vitamin-d": 0,
+            "vitamin-e": 2,
+            "potassium": 420,
+            "sodium": 0.2,
+            "calcium": 78,
+            "magnesium": 140,
+            "phosphorus": 360,
+            "iron": 2.6,
+            "zinc": 2.7,
+            "selenium": 1.2
+          },
+          "basis": "100g",
+          "source": "Swiss Food Composition Database · FSVO · v7.1 (generic food)",
+          "sourceUrl": "https://valeursnutritives.ch/en/downloads/",
+          "retrieved": 1788566400000
+        }
+      }
+    ],
+    "steps": [
+      "Combine the oat flakes and milk in a saucepan.",
+      "Simmer gently, stirring, until the oats soften. Add water as needed for your preferred texture.",
+      "Divide between two bowls. Top with blueberries and roughly chopped walnuts."
+    ],
+    "tags": [
+      "Breakfast",
+      "Example recipe"
+    ]
+  },
+  {
+    "id": "demo-salad",
+    "name": "The colourful chickpea bowl",
+    "description": "Cooked chickpeas, crisp greens and feta. Easy to prepare together. Example recipe; photo is illustrative.",
+    "image": "/recipes/chickpea-salad.jpg",
+    "photoCredit": "Colorful healthy Chickpea Salad · FitTasteTic · CC BY-SA 2.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Colorful_healthy_Chickpea_Salad.jpg",
+    "servings": 2,
+    "minutes": 15,
+    "ingredients": [
+      {
+        "id": "ingredient-1059",
+        "name": "Chickpea, cooked (without addition of fat and salt)",
+        "amount": 300,
+        "unit": "g",
+        "product": {
+          "id": "swiss:1059",
+          "name": "Chickpea, cooked (without addition of fat and salt)",
+          "categories": [
+            "Cereal products, pulses and potatoes/Pulses"
+          ],
+          "countries": [],
+          "nutrition": {
+            "energy-kcal": 131,
+            "fat": 2,
+            "saturated-fat": 0.3,
+            "carbohydrates": 16.8,
+            "sugars": 0.9,
+            "fiber": 8.4,
+            "proteins": 7.3,
+            "salt": 0,
+            "vitamin-a": 10,
+            "vitamin-b1": 0.14,
+            "vitamin-b2": 0.04,
+            "vitamin-b6": 0.09,
+            "vitamin-b12": 0,
+            "vitamin-b9": 68,
+            "vitamin-c": 1.2,
+            "vitamin-d": 0,
+            "vitamin-e": 0.58,
+            "potassium": 330,
+            "sodium": 3,
+            "calcium": 44,
+            "magnesium": 48,
+            "phosphorus": 140,
+            "iron": 1.9,
+            "iodine": 0.2,
+            "zinc": 0.9,
+            "selenium": 2.5
+          },
+          "basis": "100g",
+          "source": "Swiss Food Composition Database · FSVO · v7.1 (generic food)",
+          "sourceUrl": "https://valeursnutritives.ch/en/downloads/",
+          "retrieved": 1788566400000
+        }
+      },
+      {
+        "id": "ingredient-348",
+        "name": "Tomato, raw",
+        "amount": 200,
+        "unit": "g",
+        "product": {
+          "id": "swiss:348",
+          "name": "Tomato, raw",
+          "categories": [
+            "Vegetables/Fresh vegetables"
+          ],
+          "countries": [],
+          "nutrition": {
+            "energy-kcal": 21,
+            "fat": 0.3,
+            "saturated-fat": 0.1,
+            "carbohydrates": 3.3,
+            "sugars": 3.2,
+            "fiber": 1.2,
+            "proteins": 0.9,
+            "salt": 0,
+            "vitamin-a": 78,
+            "vitamin-b1": 0.05,
+            "vitamin-b2": 0.02,
+            "vitamin-b6": 0.09,
+            "vitamin-b12": 0,
+            "vitamin-b9": 18.1,
+            "vitamin-c": 25.5,
+            "vitamin-d": 0,
+            "vitamin-e": 0.42,
+            "potassium": 240,
+            "sodium": 2.4,
+            "calcium": 8.3,
+            "magnesium": 8.2,
+            "phosphorus": 22,
+            "iron": 0.1,
+            "iodine": 0.6,
+            "zinc": 0.1,
+            "selenium": 0.1
+          },
+          "basis": "100g",
+          "source": "Swiss Food Composition Database · FSVO · v7.1 (generic food)",
+          "sourceUrl": "https://valeursnutritives.ch/en/downloads/",
+          "retrieved": 1788566400000
+        }
+      },
+      {
+        "id": "ingredient-354",
+        "name": "Cucumber, raw",
+        "amount": 150,
+        "unit": "g",
+        "product": {
+          "id": "swiss:354",
+          "name": "Cucumber, raw",
+          "categories": [
+            "Vegetables/Fresh vegetables"
+          ],
+          "countries": [],
+          "nutrition": {
+            "energy-kcal": 12,
+            "fat": 0,
+            "saturated-fat": 0,
+            "carbohydrates": 1.8,
+            "sugars": 1.8,
+            "fiber": 0.8,
+            "proteins": 0.7,
+            "salt": 0,
+            "vitamin-a": 24,
+            "vitamin-b1": 0.02,
+            "vitamin-b2": 0.01,
+            "vitamin-b6": 0.03,
+            "vitamin-b12": 0,
+            "vitamin-b9": 10.5,
+            "vitamin-c": 8.9,
+            "vitamin-d": 0,
+            "vitamin-e": 0.05,
+            "potassium": 140,
+            "sodium": 1.7,
+            "calcium": 16,
+            "magnesium": 9.9,
+            "phosphorus": 23,
+            "iron": 0.2,
+            "iodine": 1.7,
+            "zinc": 0.1,
+            "selenium": 0
+          },
+          "basis": "100g",
+          "source": "Swiss Food Composition Database · FSVO · v7.1 (generic food)",
+          "sourceUrl": "https://valeursnutritives.ch/en/downloads/",
+          "retrieved": 1788566400000
+        }
+      },
+      {
+        "id": "ingredient-539",
+        "name": "Feta, cow milk",
+        "amount": 80,
+        "unit": "g",
+        "product": {
+          "id": "swiss:539",
+          "name": "Feta, cow milk",
+          "categories": [
+            "Milk and dairy products/Soft cheese"
+          ],
+          "countries": [],
+          "nutrition": {
+            "energy-kcal": 256,
+            "fat": 20.7,
+            "saturated-fat": 12.4,
+            "carbohydrates": 1.4,
+            "sugars": 1.4,
+            "fiber": 0,
+            "proteins": 16,
+            "salt": 3.7,
+            "vitamin-a": 203,
+            "vitamin-b1": 0.04,
+            "vitamin-b2": 0.33,
+            "vitamin-b6": 0.19,
+            "vitamin-b12": 0.88,
+            "vitamin-b9": 49,
+            "vitamin-d": 0.3,
+            "vitamin-e": 0.5,
+            "potassium": 150,
+            "sodium": 1500,
+            "calcium": 480,
+            "magnesium": 20,
+            "phosphorus": 340,
+            "iron": 0.2
+          },
+          "basis": "100g",
+          "source": "Swiss Food Composition Database · FSVO · v7.1 (generic food)",
+          "sourceUrl": "https://valeursnutritives.ch/en/downloads/",
+          "retrieved": 1788566400000
+        }
+      },
+      {
+        "id": "ingredient-448",
+        "name": "Butterhead lettuce, raw",
+        "amount": 50,
+        "unit": "g",
+        "product": {
+          "id": "swiss:448",
+          "name": "Butterhead lettuce, raw",
+          "categories": [
+            "Vegetables/Fresh vegetables"
+          ],
+          "countries": [],
+          "nutrition": {
+            "energy-kcal": 16,
+            "fat": 0.4,
+            "saturated-fat": 0.1,
+            "carbohydrates": 1.1,
+            "sugars": 0.7,
+            "fiber": 1.3,
+            "proteins": 1.3,
+            "salt": 0,
+            "vitamin-a": 184,
+            "vitamin-b1": 0.07,
+            "vitamin-b2": 0.1,
+            "vitamin-b6": 0.05,
+            "vitamin-b12": 0,
+            "vitamin-b9": 50.1,
+            "vitamin-c": 8.2,
+            "vitamin-d": 0,
+            "vitamin-e": 0.3,
+            "potassium": 230,
+            "sodium": 10,
+            "calcium": 41,
+            "magnesium": 12,
+            "phosphorus": 28,
+            "iron": 0.5,
+            "iodine": 0.6,
+            "zinc": 0.3,
+            "selenium": 0.1
+          },
+          "basis": "100g",
+          "source": "Swiss Food Composition Database · FSVO · v7.1 (generic food)",
+          "sourceUrl": "https://valeursnutritives.ch/en/downloads/",
+          "retrieved": 1788566400000
+        }
+      },
+      {
+        "id": "ingredient-373",
+        "name": "Parsley, fresh",
+        "amount": 10,
+        "unit": "g",
+        "product": {
+          "id": "swiss:373",
+          "name": "Parsley, fresh",
+          "categories": [
+            "Vegetables/Herbs"
+          ],
+          "countries": [],
+          "nutrition": {
+            "energy-kcal": 58,
+            "fat": 0.5,
+            "saturated-fat": 0.1,
+            "carbohydrates": 7.4,
+            "sugars": 4.8,
+            "fiber": 4.3,
+            "proteins": 3.9,
+            "salt": 0.1,
+            "vitamin-a": 770,
+            "vitamin-b1": 0.15,
+            "vitamin-b2": 0.3,
+            "vitamin-b6": 0.2,
+            "vitamin-b12": 0,
+            "vitamin-b9": 132,
+            "vitamin-c": 182,
+            "vitamin-d": 0,
+            "vitamin-e": 3.54,
+            "potassium": 850,
+            "sodium": 38,
+            "calcium": 210,
+            "magnesium": 37,
+            "phosphorus": 110,
+            "iron": 5.9,
+            "iodine": 3.4,
+            "zinc": 0.8
+          },
+          "basis": "100g",
+          "source": "Swiss Food Composition Database · FSVO · v7.1 (generic food)",
+          "sourceUrl": "https://valeursnutritives.ch/en/downloads/",
+          "retrieved": 1788566400000
+        }
+      },
+      {
+        "id": "ingredient-591",
+        "name": "Olive oil",
+        "amount": 15,
+        "unit": "g",
+        "product": {
+          "id": "swiss:591",
+          "name": "Olive oil",
+          "categories": [
+            "Fats and oils/Oils"
+          ],
+          "countries": [],
+          "nutrition": {
+            "energy-kcal": 900,
+            "fat": 100,
+            "saturated-fat": 11.9,
+            "carbohydrates": 0,
+            "sugars": 0,
+            "fiber": 0,
+            "proteins": 0,
+            "salt": 0,
+            "vitamin-a": 15,
+            "vitamin-b1": 0,
+            "vitamin-b2": 0,
+            "vitamin-b6": 0,
+            "vitamin-b12": 0,
+            "vitamin-b9": 0,
+            "vitamin-c": 0,
+            "vitamin-d": 0,
+            "vitamin-e": 28.8,
+            "potassium": 1,
+            "sodium": 1,
+            "calcium": 0,
+            "magnesium": 1,
+            "phosphorus": 2,
+            "iron": 0.1,
+            "iodine": 0.1,
+            "zinc": 0,
+            "selenium": 0
+          },
+          "basis": "100g",
+          "source": "Swiss Food Composition Database · FSVO · v7.1 (generic food)",
+          "sourceUrl": "https://valeursnutritives.ch/en/downloads/",
+          "retrieved": 1788566400000
+        }
+      }
+    ],
+    "steps": [
+      "Use cooked, cooled chickpeas. Rinse vegetables and parsley.",
+      "Chop the tomatoes and cucumber. Tear the lettuce and crumble the feta.",
+      "Combine with the chickpeas, parsley and olive oil. Divide into two portions."
+    ],
+    "tags": [
+      "Lunch",
+      "Example recipe"
+    ]
+  }
+]

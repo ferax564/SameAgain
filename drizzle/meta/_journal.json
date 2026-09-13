@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1788592338507,
+      "tag": "0000_military_thor",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1788593999125,
+      "tag": "0001_perfect_bloodscream",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1788612287544,
+      "tag": "0002_faulty_domino",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1789065763860,
+      "tag": "0003_new_frank_castle",
+      "breakpoints": true
+    }
+  ]
+}

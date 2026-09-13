@@ -1,0 +1,12 @@
+Same Again Swiss retailer-tagged community catalogue snapshot
+Source: Open Food Facts — https://world.openfoodfacts.org/
+Database: Open Database License (ODbL) 1.0 — https://opendatacommons.org/licenses/odbl/1-0/
+Individual contents: Database Contents License (DbCL) 1.0 — https://opendatacommons.org/licenses/dbcl/1-0/
+Images linked from Open Food Facts: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0/
+The derived snapshot is made available under ODbL 1.0. Attribution and source
+URLs/retrieval timestamps are retained on each product. Images are linked,
+not copied here; packaging designs and trademarks may carry additional rights.
+
+This is not an official Coop or Migros feed. Retailer and country tags are
+community catalogue evidence, not current assortment, price or branch inventory.
+No private household data is included. Scope: see the app guide and source report.

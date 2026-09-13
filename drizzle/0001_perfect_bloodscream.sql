@@ -1,0 +1,1 @@
+CREATE INDEX `records_household_kind` ON `records` (`household`,`kind`);

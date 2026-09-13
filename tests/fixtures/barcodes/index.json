@@ -1,0 +1,74 @@
+[
+  {
+    "file": "EAN13-0.rgba.gz",
+    "width": 339,
+    "height": 80,
+    "code": "7610097171076"
+  },
+  {
+    "file": "EAN13-90.rgba.gz",
+    "width": 80,
+    "height": 339,
+    "code": "7610097171076"
+  },
+  {
+    "file": "EAN13-180.rgba.gz",
+    "width": 339,
+    "height": 80,
+    "code": "7610097171076"
+  },
+  {
+    "file": "EAN13-270.rgba.gz",
+    "width": 80,
+    "height": 339,
+    "code": "7610097171076"
+  },
+  {
+    "file": "EAN8-0.rgba.gz",
+    "width": 255,
+    "height": 80,
+    "code": "96385074"
+  },
+  {
+    "file": "EAN8-90.rgba.gz",
+    "width": 80,
+    "height": 255,
+    "code": "96385074"
+  },
+  {
+    "file": "EAN8-180.rgba.gz",
+    "width": 255,
+    "height": 80,
+    "code": "96385074"
+  },
+  {
+    "file": "EAN8-270.rgba.gz",
+    "width": 80,
+    "height": 255,
+    "code": "96385074"
+  },
+  {
+    "file": "UPCA-0.rgba.gz",
+    "width": 342,
+    "height": 80,
+    "code": "0049000006346"
+  },
+  {
+    "file": "UPCA-90.rgba.gz",
+    "width": 80,
+    "height": 342,
+    "code": "0049000006346"
+  },
+  {
+    "file": "UPCA-180.rgba.gz",
+    "width": 342,
+    "height": 80,
+    "code": "0049000006346"
+  },
+  {
+    "file": "UPCA-270.rgba.gz",
+    "width": 80,
+    "height": 342,
+    "code": "0049000006346"
+  }
+]

@@ -1,0 +1,71 @@
+{
+  "retrieved": "2026-09-05T13:16:50.035Z",
+  "source": "Open Food Facts",
+  "completeRetailerCatalogue": false,
+  "records": 13249,
+  "retailers": [
+    {
+      "retailer": "coop",
+      "reported": 3661,
+      "exact": true,
+      "pagesFetched": 4,
+      "pagesReported": 4
+    },
+    {
+      "retailer": "migros",
+      "reported": 10000,
+      "exact": false,
+      "pagesFetched": 10,
+      "pagesReported": 10
+    }
+  ],
+  "licence": "ODbL 1.0; contents DbCL 1.0; images CC BY-SA 3.0",
+  "notice": "Community records with retailer and Switzerland tags. Up to 10,000 search hits per retailer; no exhaustive assortment or branch stock claim.",
+  "photoRefresh": {
+    "date": "2026-09-10",
+    "repaired": [
+      {
+        "barcode": "3068320014067",
+        "image": "https://images.openfoodfacts.org/images/products/306/832/001/4067/front_en.115.400.jpg",
+        "retrieved": "2026-09-10T18:44:30.163506+00:00",
+        "sourceUrl": "https://world.openfoodfacts.org/api/v3.6/product/3068320014067.json"
+      },
+      {
+        "barcode": "3057640521683",
+        "image": "https://images.openfoodfacts.org/images/products/305/764/052/1683/front_fr.40.400.jpg",
+        "retrieved": "2026-09-10T18:44:39.810207+00:00",
+        "sourceUrl": "https://world.openfoodfacts.org/api/v3.6/product/3057640521683.json"
+      },
+      {
+        "barcode": "4000522006890",
+        "image": "https://images.openfoodfacts.org/images/products/400/052/200/6890/front_de.111.400.jpg",
+        "retrieved": "2026-09-10T18:44:49.467023+00:00",
+        "sourceUrl": "https://world.openfoodfacts.org/api/v3.6/product/4000522006890.json"
+      },
+      {
+        "barcode": "02425801",
+        "image": "https://images.openfoodfacts.org/images/products/000/000/242/5801/front_en.14.400.jpg",
+        "retrieved": "2026-09-10T18:44:59.402372+00:00",
+        "sourceUrl": "https://world.openfoodfacts.org/api/v3.6/product/02425801.json"
+      }
+    ],
+    "withPhoto": 12658
+  },
+  "coverageByRetailer": {
+    "coop": {
+      "records": 3534,
+      "withPhoto": 3470
+    },
+    "migros": {
+      "records": 9759,
+      "withPhoto": 9230
+    }
+  },
+  "detailRefresh": {
+    "date": "2026-09-10",
+    "barcode": "7610200011435",
+    "previousPack": "1000g",
+    "currentPack": "500g",
+    "notice": "Source changed; verify the current package."
+  }
+}

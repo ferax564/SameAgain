@@ -1,0 +1,3540 @@
+[
+  {
+    "id": "migros:mo-10522949",
+    "name": "Lipton Fresh Blends · Eistee · Mint & Lime",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/mo/10522949",
+    "retrieved": 1788611938215,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "ingredients": "Wasser, Zucker, Säuerungsmittel (Citronensäure, Äpfelsäure), Grünteeextrakt 0.1%, Limettensaft aus Konzentrat 0.1%, Säureregulator (E 331), natürliche Aromen, Antioxidationsmittel (Ascorbinsäure), Süssungsmittel (Steviolglycoside), Minzextrakt."
+  },
+  {
+    "id": "migros:220634011710",
+    "name": "Schweinshohrückensteak",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/220634011710",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:502003200000",
+    "name": "Potz · Ablaufentstopfer",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/502003200000",
+    "retrieved": 1788611943332,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "250ml"
+  },
+  {
+    "id": "migros:158512500000",
+    "name": "Kelly Loves · Seaweed Rice Crisps · with Seasoning",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/158512500000",
+    "retrieved": 1788611944631,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "20g",
+    "ingredients": "Reis-Chips (Tapiokastärke, Reismehl, Wasser, Maisöl, Salz), Meeresalgen, Gewürze (Zucker, Salz, Hefeextrakt), Rapsöl, SESAME-Öl, Rosmarin-Oleoresin."
+  },
+  {
+    "id": "migros:102789700000",
+    "name": "Patissier · Zuckerschrift · Weiss",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/102789700000",
+    "retrieved": 1788611950469,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "25g",
+    "ingredients": "Zucker, Wasser, Feuchthaltemittel: Sorbit, Reisfett, Farbstoff: Calciumcarbonat, Verdickungsmittel: Agar-Agar, Säuerungsmittel: Citronensäure, Emulgator : Rapslecithin, natürliches Vanillearoma, Konservierungsstoff: Kaliumsorbat.",
+    "nutrition": {
+      "fat": 5.8,
+      "saturated-fat": 2.1,
+      "carbohydrates": 64,
+      "sugars": 64,
+      "fiber": 2.1,
+      "salt": 0.02
+    },
+    "basis": "100g"
+  },
+  {
+    "id": "migros:233520173000",
+    "name": "Citterio · Würfeli Guanciale",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/233520173000",
+    "retrieved": 1788611953385,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "90g",
+    "ingredients": "Schweinebacke (Ursprung: Italien), Pökelsalz (Speisesalz, Konservierungsstoff: Natriumnitrit), Wein, Zucker, Knoblauch, Antioxidationsmittel (Natriumascorbat), Konservierungsstoff (Kaliumsalpeter)",
+    "nutrition": {
+      "fat": 56,
+      "saturated-fat": 22,
+      "proteins": 11,
+      "salt": 3
+    },
+    "basis": "100g"
+  },
+  {
+    "id": "migros:102705400000",
+    "name": "Vanilleschoten",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/102705400000",
+    "retrieved": 1788611959564,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "3 Stk.",
+    "ingredients": "Vanilleschoten (Madagaskar)."
+  },
+  {
+    "id": "migros:261500701000",
+    "name": "Extra · Aprikosen",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/261500701000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:151201000000",
+    "name": "Sélection · Pistaziencreme",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/151201000000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:704536100000",
+    "name": "Migros Kitchen & Co. · Eiswürfelbeutel",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/704536100000",
+    "retrieved": 1788611965762,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "20 Stk."
+  },
+  {
+    "id": "migros:105317400000",
+    "name": "Sun Queen · Walnusskerne",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/105317400000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:274401202400",
+    "name": "Extra · Kartoffeln",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/274401202400",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:104488100000",
+    "name": "Kartoffelstock · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/104488100000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:120303800000",
+    "name": "Valais · Mineralwasser · still",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/120303800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:121513000000",
+    "name": "Sirup · Wassermelone",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/121513000000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:101553300000",
+    "name": "Frey · Crunchy Clouds · Cookies",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/101553300000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:708154100000",
+    "name": "Migros Kitchen & Co. · Zahnstocher · beige, Holz, 8 cm",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/708154100000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:522211800000",
+    "name": "Actilife · Collagen Pulver · Neutral",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/522211800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:271206302100",
+    "name": "Migros · Krautstiele",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/271206302100",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:102000200000",
+    "name": "M-Classic · Erythrit",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/102000200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:106221200000",
+    "name": "Mirador · Streuwürze · mit Kräutern, vegan",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/106221200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:511729000000",
+    "name": "Gillette Fusion5 · Ersatzklingen",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/511729000000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:271484502300",
+    "name": "Tomaten · Bio, Marsanino",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/271484502300",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:277109311200",
+    "name": "Migros · Bundzwiebeln",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/277109311200",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:158583100000",
+    "name": "Migros · Kokosnussmilch · Light",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/158583100000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:513642200000",
+    "name": "Pedic · Fuss-Deospray",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/513642200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:101943200000",
+    "name": "Farm Chips · Riz Casimir · glutenfrei",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/101943200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:104182300000",
+    "name": "Bosco · Pizzoccheri",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/104182300000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:104131200000",
+    "name": "Da Emilio · Fregola Sarda",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/104131200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:265608702300",
+    "name": "Migros · Himbeeren",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/265608702300",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:100124500000",
+    "name": "Frey · Lait · Extra",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/100124500000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:704538700000",
+    "name": "Migros Kitchen & Co. · Dauerbackfolie · 33cm x 40cm",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/704538700000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:205021700000",
+    "name": "Joghurt · Bio, Stracciatella",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/205021700000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:120974000000",
+    "name": "Coca-Cola · Classic",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/120974000000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:101914400000",
+    "name": "M-Classic · Popcornmais",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/101914400000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:264703513200",
+    "name": "Migros · Melone · Charentais",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/264703513200",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:241100402000",
+    "name": "Optigal · Pouletschnitzel",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/241100402000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:130921200000",
+    "name": "Cornatur · Quorn Geschnetzeltes · vegetarisch",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/130921200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:100940000000",
+    "name": "Lindt Lindor · Kugeln · Milch",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/100940000000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:526631700000",
+    "name": "I am · Reinigungstücher · Reisegrösse - migros.ch",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/526631700000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:103355200000",
+    "name": "Sélection · Walnussöl",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/103355200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:502003900000",
+    "name": "Potz · Kalkreiniger · Antikalk-Kraftformel",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/502003900000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:233001054400",
+    "name": "Hobelfleisch · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/233001054400",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:704537900000",
+    "name": "Migros Kitchen & Co. · Verschlussklips · gross",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/704537900000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:274583209300",
+    "name": "Snack Karotten · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/274583209300",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:106667300000",
+    "name": "Heinz · Ketchup · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/106667300000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:273800502400",
+    "name": "Migros · Bohnen",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/273800502400",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:120237800000",
+    "name": "Guarana · Antarctica",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/120237800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:204141100000",
+    "name": "Crème Fraîche · aha!, laktosefrei",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/204141100000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:251363200000",
+    "name": "Migros · Wildlachs Sockeye · Alaska",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/251363200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:161426800000",
+    "name": "You · Açai Püree  · Bio, ohne Zuckerzusatz",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/161426800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:721590800000",
+    "name": "Migros Paper & Co. · Q-Beutel · 60x80MM 20ST",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/721590800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:212689300000",
+    "name": "Philadelphia · Frischkäse · Nature",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/212689300000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:104476300000",
+    "name": "Mifloc · Kartoffelstock · vegetarisch",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/104476300000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:153411000000",
+    "name": "M-Classic · Champignons de Paris · geschnitten",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/153411000000",
+    "retrieved": 1788611998531,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "230g",
+    "ingredients": "Champignons, Wasser, Meersalz, Säuerungsmittel: Citronensäure, Antioxidationsmittel: Ascorbinsäure."
+  },
+  {
+    "id": "migros:115076000000",
+    "name": "Anna's Best · Pastateig · ausgewallt",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/115076000000",
+    "retrieved": 1788611995313,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "250g",
+    "ingredients": "Hartweizengriess, Vollei 18% (aus Bodenhaltung), Wasser, Säuerungsmittel: Citronensäure, Reismehl."
+  },
+  {
+    "id": "migros:703313700000",
+    "name": "Migros Kitchen & Co. · Rechaud",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/703313700000",
+    "retrieved": 1788612001374,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "1 Stk."
+  },
+  {
+    "id": "migros:704537000000",
+    "name": "Migros Kitchen & Co. · Papierbeutel · 15l",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/704537000000",
+    "retrieved": 1788612001959,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "10 Stk."
+  },
+  {
+    "id": "migros:747168600000",
+    "name": "Medela · Muttermilchbeutel",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/747168600000",
+    "retrieved": 1788612004834,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "25 Stk."
+  },
+  {
+    "id": "migros:233100283000",
+    "name": "Spécialité Suisse · Appenzeller Mostbröckli IGP · hauchdünn",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/233100283000",
+    "retrieved": 1788612005417,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "100 g",
+    "ingredients": "Rindfleisch, Nitritpökelsalz (Kochsalz, Konservierungsstoff: E250), Traubenzucker, Gewürze, Antioxidationsmittel (Natriumascorbat: E301), Konservierungsstoffe (Kaliumsorbat: E202, Kaliumnitrat: E252), Gewürzextrakt.",
+    "nutrition": {
+      "fat": 3,
+      "saturated-fat": 1.5,
+      "carbohydrates": 1,
+      "proteins": 32,
+      "salt": 4.5
+    },
+    "basis": "100g"
+  },
+  {
+    "id": "migros:113818100000",
+    "name": "Punschkugeln",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/113818100000",
+    "retrieved": 1788612008395,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "140g",
+    "ingredients": "Vollei (aus Bodenhaltung), Zucker, Weizenmehl, Dekorstreusel 14% (Zucker, Kakaopulver fettarm, Kakaobutter, Palmöl, Wasser, Glucosesirup, Überzugsmittel: E 553b, Emulgator: E 322, natürliches Aroma), Fettglasur 6% (Zucker, Palmkernöl, Kakaopulver, Palmöl, Magermilchpulver, Sonnenblumenöl, Kakaopulver fettarm, Emulgator: E 322, natürliches Aroma), Pflanzenfette und -öle (Palm, Raps, Kokos, Palmkern, Sonnenblumen), Likör mit Rum 6% (Rum, Alkohol, Wasser, Zucker), Weizenstärke, Magermilchpulver, Kirsch, modifizierte Stärke, Emulgatoren: E 471, E 472b, E 475 und Sojalecithin, Weizenprotein, Feuchthaltemittel: E 422, Glucosesirup, Haselnüsse geröstet, Aromen, Sojamehl."
+  },
+  {
+    "id": "migros:511881500000",
+    "name": "Sanactiv · Bronchialpastillen Erwachsene",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/511881500000",
+    "retrieved": 1788612008963,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "40 Stk."
+  },
+  {
+    "id": "migros:104470700000",
+    "name": "Couscous · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/104470700000",
+    "retrieved": 1788612012081,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "500g",
+    "ingredients": "Hartweizengriess *. * aus biologischer Landwirtschaft"
+  },
+  {
+    "id": "migros:501002000000",
+    "name": "Handy · Abwaschmittel",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/501002000000",
+    "retrieved": 1788612012295,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "750ml"
+  },
+  {
+    "id": "migros:111282200000",
+    "name": "Migros · Toast · Vollkorn",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/111282200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:105331300000",
+    "name": "Mandeln · Bio, gemahlen",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/105331300000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:160368300000",
+    "name": "Crème d'or · Glace · Caramel",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/160368300000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:160368900000",
+    "name": "Crème d'or · Glace · Vanille Bourbon",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/160368900000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:120233700000",
+    "name": "El Tony Mate · Mate",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/120233700000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:158576300000",
+    "name": "Thai Kitchen · Frühlingsrollenblätter",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/158576300000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:102733900000",
+    "name": "Patissier · Backfüllung · Mandel",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/102733900000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:102704200000",
+    "name": "Patissier · Geriebene Orangenschale",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/102704200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:165014200000",
+    "name": "Pelican Filets Gourmet · Provençale",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/165014200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:230510051510",
+    "name": "M-Classic · Schweinswürstchen",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/230510051510",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:113802600000",
+    "name": "Himbeer-Becher",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/113802600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:161643600000",
+    "name": "Farmer's Best · Ratatouille Gemüsemischung · gewürzt • Mi...",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/161643600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:703810800000",
+    "name": "Migros Kitchen & Co. · Stufendeckel · 24-28 cm",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/703810800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:749700500000",
+    "name": "Squishmallows · Plüsch · assortiert 19cm",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/749700500000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:230114180011",
+    "name": "Brätkügeli · Aus der Region",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/230114180011",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:227220625000",
+    "name": "Migros · Hackballs",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/227220625000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:526631300000",
+    "name": "Hero. · Mighty Patch The Original · Night",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/526631300000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:708159700000",
+    "name": "Migros Kitchen & Co. · Kartoffelstampfer · schwarz, 25 x ...",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/708159700000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:262500502300",
+    "name": "Migros · Zwetschgen",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/262500502300",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:104491300000",
+    "name": "Hirse · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/104491300000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:520571500000",
+    "name": "Pampers Baby Dry · Windeln · Gr.3,6-10kg",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/520571500000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:158610800000",
+    "name": "Alnatura · Mie Nudeln · Bio, ideal auch in Suppen",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/158610800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:102597600000",
+    "name": "Homemade · Crème Patisserie · Vanille Aroma",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/102597600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:131126100000",
+    "name": "Weisskohl · fermentiert",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/131126100000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:106208900000",
+    "name": "Kurkuma · Bio, gemahlen",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/106208900000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:115053100000",
+    "name": "Anna's Best · Pizzateig · ausgewallt, eckig, vegan",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/115053100000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:523003100000",
+    "name": "Sobio Etic · Rosenwasser",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/523003100000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:130902100000",
+    "name": "Cornatur · Nuggets · vegan",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/130902100000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:104223300000",
+    "name": "Schweizer Haferflöckli · Bio, fein",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/104223300000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:158518600000",
+    "name": "Sempio · Gochujang · Korean Chili Paste",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/158518600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:278107102200",
+    "name": "Migros · Thai Gemüse · Curry gelb",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/278107102200",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:522201000000",
+    "name": "Actilife · Omega 3 Algenöl Kapseln · vegan",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/522201000000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:158517800000",
+    "name": "Kikkoman · Sojasauce · vegan",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/158517800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:791049500000",
+    "name": "Mio Star · Stromadapter SCHUKO No Block · T12",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/791049500000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:104462800000",
+    "name": "Alnatura · Bulgur · Bio, vegan",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/104462800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:101910100000",
+    "name": "Migros · Chips Léger · Paprika",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/101910100000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:113653200000",
+    "name": "San Antonio · Panettone",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/113653200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:130731400000",
+    "name": "You · Smoothie Berry · Himbeer, Banane, Joghurt",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/130731400000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:275305102100",
+    "name": "Migros · Meerrettich",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/275305102100",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:160360800000",
+    "name": "Crème d'or · Glace · Stracciatella",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/160360800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:113122700000",
+    "name": "Petit Bonheur · Linzertörtli",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/113122700000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:109107100000",
+    "name": "Fatto · Katzenstreu Ultra Brilliant · clumping",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/109107100000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:110144900000",
+    "name": "Griesson · Soft Cake · Orange",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/110144900000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:103331100000",
+    "name": "Monini · Classico · extra vergine",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/103331100000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:113800700000",
+    "name": "Goufrais",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/113800700000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:102716400000",
+    "name": "Alnatura · Kuvertüre · Bio, Zartbitter",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/102716400000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:104488000000",
+    "name": "Kartoffelstock · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/104488000000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:156024800000",
+    "name": "Spanische Oliven Hojiblanca · Bio, entsteint",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/156024800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:205203600000",
+    "name": "Bifidus · Joghurt · Nature",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/205203600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:131520800000",
+    "name": "Algensalat · Goma Wakame",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/131520800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:104600400000",
+    "name": "Weissmehl · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/104600400000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:521042000000",
+    "name": "Aptamil Pronutra PRE · Anfangsmilch · von Geburt an  • Mi...",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/521042000000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:203500600000",
+    "name": "New Roots · La Fondue · Bio, vegan",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/203500600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:227221550011",
+    "name": "Migros · Fleischkäse · Aus der Region, ca. 500g",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/227221550011",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:113881600000",
+    "name": "Tiramisu Becher",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/113881600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:104480600000",
+    "name": "M-Classic · Original Rösti",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/104480600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:113115105500",
+    "name": "Buttergipf Branche",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/113115105500",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:107060500000",
+    "name": "Klostergarten · Fenchelfrüchte · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/107060500000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:705825600000",
+    "name": "Migros Kitchen & Co. · Glitzerspray · 10 g, gold",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/705825600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:101592000000",
+    "name": "Sélection · Tartufi Neri",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/101592000000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:162050700000",
+    "name": "M-Classic · Zapfen Kroketten",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/162050700000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:271716902200",
+    "name": "Migros · Chilis · rot",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/271716902200",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:120271600000",
+    "name": "Coca-Cola · Classic Dose",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/120271600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:107064100000",
+    "name": "Pfefferminztee · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/107064100000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:104206200000",
+    "name": "Müesli Crunchy · aha!, Bio, mit Waldbeeren, glutenfrei • ...",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/104206200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:513157200000",
+    "name": "Veet Men Total Pro · Intim-Haarentfernungs-Set · mit Pfle...",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/513157200000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:501110900000",
+    "name": "Handymatic Classic · Geschirrspülpulver",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/501110900000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:526634700000",
+    "name": "I am · Vaseline Hautcreme Körper, Gesicht · Intensiv-Pfle...",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/526634700000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:160152300000",
+    "name": "Gustavo Gusto · Pizza · Margherita",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/160152300000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:204555000000",
+    "name": "Migros · Buttermilch · Nature",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/204555000000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:107151400000",
+    "name": "Migros · Delizio Lungo · 24 Kapseln",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/107151400000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:747241400000",
+    "name": "Milette Baby Care · Wickelunterlage",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/747241400000",
+    "retrieved": 1788612055588,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "10 Stk."
+  },
+  {
+    "id": "migros:106286900000",
+    "name": "Sternanis · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/106286900000",
+    "retrieved": 1788612056458,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "34g",
+    "ingredients": "Sternanis*. DE: *aus ausländischer Bio-Produktion."
+  },
+  {
+    "id": "migros:109088300000",
+    "name": "Mio · Adult Delights · mit Huhn",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/109088300000",
+    "retrieved": 1788612059321,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "7 x 15g"
+  },
+  {
+    "id": "migros:104601200000",
+    "name": "Migros · Weissmehl",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/104601200000",
+    "retrieved": 1788612059916,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "1kg",
+    "ingredients": "Weizenweissmehl.",
+    "nutrition": {
+      "fat": 1,
+      "saturated-fat": 0.2,
+      "carbohydrates": 71,
+      "sugars": 1,
+      "fiber": 3,
+      "proteins": 12
+    },
+    "basis": "100g"
+  },
+  {
+    "id": "migros:101232000000",
+    "name": "Micamu · Feinste Rahmcaramels · weich",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/101232000000",
+    "retrieved": 1788612062884,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "155g",
+    "ingredients": "Zucker, Glucosesirup, Kondensmilch gezuckert, Butter, Vollrahm 4.5 %, Glucose, Emulgator: Mono- und Diglyceride von Speisefettsäuren, Karamellzuckersirup, Aromen, Kochsalz."
+  },
+  {
+    "id": "migros:104282400000",
+    "name": "Alnatura · Honig-Reiswaffeln · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/104282400000",
+    "retrieved": 1788612063671,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "3 x 33g",
+    "ingredients": "Vollkornreis* 80,4%, Honig* 19,6% * aus biologischer Landwirtschaft. Kann Spuren von Soja, Milch und Sesam enthalten."
+  },
+  {
+    "id": "migros:160152200000",
+    "name": "M-Classic · Pizza · Margherita",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/160152200000",
+    "retrieved": 1788612066745,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "275g",
+    "ingredients": "Weizenmehl, Wasser, Mozzarella (Käse) 24%, Tomatenkonzentrat 6%, Hefe, Weizenprotein, Kochsalz jodiert, Maisstärke, Rapsöl, Zucker, Gewürze, Streuwürze, Knoblauchpulver, Gewürzextrakte, Zitronensaftkonzentrat, Gerstenmalzmehl, Hefeextrakt, Mehlbehandlungsmittel: Ascorbinsäure."
+  },
+  {
+    "id": "migros:100189000000",
+    "name": "Lindt Excellence · Noir Orange Intense · With Orange",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/100189000000",
+    "retrieved": 1788612067120,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "100g",
+    "ingredients": "Zucker, Kakaomasse, MANDELN 7%, Kakaobutter, Orangensaft aus Konzentrat 3.9%, BUTTERREINFETT, Invertzucker, Zitronensaft aus Konzentrat, Emulgator (SOJALECITHIN), Ananas, Geliermittel (Pektin), natürliches Orangenaroma, Aroma.Kann andere MILCHBESTANDTEILE, HASELNÜSSE und andere SCHALENFRÜCHTE enthalten.Dunkle Schokolade enthält: Kakao 48 % mindestens."
+  },
+  {
+    "id": "migros:102010200000",
+    "name": "Migros · Rohzucker aus Zuckerrohr · grob",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/102010200000",
+    "retrieved": 1788612069864,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "1kg",
+    "ingredients": "Rohrohrzucker. Rohrohrzucker Fairtrade mit Mengenausgleich. Gesamtanteil 100%. www.fairtrade.net/ch",
+    "nutrition": {
+      "fat": 0,
+      "saturated-fat": 0,
+      "carbohydrates": 99,
+      "sugars": 99,
+      "fiber": 0,
+      "proteins": 0,
+      "salt": 0
+    },
+    "basis": "100g"
+  },
+  {
+    "id": "migros:702692700000",
+    "name": "Migros Home · Wäschesack · 50 x 60 cm",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/702692700000",
+    "retrieved": 1788612070539,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "1 Stk."
+  },
+  {
+    "id": "migros:113051505500",
+    "name": "Schinkengipfel",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/113051505500",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:703758700000",
+    "name": "Cucina & Tavola · Fondue Set · Ø 22 cm, rot",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/703758700000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:708160800000",
+    "name": "Migros Kitchen & Co. · Passiergerät · silbrig, Edelstahl,...",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/708160800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:107081500000",
+    "name": "Klostergarten · Kräutertee Innere Kraft · Bio, würzig & i...",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/107081500000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:708152900000",
+    "name": "Migros Kitchen & Co. · Digital-Timer · grau, silbrig, Alu...",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/708152900000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:162001500000",
+    "name": "Denny's · Rösti Fries  · vegan",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/162001500000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:522202600000",
+    "name": "Actilife · Magnesium Brausetabletten  · Zitrone",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/522202600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:113877600000",
+    "name": "Vanille Vermicelles",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/113877600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:166001500000",
+    "name": "Don Pollo · Poulet Crispy",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/166001500000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:101572600000",
+    "name": "Nougat Montélimar",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/101572600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:704539700000",
+    "name": "Migros Kitchen & Co. · Silikondeckel · ⌀ 10cm",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/704539700000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:511856400000",
+    "name": "Sanactiv · Teebaumöl",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/511856400000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:205331800000",
+    "name": "Migros · Crème Dessert · Vanille",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/205331800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:205210100000",
+    "name": "M-Classic · Müesli · classic",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/205210100000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:233520611020",
+    "name": "Bratspeck · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/233520611020",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:204112900000",
+    "name": "Emmi beleaf · Crème Fraîche · Alternative, vegan",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/204112900000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:512424300000",
+    "name": "Safe & Easy · Schwangerschafts-Frühtest",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/512424300000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:513902500000",
+    "name": "Cremedose",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/513902500000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:502064500000",
+    "name": "Durgol · Entkalker · Express",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/502064500000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:251434112000",
+    "name": "Sélection · Sashimi Lachs",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/251434112000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:274680201000",
+    "name": "Randen · Bio",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/274680201000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:204521800000",
+    "name": "Migros · Joghurt Drink · Bio, Kefir",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/204521800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:230113955510",
+    "name": "Cipollata",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · public product page",
+    "sourceUrl": "https://www.migros.ch/de/product/230113955510",
+    "retrieved": 1788612411760,
+    "evidence": "retailer-page",
+    "retailer": "migros-ch",
+    "pack": "2 x 200g",
+    "ingredients": "Schweinefleisch*, Wasser, Speck*, Kochsalz jodiert, Zwiebeln, MILCHZUCKER, MILCHprotein, Gewürze, Stabilisatoren: Diphosphate und Polyphosphate, Säureregulatoren: Natriumacetate und Zitronensäure, Kochsalz, Geschmacksverstärker: Mononatriumglutamat, Antioxidationsmittel: Trinatriumcitrat. Hülle: Schafsaitling. *in IP-SUISSE Qualität.",
+    "nutritionNote": "Energy converted from declared kJ using 4.184 kJ/kcal.",
+    "nutrition": {
+      "energy-kcal": 247.371,
+      "fat": 22,
+      "saturated-fat": 8,
+      "carbohydrates": 1,
+      "sugars": 1,
+      "fiber": 0.5,
+      "proteins": 12,
+      "salt": 1.8
+    },
+    "basis": "100g"
+  },
+  {
+    "id": "migros:252311501000",
+    "name": "Pelican · Crevetten · Tail-On, gekocht",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/252311501000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:131110800000",
+    "name": "Hummus · Bio, Nature",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/131110800000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:103044900000",
+    "name": "M-Classic · Bratbutter",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/103044900000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:511829900000",
+    "name": "Luvos · Heilerde Reizdarm Granulat",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/511829900000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:520521700000",
+    "name": "Rascals · Windeln · Gr.1,3-5kg",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/520521700000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:101523000000",
+    "name": "M-Classic · Kisss Big · Milk",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/101523000000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:107136000000",
+    "name": "Migros · Boncampo Bohnenkaffee · Oro",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/107136000000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:271804002600",
+    "name": "Migros · Champignons · braun",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/271804002600",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:708100600000",
+    "name": "Soda Stream · Quick Connect Zylinder · 10.- Depot",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/de/product/708100600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:511700600000",
+    "name": "Wilkinson · Precision Styler  · Precision razor for eyebr...",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/en/product/511700600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:104287500000",
+    "name": "Migros High Protein · Müesli croccante · Frutti di bosco,...",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/it/product/104287500000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:205372600000",
+    "name": "Migros High Protein · Pudding · Chocolate, lactose free •...",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/en/product/205372600000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:264400504200",
+    "name": "Migros · Kiwi",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/en/product/264400504200",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "migros:513352500000",
+    "name": "I am · Hand Butter  · Honey & Vitamin E",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "migros"
+    ],
+    "source": "Migros · indexed page title",
+    "sourceUrl": "https://www.migros.ch/en/product/513352500000",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "migros-ch"
+  },
+  {
+    "id": "coop:7371200",
+    "name": "Parmigiano DOP Reggiano Keil ca. ca. 250g",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/milchprodukte-eier/chaes-huesli/parmigiano-dop-reggiano-keil-ca/p/7371200",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:6589691",
+    "name": "Prix Garantie Roggenbrot",
+    "pack": "500 g",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · public product page",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/brot-backwaren/baeckerei/prix-garantie-roggenbrot/p/6589691",
+    "retrieved": 1789065967432,
+    "evidence": "retailer-page",
+    "retailer": "coop-ch",
+    "ingredients": "Getreidemehle (ROGGEN 37%, WEIZEN [Halbweiss]), Wasser, Hefe, Kochsalz jodiert, WEIZENGLUTEN, WEIZENVOLLKORNQUELLMEHL, WEIZENDUNST, WEIZENRÖSTMALZMEHL, Säuerungsmittel (E 270), karamellisierter Zucker, Zucker, Kümmel, WEIZENSTÄRKE.",
+    "allergens": [
+      "en:rye",
+      "en:wheat",
+      "en:gluten"
+    ],
+    "traces": [
+      "en:walnuts",
+      "en:spelt",
+      "en:eggs",
+      "en:barley",
+      "en:oats",
+      "en:hazelnuts",
+      "en:khorasan-wheat",
+      "en:almonds",
+      "en:milk",
+      "en:sesame-seeds",
+      "en:soybeans"
+    ],
+    "basis": "100g",
+    "nutrition": {
+      "fat": 0.9,
+      "saturated-fat": 0.2,
+      "carbohydrates": 42,
+      "sugars": 0.7,
+      "fiber": 4.7,
+      "proteins": 6.8,
+      "salt": 1.3
+    }
+  },
+  {
+    "id": "coop:5605637",
+    "name": "Frischback Stäckebrot 2x250g (500g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/brot-backwaren/haltbare-brote/frischback-brot/frischback-staeckebrot-2x250g/p/5605637",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:6649914",
+    "name": "Naturaplan Bio Peperoni Ramiro (280g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/fruechte-gemuese/salatgemuese/peperoni/naturaplan-bio-peperoni-ramiro/p/6649914",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:6116601",
+    "name": "El Tony Mate & Ginger 6x 33cl",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/getraenke/soft-drinks/cola-limonaden/uebrige-limonaden/el-tony-mate-ginger/p/6116601",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:3020310",
+    "name": "Eierschwämme mittel (100g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/vorraete/konserven/gemuese/pilze/eierschwaemme-mittel/p/3020310",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:6429383",
+    "name": "Raclette Scheiben XXS assortiert 2x400g - Lebensmittel",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/milchprodukte-eier/abgepackter-kaese/raclette-fondue/raclette/raclette-scheiben-xxs-assortiert-2x400g/p/6429383",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:5935812",
+    "name": "Betty Bossi Essbarer Kleber (25g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/vorraete/backzutaten/dekoration-toppings/dekor-schriften/betty-bossi-essbarer-kleber/p/5935812",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:6538815",
+    "name": "familia Champion High Protein (500g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/vorraete/mueesli-cerealien/mueesli/mueesli-ohne-schokolade/familia-champion-high-protein/p/6538815",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:4919444",
+    "name": "Naturaplan Bio Cassis-Sirup (50cl)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/getraenke/sirup/naturaplan-bio-cassis-sirup/p/4919444",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:4969355",
+    "name": "Dr.Oetker Dekor Mokkabohnen (75g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/vorraete/backzutaten/dekoration-toppings/dekor-schriften/droetker-dekor-mokkabohnen/p/4969355",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:5618456",
+    "name": "Naturaplan Bio Tomaten gehackt (230g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/vorraete/konserven/gemuese/tomaten/naturaplan-bio-tomaten-gehackt/p/5618456",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:3031462",
+    "name": "familia c.m. plus (600g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/vorraete/mueesli-cerealien/mueesli/mueesli-ohne-schokolade/familia-cm-plus/p/3031462",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:7388155",
+    "name": "Corona Extra 18x33cl (594cl)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/getraenke/bier/helles-bier-lager/corona-extra-18x33cl/p/7388155",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:3690806",
+    "name": "Slow Food Farina Bona (250g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/vorraete/grundnahrungsmittel/mehl-zucker/mehl/slow-food-farina-bona/p/3690806",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:3081332",
+    "name": "Naturaplan Bio Vollmilch 3,9% Milchfett Past",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/milchprodukte-eier/milch/frische-milch/naturaplan-bio-vollmilch-39-milchfett-past/p/3081332",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:4482099",
+    "name": "Mönchsbart (300g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/fruechte-gemuese/kraeuter-gewuerze/frische-kraeuter/moenchsbart/p/4482099",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:7586889",
+    "name": "Birnen QTee IP-Suisse (700g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/fruechte-gemuese/fruechte/aepfel-birnen/birnen-qtee-ip-suisse/p/7586889",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:3414562",
+    "name": "Guezli Löffelbiscuits (400g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/suesses-snacks/guetzli-suessgebaeck/guetzli-ohne-schokolade/weitere-guetzli/guezli-loeffelbiscuits/p/3414562",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:6837730",
+    "name": "Thai Kitchen Bio Kokosnuss Milch (500ml)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/milchprodukte-eier/milch/kokosmilch/thai-kitchen-bio-kokosnuss-milch/p/6837730",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:6336234",
+    "name": "Erythrit (500g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/vorraete/grundnahrungsmittel/mehl-zucker/suessstoffe/erythrit/p/6336234",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:6509545",
+    "name": "Kreuzkümmel ganz (24g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/vorraete/bouillons-gewuerze/gewuerze/getrocknete-gewuerze/kreuzkuemmel-ganz/p/6509545",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:4693656",
+    "name": "Naturafarm Kalbs-Haxen ca. 220g",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/fleisch-fisch/ihr-online-metzger/naturafarm-kalbs-haxen/p/4693656",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:7277641",
+    "name": "Value Le Gruyère AOP mild (350g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/milchprodukte-eier/abgepackter-kaese/hartkaese-halbhartkaese/sbrinz-parmesan-gruyere/value-le-gruyere-aop-mild/p/7277641",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:7445145",
+    "name": "Bell Paw Patrol Salami Sticks 4x20G (80g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/fleisch-fisch/charcuterie-wurstwaren/snacks-apero/bell-paw-patrol-salami-sticks-4x20g/p/7445145",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:7169620",
+    "name": "Fine Food Malloreddus (500g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/vorraete/grundnahrungsmittel/teigwaren/geformt/fine-food-malloreddus/p/7169620",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:7189061",
+    "name": "Karma traditional Kimchi mild (250g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/fruechte-gemuese/kohlgemuese/sauerkraut-rotkraut/karma-traditional-kimchi-mild/p/7189061",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:6629441",
+    "name": "Naturaplan Bio Granatapfelsaft (300ml)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/getraenke/frucht-gemuesesaefte/fruchtsaefte/uebrige-fruchtsaefte/naturaplan-bio-granatapfelsaft/p/6629441",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:6227374",
+    "name": "Naturaplan Bio CH-Geflügel Brühe (230ml)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/vorraete/bouillons-gewuerze/bouillons-fonds/fleisch-bouillon/naturaplan-bio-ch-gefluegel-bruehe/p/6227374",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:4053595",
+    "name": "Fencheltee Instant (200g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/getraenke/heisse-getraenke/tee/instant-tee-punch/fencheltee-instant/p/4053595",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  },
+  {
+    "id": "coop:6616672",
+    "name": "Schinkengipfeli 15x44g (660g)",
+    "categories": [],
+    "countries": [
+      "en:switzerland"
+    ],
+    "stores": [
+      "coop"
+    ],
+    "source": "Coop · indexed page title",
+    "sourceUrl": "https://www.coop.ch/de/lebensmittel/tiefgekuehlt/fertiggerichte/aperogebaeck/schinkengipfeli-15x44g/p/6616672",
+    "retrieved": 1788611884785,
+    "evidence": "indexed-link",
+    "retailer": "coop-ch"
+  }
+]

@@ -1,0 +1,37 @@
+{
+  "repository": "https://github.com/naptha/tessdata",
+  "version": "1.0.0",
+  "variant": "4.0.0_best_int",
+  "licence": "Language npm packaging: MIT; upstream Tesseract trained data: Apache-2.0",
+  "upstream": "https://github.com/tesseract-ocr/tessdata_best",
+  "files": {
+    "deu.traineddata.gz": {
+      "sha256": "306c4280d0cbed46fbff727486bd43b92730181bae80f56941a091f363bdf28b",
+      "url": "https://cdn.jsdelivr.net/npm/@tesseract.js-data/deu@1.0.0/4.0.0_best_int/deu.traineddata.gz"
+    },
+    "eng.traineddata.gz": {
+      "sha256": "45b4cb346724ac1774f1c36f42f182b887bcdb28ebe63e6fff90ac41f3fcff91",
+      "url": "https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int/eng.traineddata.gz"
+    },
+    "fra.traineddata.gz": {
+      "sha256": "d611139672b3752c7097e671e4a1d9209dfd37f2aeb081ef6487fba3351e9255",
+      "url": "https://cdn.jsdelivr.net/npm/@tesseract.js-data/fra@1.0.0/4.0.0_best_int/fra.traineddata.gz"
+    },
+    "ita.traineddata.gz": {
+      "sha256": "f702fcfad297ce028ede3626d1467b67939f23ff23595f9badd54681cf25a4d3",
+      "url": "https://cdn.jsdelivr.net/npm/@tesseract.js-data/ita@1.0.0/4.0.0_best_int/ita.traineddata.gz"
+    },
+    "spa.traineddata.gz": {
+      "sha256": "40be52f97b5d4eb7460073dc1f94cd546b27150333c0bf854ed7e7132db6bceb",
+      "url": "https://cdn.jsdelivr.net/npm/@tesseract.js-data/spa@1.0.0/4.0.0_best_int/spa.traineddata.gz"
+    },
+    "por.traineddata.gz": {
+      "sha256": "dacebc1386ddaaf8389f81094236cca0d690897cde693d48cbdaa881c86e2b4c",
+      "url": "https://cdn.jsdelivr.net/npm/@tesseract.js-data/por@1.0.0/4.0.0_best_int/por.traineddata.gz"
+    },
+    "nld.traineddata.gz": {
+      "sha256": "a2d904b6ddc4feb0d31ecfcd7361a554102e7aa2e278c54f4fc029e0d0815571",
+      "url": "https://cdn.jsdelivr.net/npm/@tesseract.js-data/nld@1.0.0/4.0.0_best_int/nld.traineddata.gz"
+    }
+  }
+}

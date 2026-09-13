@@ -1,0 +1,4 @@
+import foods from '@/lib/swiss-foods.json';
+import provenance from '@/lib/swiss-provenance.json';
+import {identity,rate,responseError} from '@/lib/server';
+export async function GET(req:Request){try{await identity();const p=new URL(req.url).searchParams,q=(p.get('q')||'').trim().toLowerCase().slice(0,100),id=p.get('id');if(id){const product=foods.find(f=>f.id===id);return Response.json({product,provenance:(provenance.records as any)[id],sources:provenance.sources},{status:product?200:404})}const terms=q.split(/\s+/).filter(Boolean);return Response.json({products:terms.length?foods.filter(f=>terms.every(t=>(f.name+' '+f.categories.join(' ')+' '+((provenance.records as any)[f.id]?.synonyms||'')).toLowerCase().includes(t))).slice(0,30):[],total:foods.length,source:provenance.attribution,version:provenance.version},{headers:{'Cache-Control':'private, max-age=3600'}})}catch(e){return responseError(e)}}

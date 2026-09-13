@@ -1,0 +1,489 @@
+[
+  {
+    "id": "off:8000500082379",
+    "barcode": "8000500082379",
+    "name": "Nutella",
+    "brand": "Nutella, Ferrero Technical Services Srl",
+    "image": "https://images.openfoodfacts.org/images/products/800/050/008/2379/front_en.167.400.jpg",
+    "pack": "1000g",
+    "stores": [
+      "Dia",
+      "Michus Supermercados",
+      "Migros"
+    ],
+    "additives": [
+      "en:e322"
+    ],
+    "categories": [
+      "en:breakfasts",
+      "en:spreads",
+      "en:sweet-spreads",
+      "en:festive-foods",
+      "en:christmas-foods-and-drinks",
+      "fr:pates-a-tartiner",
+      "en:hazelnut-spreads",
+      "en:chocolate-spreads",
+      "en:cocoa-and-hazelnuts-spreads"
+    ],
+    "countries": [
+      "en:austria",
+      "en:belgium",
+      "en:bulgaria",
+      "en:czech-republic",
+      "en:france",
+      "en:germany",
+      "en:hungary",
+      "en:morocco",
+      "en:romania",
+      "en:serbia",
+      "en:slovenia",
+      "en:spain",
+      "en:sweden",
+      "en:switzerland",
+      "en:turkey"
+    ],
+    "ingredients": "sugar, palm oil,  hazelnuts  (13%), skimmed  milk  powder (8,7 %), lean cocoa (7,4 %), emulsifier: lecithins ( soya ), vanillin,",
+    "ingredientTags": [
+      "en:sugar",
+      "en:palm-oil",
+      "en:hazelnut",
+      "en:skimmed-milk-powder",
+      "en:fat-reduced-cocoa",
+      "en:e322",
+      "en:vanillin"
+    ],
+    "allergens": [
+      "en:milk",
+      "en:nuts",
+      "en:soybeans"
+    ],
+    "traces": [],
+    "labels": [
+      "en:sustainable",
+      "en:sustainable-palm-oil",
+      "en:roundtable-on-sustainable-palm-oil"
+    ],
+    "nutrition": {
+      "energy-kcal": 539,
+      "proteins": 6.3,
+      "carbohydrates": 57.5,
+      "fat": 30.9,
+      "saturated-fat": 10.6,
+      "sugars": 56.3,
+      "fiber": 3,
+      "salt": 0.11
+    },
+    "basis": "100g",
+    "source": "Open Food Facts",
+    "sourceUrl": "https://world.openfoodfacts.org/product/8000500082379",
+    "retrieved": 1789066502032,
+    "sourceUpdated": 1788379019000,
+    "detailsRetrieved": 1789066502032
+  },
+  {
+    "id": "off:3017620422003",
+    "barcode": "3017620422003",
+    "name": "Nutella",
+    "brand": "Nutella, Ferrero, Yum yum",
+    "image": "https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.879.400.jpg",
+    "pack": "400 g e",
+    "stores": [
+      "Carrefour"
+    ],
+    "additives": [
+      "en:e322",
+      "en:e322i"
+    ],
+    "categories": [
+      "en:breakfasts",
+      "en:spreads",
+      "en:sweet-spreads",
+      "en:confectionary-based-spreads",
+      "en:Petit-déjeuners",
+      "en:Produits à tartiner",
+      "en:Produits à tartiner sucrés",
+      "en:Pâtes à tartiner"
+    ],
+    "countries": [
+      "en:france"
+    ],
+    "ingredients": "Sucre, huile de palme, NOISETTES 13%, cacao maigre 7,4%, LAIT écrémé en poudre 6,6%, LACTOSERUM en poudre, émulsifiants: lécithines [SOJA), vanilline. Sans gluten.",
+    "ingredientTags": [
+      "en:sugar",
+      "en:palm-oil",
+      "en:hazelnut",
+      "en:fat-reduced-cocoa",
+      "en:skimmed-milk-powder",
+      "en:whey-powder",
+      "en:e322",
+      "en:vanillin"
+    ],
+    "allergens": [
+      "en:milk",
+      "en:nuts",
+      "en:soybeans"
+    ],
+    "traces": [],
+    "labels": [
+      "en:vegetarian",
+      "en:no-gluten",
+      "fr:triman"
+    ],
+    "nutrition": {
+      "energy-kcal": 539,
+      "proteins": 6.3,
+      "carbohydrates": 57.5,
+      "fat": 30.9,
+      "saturated-fat": 10.6,
+      "sugars": 56.3,
+      "fiber": 0,
+      "salt": 0.107
+    },
+    "basis": "100g",
+    "source": "Open Food Facts",
+    "sourceUrl": "https://world.openfoodfacts.org/product/3017620422003",
+    "retrieved": 1789066502220,
+    "sourceUpdated": 1789053010000,
+    "detailsRetrieved": 1789066502220
+  },
+  {
+    "id": "off:5411188112709",
+    "barcode": "5411188112709",
+    "name": "Geröstete Mandel Ohne Zucker",
+    "brand": "alpro",
+    "image": "https://images.openfoodfacts.org/images/products/541/118/811/2709/front_en.927.400.jpg",
+    "pack": "1 l",
+    "stores": [
+      "Jumbo",
+      "Michus Supermercados"
+    ],
+    "additives": [
+      "en:e322",
+      "en:e412",
+      "en:e418"
+    ],
+    "categories": [
+      "en:beverages-and-beverages-preparations",
+      "en:plant-based-foods-and-beverages",
+      "en:beverages",
+      "en:plant-based-foods",
+      "en:dairy-substitutes",
+      "en:milk-substitutes",
+      "en:nuts-and-their-products",
+      "en:plant-based-beverages",
+      "en:plant-based-milk-alternatives",
+      "en:nut-based-drinks",
+      "en:almond-based-drinks"
+    ],
+    "countries": [
+      "en:germany",
+      "en:netherlands",
+      "en:spain"
+    ],
+    "ingredients": "Wasser, _Mandeln_ (2,3%), Calcium (Calciumcarbonat), Meersalz, Stabilisatoren (Guarkernmehl, Gellan), Emulgator (Lecithine), natürliches Aroma, Vitamine B12, D2, E.",
+    "ingredientTags": [
+      "en:water",
+      "en:almond",
+      "en:calcium",
+      "en:sea-salt",
+      "en:e412",
+      "en:e418",
+      "en:e322",
+      "en:natural-flavouring",
+      "en:vitamins",
+      "en:vitamin-b12",
+      "en:ergocalciferol",
+      "en:vitamin-e"
+    ],
+    "allergens": [
+      "en:nuts"
+    ],
+    "traces": [
+      "de:Schalenfrüchte (keine Erdnüsse)"
+    ],
+    "labels": [
+      "en:low-or-no-fat",
+      "en:low-or-no-sugar",
+      "en:vegetarian",
+      "en:low-fat",
+      "en:no-gluten",
+      "en:no-milk",
+      "en:no-preservatives",
+      "en:vegan",
+      "en:calcium-source",
+      "en:certified-b-corporation",
+      "en:european-vegetarian-union",
+      "en:european-vegetarian-union-vegan",
+      "en:european-vegetarian-union-vegetarian",
+      "en:fsc",
+      "en:fsc-mix",
+      "en:low-or-no-saturated-fat",
+      "en:low-saturated-fat",
+      "en:no-colorings",
+      "en:no-dyes-or-preservatives",
+      "en:no-sugar",
+      "en:nutriscore",
+      "en:nutriscore-grade-b",
+      "en:plant-based",
+      "en:the-vegan-society",
+      "en:without-sweeteners",
+      "fr:triman"
+    ],
+    "nutrition": {
+      "energy-kcal": 14,
+      "proteins": 0.5,
+      "carbohydrates": 0,
+      "fat": 1.1,
+      "saturated-fat": 0,
+      "sugars": 0,
+      "fiber": 0.3,
+      "salt": 0.15,
+      "calcium": 120,
+      "sodium": 60,
+      "iodine": 22.500000000000004,
+      "vitamin-d": 0.75,
+      "vitamin-e": 1.7999999999999998,
+      "vitamin-b2": 0.2,
+      "vitamin-b12": 0.38
+    },
+    "basis": "100g",
+    "source": "Open Food Facts",
+    "sourceUrl": "https://world.openfoodfacts.org/product/5411188112709",
+    "retrieved": 1789066502409,
+    "sourceUpdated": 1789024078000,
+    "detailsRetrieved": 1789066502409
+  },
+  {
+    "id": "off:8076800195057",
+    "barcode": "8076800195057",
+    "name": "Spaghetti Nº5",
+    "brand": "Barilla",
+    "image": "https://images.openfoodfacts.org/images/products/807/680/019/5057/front_en.3881.400.jpg",
+    "pack": "500 g",
+    "stores": [
+      "Coles",
+      "Jumbo",
+      "Picnic"
+    ],
+    "additives": [],
+    "categories": [
+      "en:plant-based-foods-and-beverages",
+      "en:plant-based-foods",
+      "en:cereals-and-potatoes",
+      "en:cereals-and-their-products",
+      "en:pastas",
+      "en:cereal-pastas",
+      "en:dry-pastas",
+      "en:durum-wheat-pasta",
+      "en:spaghetti",
+      "en:dry-durum-wheat-pasta",
+      "en:durum-wheat-spaghetti"
+    ],
+    "countries": [
+      "en:australia",
+      "en:croatia",
+      "en:france",
+      "en:germany",
+      "en:netherlands"
+    ],
+    "ingredients": "DURUM WHEAT SEMOLINA PASTA. May contain traces of soy and mustard.",
+    "ingredientTags": [
+      "en:durum-wheat-semolina-pasta"
+    ],
+    "allergens": [
+      "en:gluten"
+    ],
+    "traces": [
+      "en:eggs",
+      "en:mustard",
+      "en:soybeans"
+    ],
+    "labels": [
+      "en:vegetarian",
+      "en:halal",
+      "en:green-dot-india",
+      "en:halal-food-council-of-europe",
+      "en:halal-quality-control",
+      "en:made-in-italy",
+      "en:FSSAI"
+    ],
+    "nutrition": {
+      "energy-kcal": 359,
+      "proteins": 13,
+      "carbohydrates": 71,
+      "fat": 2,
+      "saturated-fat": 0.5,
+      "sugars": 3.5,
+      "fiber": 3,
+      "salt": 0.01
+    },
+    "basis": "100g",
+    "source": "Open Food Facts",
+    "sourceUrl": "https://world.openfoodfacts.org/product/8076800195057",
+    "retrieved": 1789066502597,
+    "sourceUpdated": 1788898312000,
+    "detailsRetrieved": 1789066502597
+  },
+  {
+    "id": "off:8000500310427",
+    "barcode": "8000500310427",
+    "name": "Biscuits NUTELLA Biscuits Noisettes et Cacao x22 - 304g",
+    "brand": "Ferrero, Nutella biscuits",
+    "image": "https://images.openfoodfacts.org/images/products/800/050/031/0427/front_fr.573.400.jpg",
+    "pack": "304 g",
+    "stores": [
+      "Esselunga"
+    ],
+    "additives": [
+      "en:e322",
+      "en:e322i",
+      "en:e450",
+      "en:e450i",
+      "en:e500",
+      "en:e500ii",
+      "en:e503",
+      "en:e503ii"
+    ],
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits",
+      "en:biscuits-cookies-shelf-stable",
+      "en:Biscotti",
+      "en:Snack dolci"
+    ],
+    "countries": [
+      "en:algeria",
+      "en:france",
+      "en:germany",
+      "en:greece",
+      "en:italy",
+      "en:morocco",
+      "en:portugal",
+      "en:romania",
+      "en:spain",
+      "en:switzerland",
+      "en:united-states"
+    ],
+    "ingredients": "Pâte à tartiner aux NOISETTES et au cacao 40% (sucre, huile de palme, NOISETTES 13%**, LAIT écrémé en poudre 8,7%**, cacao maigre 7,4%**, émulsifiants : lécithines [SOJA]; vanilline), farine de FROMENT 32,5%, graisses végétales (palme, palmiste), sucre de canne (contient BLE) 8,5%, LACTOSE, son de BLE, LAIT en poudre, miel, poudres à lever (diphosphate disodique, carbonate acide de sodium, carbonate acide d'ammonium), farine d'ORGE malté, cacao maigre en poudre, sel, extrait en poudre de malt d'ORGE et de maïs, amidon de FROMENT, émulsifiants: lécithines [SOJA]; vanilline.",
+    "ingredientTags": [
+      "en:hazelnut-spread",
+      "en:cocoa",
+      "en:wheat-flour",
+      "en:vegetable-fat",
+      "en:cane-sugar",
+      "en:lactose",
+      "en:wheat-bran",
+      "en:milk-powder",
+      "en:honey",
+      "en:e450i",
+      "en:e500ii",
+      "en:e503ii",
+      "en:barley-malt-flour",
+      "en:fat-reduced-cocoa-powder",
+      "en:salt",
+      "en:malted-barley",
+      "en:corn",
+      "en:wheat-starch",
+      "en:e322",
+      "en:vanillin"
+    ],
+    "allergens": [
+      "en:gluten",
+      "en:milk",
+      "en:nuts",
+      "en:soybeans"
+    ],
+    "traces": [
+      "en:mustard"
+    ],
+    "labels": [
+      "en:vegetarian",
+      "en:no-gluten",
+      "en:no-preservatives",
+      "en:made-in-italy",
+      "fr:Ponto Verde"
+    ],
+    "nutrition": {
+      "energy-kcal": 515,
+      "proteins": 7.9,
+      "carbohydrates": 64,
+      "fat": 24.8,
+      "saturated-fat": 11.5,
+      "sugars": 35.8,
+      "salt": 0.559
+    },
+    "basis": "100g",
+    "source": "Open Food Facts",
+    "sourceUrl": "https://world.openfoodfacts.org/product/8000500310427",
+    "retrieved": 1789066502781,
+    "sourceUpdated": 1788918041000,
+    "detailsRetrieved": 1789066502781
+  },
+  {
+    "id": "off:0737628064502",
+    "barcode": "0737628064502",
+    "name": "Thai peanut noodle kit includes stir-fry rice noodles & thai peanut seasoning",
+    "brand": "Simply Asia, Thai Kitchen",
+    "image": "https://images.openfoodfacts.org/images/products/073/762/806/4502/front_en.6.400.jpg",
+    "pack": "155 g",
+    "stores": [],
+    "additives": [
+      "en:e330"
+    ],
+    "categories": [
+      "en:plant-based-foods-and-beverages",
+      "en:plant-based-foods",
+      "en:cereals-and-potatoes",
+      "en:cereals-and-their-products",
+      "en:pastas",
+      "en:noodles",
+      "en:Rice Noodles"
+    ],
+    "countries": [
+      "en:france",
+      "en:united-states"
+    ],
+    "ingredients": "Rice Noodles (rice, water), seasoning packet (peanut, sugar, salt, corn starch, spices [chili, cinnamon, pepper, cumin, clove], hydrolyzed soy protein, green onions, citric acid, peanut oil, sesame oil, natural flavor).",
+    "ingredientTags": [
+      "en:rice-noodles",
+      "en:seasoning-packet"
+    ],
+    "allergens": [
+      "en:peanuts",
+      "en:sesame-seeds",
+      "en:soybeans"
+    ],
+    "traces": [
+      "en:peanuts"
+    ],
+    "labels": [
+      "en:vegetarian",
+      "en:no-gluten",
+      "en:vegan"
+    ],
+    "nutrition": {
+      "energy-kcal": 385,
+      "proteins": 9.62,
+      "carbohydrates": 71.15,
+      "fat": 7.69,
+      "saturated-fat": 1.92,
+      "sugars": 13.46,
+      "fiber": 1.9,
+      "salt": 0.72,
+      "calcium": 38,
+      "iron": 0.69,
+      "sodium": 288,
+      "vitamin-a": 115.50000000000001,
+      "vitamin-c": 0
+    },
+    "basis": "100g",
+    "source": "Open Food Facts",
+    "sourceUrl": "https://world.openfoodfacts.org/product/0737628064502",
+    "retrieved": 1789066502961,
+    "sourceUpdated": 1773864998000,
+    "detailsRetrieved": 1789066502961
+  }
+]

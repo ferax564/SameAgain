@@ -1,0 +1,29 @@
+{
+  "retrieved": "2026-09-05",
+  "complete": false,
+  "retailers": {
+    "coop-ch": {
+      "records": 31,
+      "pageDetails": 1,
+      "nutrition": 1
+    },
+    "migros-ch": {
+      "records": 182,
+      "pageDetails": 28,
+      "nutrition": 6
+    }
+  },
+  "migrosCrawl": {
+    "indexedGermanProductUrls": 179,
+    "successfulFetches": 30,
+    "failedFetches": 149
+  },
+  "limitations": [
+    "Coop bulk fetches were blocked on 5 September; one existing public product link was verified on 10 September. Full assortment remains unavailable.",
+    "Migros sitemap has 10056 URLs but no product detail URLs. URL index discovery is not exhaustive.",
+    "Indexed names are discovery links; current assortment, prices and branch inventory are not verified.",
+    "Retailer images and promotional descriptions are not copied. No open reuse licence is claimed for retailer content."
+  ],
+  "sha256": "1baec7fc0ed3af15397ae695bff9386ffdf071b4928cda3a245a3fb5e3cd8505",
+  "lastVerified": "2026-09-10"
+}
