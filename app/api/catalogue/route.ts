@@ -31,7 +31,14 @@ if(!browsing)try{live=await off.search(q,c,category,tag)}catch{notice='Live sear
 const stored=await savedCatalogueCandidates(q);
 let privateProducts:any[]=[];
 if(h&&!c&&!p.get('label')&&!retailer&&p.get('source')!=='community')privateProducts=(await query("SELECT data FROM records WHERE household=? AND kind='product' AND deleted=0",h)).map(r=>JSON.parse(r.data));
-const ranked=rankSearch([...indexed,...stored,...live,...privateProducts,...extra],q,{country:c,category,retailer,label:p.get('label')||undefined,community:p.get('source')==='community',limit:ALL_CATALOGUE_MATCHES});
+const filters={country:c,category,retailer,label:p.get('label')||undefined,community:p.get('source')==='community',limit:ALL_CATALOGUE_MATCHES};
+let ranked;
+if(browsing&&extra.length){
+ const community=rankSearch([...indexed,...stored,...live,...privateProducts],q,filters);
+ const extraRanked=rankSearch(extra,q,filters);
+ const seen=new Set(community.map(p=>p.id));
+ ranked=[...community,...extraRanked.filter(p=>!seen.has(p.id))];
+}else ranked=rankSearch([...indexed,...stored,...live,...privateProducts,...extra],q,filters);
 const paged=pageCatalogue(ranked,page);
 await persistSwiss(paged.products.filter(row=>row.source==='Open Food Facts'));
 if(!notice)notice=paged.total

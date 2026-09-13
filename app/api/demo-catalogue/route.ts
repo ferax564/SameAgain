@@ -21,7 +21,15 @@ export async function GET(req:Request){
   const fromRetailer=p.get('source')==='retailer';
   const retailerRows=(imported as Product[]).filter(r=>!retailer||r.retailer===retailer).map(enrichIndexedProduct);
   const swiss=fromRetailer?[]:await swissSearch(q,country,undefined,retailer?retailers[retailer].tag:undefined,req.url);
-  const ranked=rankSearch(fromRetailer?retailerRows:[...swiss,...retailerRows],q,{country,retailer,label:p.get('label')||undefined,limit:ALL_CATALOGUE_MATCHES});
+  const filters={country,retailer,label:p.get('label')||undefined,limit:ALL_CATALOGUE_MATCHES};
+  let ranked;
+  if(fromRetailer)ranked=rankSearch(retailerRows,q,filters);
+  else if(!q.trim()&&retailerRows.length){
+   const community=rankSearch(swiss,q,filters);
+   const extra=rankSearch(retailerRows,q,filters);
+   const seen=new Set(community.map(p=>p.id));
+   ranked=[...community,...extra.filter(p=>!seen.has(p.id))];
+  }else ranked=rankSearch([...swiss,...retailerRows],q,filters);
   const paged=pageCatalogue(ranked,page);
   const swissRetailer=retailer==='coop-ch'||retailer==='migros-ch'?retailerScope(retailer):undefined;
   const coverage=fromRetailer?{imported:imported.filter(r=>r.retailer===retailer).length,pageDetails:imported.filter(r=>r.retailer===retailer&&r.evidence==='retailer-page').length,complete:false}:swissCoverage;
