@@ -94,7 +94,8 @@
 .modal .choice [data-slot=select-value]{flex:1}
 .modal [data-slot=dialog-header]{text-align:left}
 @media(max-width:370px){.modal .formgrid{grid-template-columns:1fr}}
-.list-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:10px 12px;padding:12px 23px 10px}
+.list-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px 12px;padding:12px 23px 10px}
+.list-toolbar .list-menu{justify-self:end}
 .list-toolbar .shopper-bar{grid-column:1/-1}
 .chip-row{display:flex;flex-wrap:wrap;gap:8px}
 .chip{border:1px solid var(--border);background:var(--background);color:var(--muted-foreground);border-radius:999px;padding:7px 12px;min-height:40px;font:inherit;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px}

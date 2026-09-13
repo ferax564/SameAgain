@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {hasStore} from '../lib/retailers.ts';
 import {classifyRetailerProduct,declaredNutritionCount,enrichIndexedProduct,inferPackFromName} from '../lib/catalogue-quality.ts';
+import {retailerScope} from '../lib/catalogue-scope.ts';
 import type {Product} from '../lib/domain.ts';
 
 test('indexed Coop titles expose pack size without inventing a barcode',()=>{
@@ -53,4 +54,10 @@ test('Coop and Migros coverage reports stay honest and match the shipped snapsho
  assert.equal(new Set(swiss.map(p=>p.id)).size,swiss.length);
  assert.equal(report.completeRetailerCatalogue,false);
  assert.equal(retailerReport.complete,false);
+ const coop=retailerScope('coop-ch'),migros=retailerScope('migros-ch');
+ assert.equal(coop.communityRecords,report.coverageByRetailer.coop.records);
+ assert.equal(migros.communityRecords,report.coverageByRetailer.migros.records);
+ assert.equal(coop.complete,false);
+ assert.match(coop.notice,/not the full Coop assortment/);
+ assert.match(migros.notice,/10,000-hit/);
 });
