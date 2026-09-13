@@ -3,6 +3,8 @@ import {rankSearch} from '@/lib/catalogue-search';
 import {barcode,countries} from '@/lib/domain';
 import {retailers} from '@/lib/retailers';
 import imported from '@/lib/retailer-products.json';
+import {enrichIndexedProduct} from '@/lib/catalogue-quality';
+import {retailerScope} from '@/lib/catalogue-scope';
 import type {Product} from '@/lib/domain';
 
 // Only the shipped, publicly licensed catalogue and public retailer links.
@@ -15,8 +17,9 @@ export async function GET(req:Request){
  try{
   if(p.get('barcode')){const b=barcode(p.get('barcode')!);if(!b.valid)return Response.json({error:b.error},{status:400});return Response.json({product:await swissBarcode(b.code,req.url)||null,notice:'Saved catalogue record. Check the package; the demo does not refresh live product details.'},{headers})}
   const fromRetailer=p.get('source')==='retailer';
-  const rows=fromRetailer?rankSearch(imported as Product[],q,{country,retailer,limit:48}):await swissSearch(q,country,undefined,retailer?retailers[retailer].tag:undefined,req.url);
+  const rows=fromRetailer?rankSearch((imported as Product[]).map(enrichIndexedProduct),q,{country,retailer,limit:48}):await swissSearch(q,country,undefined,retailer?retailers[retailer].tag:undefined,req.url);
   const products=rankSearch(rows,q,{country,retailer,label:p.get('label')||undefined,limit:48});
-  return Response.json({products,hasMore:false,coverage:fromRetailer?{imported:imported.filter(r=>r.retailer===retailer).length,pageDetails:imported.filter(r=>r.retailer===retailer&&r.evidence==='retailer-page').length}:swissCoverage,notice:fromRetailer?'Public retailer sources, partial import. Your demo shopping activity stays on this device.':'Real Open Food Facts records from the saved Swiss index. Demo changes stay on this device. Live refresh is available in your household.'},{headers});
+  const swissRetailer=retailer==='coop-ch'||retailer==='migros-ch'?retailerScope(retailer):undefined;
+  return Response.json({products,hasMore:false,coverage:fromRetailer?{imported:imported.filter(r=>r.retailer===retailer).length,pageDetails:imported.filter(r=>r.retailer===retailer&&r.evidence==='retailer-page').length,complete:false}:swissCoverage,scope:swissRetailer,notice:fromRetailer?'Public retailer sources, partial import. Your demo shopping activity stays on this device.':'Real Open Food Facts records from the saved Swiss index. Demo changes stay on this device. Live refresh is available in your household.'},{headers});
  }catch{return Response.json({error:'The saved catalogue is unavailable. Try again shortly.'},{status:503})}
 }

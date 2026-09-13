@@ -183,9 +183,29 @@ Historical interactive checks used a separate demo. Raw receipt photos, OCR outp
 - Upload UI re-encodes supported images to metadata-free JPEG, maximum 1,600-pixel edge. The API accepts signature-checked JPEG/PNG up to 3 MB; direct API uploads do not receive server-side EXIF stripping or malware scanning. Orphan uploads persist until household deletion. Existing list/recipe/history snapshots retain earlier product data when a private master product changes.
 - Larger rollout needs cache/rate/operation cleanup, orphan-image retention, database pagination/push sync, monitoring, backup/recovery and load testing. These are not simulated by the current small-household release.
 
+## September 13 readiness review
+
+Implemented the remaining household-usability work and re-reviewed the Coop and Migros catalogues:
+
+- Discover search always uses the saved Swiss index, including in the isolated demo. Coop Switzerland and Migros shortcuts browse that index with an honest coverage card. Demo search no longer silently limits itself to six sample products.
+- Shared lists can be filtered by Everyone, Assigned to me, Unclaimed, or another member. Claiming an item cannot silently take someone else’s assignment. Household switcher is available when you belong to more than one household.
+- Retailer page search is accent-insensitive and uses the same `search_text` tokens as community search. Indexed Coop/Migros titles can show a pack size read from the title, labelled as such. Household goods such as drain cleaner are marked separately from groceries.
+- Store matching accepts both `coop` and `en:coop` tags, so community and live records do not drop out of a retailer browse.
+
+### Coop and Migros catalogue review
+
+| Source | Records | Photos / facts | What this is |
+| --- | ---: | --- | --- |
+| Open Food Facts · Switzerland · Coop tag | 3,534 | 3,470 photo URLs | Partial community catalogue, not Coop’s full assortment |
+| Open Food Facts · Switzerland · Migros tag | 9,759 | 9,230 photo URLs | Partial community catalogue; original harvest hit the public 10,000-result window |
+| Direct Coop pages/links | 31 | 1 page with verified facts and nutrition | Indexed titles plus Prix Garantie rye bread |
+| Direct Migros pages/links | 182 | 28 page details; 6 nutrition tables | Mostly discovery links; 149 earlier detail fetches failed |
+
+The Swiss search index still has almost no ingredient lists (6 of 13,249). Opening a product hydrates full details from Open Food Facts when signed in. Direct retailer images are not copied. Neither feed is live stock, offers or branch inventory.
+
 ## Public repository handover
 
-This snapshot was prepared on 13 September 2026 from application commit `54cff8707b1f46c888d21e734a312d2ec47656e3`. It contains the existing application, tests, migrations, provider adapters and attributed public catalogue assets. The usability improvements identified in the September 12 review have **not** been implemented in this snapshot.
+This snapshot was prepared on 13 September 2026 from application commit `54cff8707b1f46c888d21e734a312d2ec47656e3`, then updated with the September 13 readiness work.
 
 It deliberately excludes Git history, account/household databases, private photo storage, runtime caches, environment files, receipts and deployment credentials. `.openai/hosting.json` retains binding names only. Original-source code has no newly selected open-source licence; public visibility alone does not grant an MIT/Apache licence. Third-party dataset, image, OCR and vendor licences remain applicable and are included or referenced beside those assets.
 
@@ -201,4 +221,4 @@ npm run typecheck
 
 Follow the setup and deployment instructions above. Do not enable the deployment’s trusted identity headers on an unprotected public origin.
 
-Export validation on 13 September 2026: `npm test` passed all 116 checks; `npm run typecheck` passed. This does not imply the usability review’s proposed improvements or physical-device release checks are complete.
+Export validation after this readiness pass: `npm test`, `python3 tests/retailer-import.test.py` and `npm run typecheck`. Physical iPhone camera/PWA checks and hosted multi-account sign-in still need real devices and invited accounts.

@@ -5,7 +5,9 @@ export const retailers:Record<string,{name:string;country:string;tag:string;home
  'carrefour-fr':{name:'Carrefour France',country:'FR',tag:'carrefour',home:'https://www.carrefour.fr/',offers:'https://www.carrefour.fr/promotions'},
  'walmart-us':{name:'Walmart',country:'US',tag:'walmart',home:'https://www.walmart.com/',offers:'https://www.walmart.com/shop/deals'},
 };
-export function recordedAt(stores:string[]|undefined,retailer:string){const r=retailers[retailer];return !!r&&!!stores?.some(s=>s.toLowerCase().replace(/^[a-z]{2}:/,'').trim()===r.tag)}
+export function storeTag(value:string){return value.toLowerCase().replace(/^[a-z]{2}:/,'').replace(/[._]/g,' ').trim()}
+export function hasStore(stores:string[]|undefined,tag:string){const expected=storeTag(tag);return !!stores?.some(s=>storeTag(s)===expected)}
+export function recordedAt(stores:string[]|undefined,retailer:string){const r=retailers[retailer];return !!r&&hasStore(stores,r.tag)}
 export function retailerSearch(id:string,q:string){const r=retailers[id];return 'https://www.google.com/search?q='+encodeURIComponent('site:'+new URL(r.home).hostname+' '+q)}
 export function offerState(o:{start:string;end:string},date:string){return date<o.start?'Upcoming':date>o.end?'Expired':'Within reported dates'}
 export function inferRetailer(name:string,country:string){const n=name.toLowerCase();return Object.keys(retailers).find(id=>retailers[id].country===country&&(n===retailers[id].tag||n.startsWith(retailers[id].tag+' ')||n.startsWith(retailers[id].tag+'-')))}
