@@ -49,12 +49,12 @@ test('Coop and Migros coverage reports stay honest and match the shipped snapsho
  assert.equal(imported.filter(p=>p.retailer==='migros-ch').length,retailerReport.retailers['migros-ch'].records);
  assert.equal(imported.filter(p=>p.retailer==='coop-ch'&&p.evidence==='retailer-page').length,retailerReport.retailers['coop-ch'].pageDetails);
  assert.equal(imported.filter(p=>p.retailer==='migros-ch'&&p.evidence==='retailer-page').length,retailerReport.retailers['migros-ch'].pageDetails);
- assert.ok(swiss.filter(p=>p.ingredients).length<20,'Search-index snapshot is not a full ingredient catalogue');
+ assert.ok(swiss.filter(p=>p.ingredients).length<=10,'Search-index snapshot is not a full ingredient catalogue');
  assert.equal(new Set(swiss.map(p=>p.id)).size,swiss.length);
  assert.equal(report.completeRetailerCatalogue,false);
  assert.equal(retailerReport.complete,false);
  const scopeSrc=await readFile('lib/catalogue-scope.ts','utf8');
  assert.match(scopeSrc,/communityRecords:community\.records/);
- assert.match(scopeSrc,/not the full Coop assortment/);
- assert.match(scopeSrc,/10,000-hit search window/);
+ assert.match(scopeSrc,/official assortment/);
+ assert.match(scopeSrc,/10,000-hit/);
 });

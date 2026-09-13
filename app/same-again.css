@@ -107,6 +107,8 @@
 .item-row.mine{background:color-mix(in srgb,var(--secondary) 78%,transparent)}
 .coverage-card{margin:16px 0 10px;padding:16px 18px;border:1px solid var(--border);border-radius:14px;background:var(--card);font-size:13px;line-height:1.65;max-width:800px}
 .coverage-card p{margin:8px 0 0;color:var(--muted-foreground);font-size:12px}
+.catalogue-progress,.catalogue-more{margin:16px 0 8px}
+.catalogue-more{min-height:46px}
 .retailer-shortcuts{margin:0 0 16px}
 .discover-filters{max-width:280px;margin-top:12px}
 .discover-manual{margin-top:16px}

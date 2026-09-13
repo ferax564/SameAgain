@@ -13,7 +13,7 @@ export function retailerScope(id:'coop-ch'|'migros-ch'){
   retailerPageDetails:imported.pageDetails,
   retailerNutrition:imported.nutrition,
   notice:id==='coop-ch'
-   ?'Coop coverage is a partial Open Food Facts snapshot plus a small set of page titles. One official bread page has verified facts. This is not the full Coop assortment or branch stock.'
-   :'Migros coverage is a partial Open Food Facts snapshot, capped by the public 10,000-hit search window, plus indexed page titles. Most direct pages have names only. This is not live inventory.',
+   ?'Browse every Open Food Facts Swiss Coop record in this snapshot, plus indexed page titles. Load more to move through the full index. This is still not Coop’s official assortment or branch stock.'
+   :'Browse every harvested Open Food Facts Swiss Migros record in this snapshot, plus indexed page titles. Migros was collected by barcode prefix so it is not limited to one 10,000-hit search. This is still not live inventory.',
  };
 }
