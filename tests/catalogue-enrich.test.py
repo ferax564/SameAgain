@@ -55,6 +55,7 @@ class EnrichTest(unittest.TestCase):
   self.assertTrue(ocr.useful('Zutaten: Hafervollkorn, Zucker, Palmöl, Salz'))
   self.assertFalse(ocr.useful('TN 42 pack photo'))
   self.assertFalse(ocr.useful('FOOD FACTS 100 g enthalten Energiewert 1460 kJ (345kcal), Eiweiss 8 g, Kohlenhydrate 74g'))
+  self.assertFalse(ocr.useful('Nährwerte | valeurs nutritives | 100 g, Fett 10g, davon gesättigte Fettsäuren'))
   self.assertIn('Hafervollkorn', ocr.clean_ocr('Zutaten: Hafervollkorn, Zucker'))
 
 if __name__ == '__main__':

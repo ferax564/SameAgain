@@ -53,9 +53,11 @@ def useful(text: str) -> bool:
         return False
     if letters / max(len(text), 1) < 0.45:
         return False
-    if re.search(r"\b(kcal|kj|energiewert|nutri-?score)\b", text or "", re.I) and not re.search(
-        r"zutaten|ingr[eé]dients?|ingredienti", text or "", re.I
-    ):
+    if re.search(
+        r"\b(kcal|kj|energiewert|nutri-?score|nährwerte|valeurs nutritives|matières grasses)\b",
+        text or "",
+        re.I,
+    ) and not re.search(r"zutaten|ingr[eé]dients?|ingredienti", text or "", re.I):
         return False
     return bool(re.search(r"[,;]|zutaten|ingr[eé]dients?|ingredienti", text or "", re.I))
 
