@@ -16,17 +16,19 @@ export function ProductAnalysis({product,constraints=[]}:{product:Product;constr
  const a=analyzeProduct(product);
  return <div className="stack product-analysis">
   <section className="analysis-hero">
-   <ScoreBadge product={product} large/>
-   <div>
-    <h3>Ingredients, nutrition and additives</h3>
-    <p className="muted">{a.notice}</p>
-    <div className="row wrap analysis-pills">
-     {a.nutriScore&&<span className={'pill nutri-'+a.nutriScore}>Nutri-Score {a.nutriScore.toUpperCase()}{a.nutriScoreSource==='open-food-facts'?' · OFF':''}</span>}
-     {a.novaGroup&&<span className={'pill nova-'+a.novaGroup}>NOVA {a.novaGroup}{a.novaGroup===4?' · ultra-processed':''}</span>}
-     {a.organic&&<span className="pill">Organic label</span>}
-     {a.missingIngredients&&<span className="pill">Ingredients not recorded</span>}
+   <div className="analysis-hero-top">
+    <ScoreBadge product={product} large/>
+    <div>
+     <h3>Ingredients, nutrition and additives</h3>
+     <div className="row wrap analysis-pills">
+      {a.nutriScore&&<span className={'pill nutri-'+a.nutriScore}>Nutri-Score {a.nutriScore.toUpperCase()}{a.nutriScoreSource==='open-food-facts'?' · OFF':''}</span>}
+      {a.novaGroup&&<span className={'pill nova-'+a.novaGroup}>NOVA {a.novaGroup}{a.novaGroup===4?' · ultra-processed':''}</span>}
+      {a.organic&&<span className="pill">Organic label</span>}
+      {a.missingIngredients&&<span className="pill">Ingredients not recorded</span>}
+     </div>
     </div>
    </div>
+   <p className="fine">{a.notice}</p>
   </section>
   <div className="analysis-breakdown">
    <article><span>Nutrition</span><strong>{a.nutritionPoints==null?'—':a.nutritionPoints+' / 60'}</strong><small>{a.nutriScoreSource==='open-food-facts'?'Open Food Facts Nutri-Score':a.nutriScoreSource==='estimated-macros'?'Estimated from labelled macros, not official Nutri-Score':'Not enough labelled macros'}</small></article>

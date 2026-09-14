@@ -127,11 +127,12 @@
 .score-watch{background:#fcebd8;color:#8a4b12;border-color:#f0c48a}
 .score-bad{background:#fde4e2;color:#92261d;border-color:#f2b3ad}
 .score-unknown{background:var(--secondary);color:var(--muted);font-weight:600}
-.analysis-hero{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:start}
+.analysis-hero{display:flex;flex-direction:column;gap:12px}
+.analysis-hero-top{display:flex;align-items:flex-start;gap:16px}
 .analysis-pills{margin-top:10px;gap:8px}
 .analysis-breakdown{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .analysis-breakdown article{border:1px solid var(--border);border-radius:16px;padding:14px 16px;background:var(--card)}
-.analysis-breakdown span,.analysis-breakdown small{display:block;color:var(--muted)}
+.analysis-breakdown span,.analysis-breakdown small{display:block;color:var(--muted-foreground)}
 .analysis-breakdown strong{display:block;font-size:20px;margin:6px 0}
 .ingredient-chips{display:flex;flex-wrap:wrap;gap:8px}
 .ingredient-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:var(--secondary);font-size:13px}
@@ -147,6 +148,6 @@
 .nutri-e{background:#c0392b;color:#fff}
 .nova-4{background:#4a2c5a;color:#fff}
 @media(max-width:760px){
- .analysis-hero,.analysis-breakdown{grid-template-columns:1fr}
+ .analysis-breakdown{grid-template-columns:1fr}
  .product-card>.score-badge{top:8px;right:8px}
 }
