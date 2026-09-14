@@ -81,17 +81,20 @@ The PWA caches the shell/static assets, not authenticated API responses. First v
 
 | Source snapshot | Records | Records with a front-photo URL | Scope |
 | --- | ---: | ---: | --- |
-| OFF, Switzerland, Coop tag | 3,557 | 3,488 | Full harvested Swiss Coop community snapshot |
-| OFF, Switzerland, Migros tag | 12,270 | 11,573 | Full harvested Swiss Migros snapshot (barcode-prefix search, not the 10,000-hit window) |
-| Unique Swiss OFF records | 15,805 | 15,041 | 46 records appear under both retailers |
+| OFF, Switzerland, Coop tag | 3,995 | 3,974 | Swiss Coop community snapshot, CSV-enriched |
+| OFF, Switzerland, Migros tag | 13,062 | 12,504 | Swiss Migros snapshot (search harvest + bulk CSV) |
+| Unique Swiss OFF records | 16,978 | 16,399 | Some records appear under both retailers |
+| With ingredient lists | 8,945 | — | Bulk CSV enrichment; still not every pack |
+| With additive tags | 4,691 | — | E-numbers when Open Food Facts recorded them |
+| With Nutri-Score grade | 10,033 | — | Official OFF grade when present |
 | Direct Coop pages/links | 31 | 0 imported | One page with verified factual details and nutrition |
 | Direct Migros pages/links | 182 | 0 imported | 28 detail records; six explicit nutrition tables |
 
-**764 Swiss source records still have no front photo.** The remaining photograph URLs are recorded coverage, not proof that every remote image always loads. The UI shows an honest fallback and lets households add their own pictures. It does not substitute generated packaging or another variant’s image. Direct retailer images are not copied without a reuse licence.
+**579 Swiss source records still have no front photo.** The remaining photograph URLs are recorded coverage, not proof that every remote image always loads. The UI shows an honest fallback and lets households add their own pictures. It does not substitute generated packaging or another variant’s image. Direct retailer images are not copied without a reuse licence.
 
-The licensed Swiss index is `public/catalogue/swiss-retailer-products.json`; its licence is adjacent. Barcode/search matches persist in D1 on use. Discover and store browse load **48 records per page** with **Load more** until the full indexed retailer snapshot is shown. Unnamed/nonmatching records were excluded. No official Coop or Migros assortment or branch-stock claim follows from these counts.
+The licensed Swiss index is `public/catalogue/swiss-retailer-products.json`; its licence is adjacent. Barcode/search matches persist in D1 on use. Discover and store browse load **48 records per page** with **Load more** until the full indexed retailer snapshot is shown. Opening a product shows a **0–100 profile** (Nutri-Score 60 / additives 30 / organic 10), the ingredient list with matched E-numbers, and labelled nutrition. Unnamed/nonmatching records were excluded. No official Coop or Migros assortment or branch-stock claim follows from these counts. The profile uses Yuka’s published weights and Open Food Facts plus EFSA/IARC/WHO/ANSES citations; it is not Yuka’s score and not medical advice.
 
-`node scripts/import-swiss-catalogue.mjs` resumes ignored import checkpoints with a minimum eight-second interval. Coop uses the exact Switzerland + store query (already an exact OFF count). Migros is harvested by barcode prefix (`code:0*` … `code:9*`) so it is not limited to one public 10,000-hit search. For still-larger refreshes use OFF bulk exports/local indexing. `scripts/import-retailer-pages.py INPUT_DIRECTORY lib/retailer-products.json` extracts factual fields from saved public pages/index results. No unattended scraping or refresh job runs. Reports record scope, provenance, dates and hashes.
+`node scripts/import-swiss-catalogue.mjs` resumes ignored import checkpoints with a minimum eight-second interval. Coop uses the exact Switzerland + store query (already an exact OFF count). Migros is harvested by barcode prefix (`code:0*` … `code:9*`) so it is not limited to one public 10,000-hit search. `python3 scripts/enrich-swiss-catalogue.py` then streams the public Open Food Facts products CSV dump to fill ingredients, additives, Nutri-Score and NOVA. For still-larger refreshes use OFF bulk exports/local indexing. `scripts/import-retailer-pages.py INPUT_DIRECTORY lib/retailer-products.json` extracts factual fields from saved public pages/index results. No unattended scraping or refresh job runs. Reports record scope, provenance, dates and hashes.
 
 Direct Migros API documentation describes products/offers/stores, but the unauthenticated API returned HTTP 401 for a missing client key. Earlier basic Coop retrieval failed; one bounded official bread page was accessible during this review and its facts were added. Neither result establishes an authorized full feed. No credentials, browser-session keys, robots exclusions or access controls were bypassed.
 
@@ -196,25 +199,29 @@ Implemented the remaining household-usability work and re-reviewed the Coop and 
 
 | Source | Records | Photos / facts | What this is |
 | --- | ---: | --- | --- |
-| Open Food Facts · Switzerland · Coop tag | 3,557 | 3,488 photo URLs | Full harvested Swiss Coop community snapshot; still not Coop’s official assortment |
-| Open Food Facts · Switzerland · Migros tag | 12,270 | 11,573 photo URLs | Full harvested Swiss Migros snapshot via barcode-prefix search, not the 10,000-hit window |
+| Open Food Facts · Switzerland · Coop tag | 3,995 | 3,974 photo URLs | Swiss Coop community snapshot + bulk CSV ingredients |
+| Open Food Facts · Switzerland · Migros tag | 13,062 | 12,504 photo URLs | Swiss Migros snapshot via barcode-prefix search and CSV enrichment |
 | Direct Coop pages/links | 31 | 1 page with verified facts and nutrition | Indexed titles plus Prix Garantie rye bread |
 | Direct Migros pages/links | 182 | 28 page details; 6 nutrition tables | Mostly discovery links; 149 earlier detail fetches failed |
 
-The Swiss search index still has almost no ingredient lists (6 of 15,805). Opening a product hydrates full details from Open Food Facts when signed in. Discover can page through the whole indexed Coop and Migros snapshots. Direct retailer images are not copied. Neither feed is live stock, offers or branch inventory.
+The Swiss search index includes **8,945 ingredient lists**, **4,691 additive tag sets** and **10,033 Nutri-Score grades** after merging the Open Food Facts bulk CSV. Opening a product shows nutrition, matched chemicals and a 0–100 profile. Direct retailer images are not copied. Neither feed is live stock, offers or branch inventory.
+
+## September 14 ingredient and additive review
+
+Discover product cards can show a 0–100 profile. Product details list ingredients (with matched E-numbers), Nutri-Score/NOVA when recorded, additive evidence cards, and per-100 g/ml nutrition. Additive notes cite EFSA, IARC, WHO or ANSES and never invent a dose. Missing ingredient lists stay incomplete rather than scoring as “clean”.
 
 ## Merge this work to main
 
-Publish the catalogue and household-readiness work with a fast-forward merge after CI is green:
+Publish the catalogue, household-readiness and ingredient-analysis work with a fast-forward merge after review:
 
 ```sh
 git fetch origin
 git checkout main
-git merge --ff-only origin/cursor/full-catalogue-a5b0
+git merge --ff-only origin/cursor/ingredient-analysis-a5b0
 git push origin main
 ```
 
-If `main` has moved, open or update the pull request from `cursor/full-catalogue-a5b0` into `main` and merge it there instead of forcing a fast-forward.
+If `main` has moved, merge the pull request from `cursor/ingredient-analysis-a5b0` into `main` instead of forcing a fast-forward.
 
 ## Public repository handover
 

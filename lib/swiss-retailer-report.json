@@ -1,9 +1,9 @@
 {
-  "retrieved": "2026-09-13T20:40:10.888Z",
+  "retrieved": "2026-09-14T05:33:25.000Z",
   "source": "Open Food Facts",
   "completeRetailerCatalogue": false,
-  "harvestMethod": "coop-store-query-and-migros-barcode-prefixes",
-  "records": 15805,
+  "harvestMethod": "coop-store-query-migros-prefixes-and-off-csv-ingredients",
+  "records": 16978,
   "retailers": [
     {
       "key": "coop",
@@ -96,20 +96,37 @@
   ],
   "coverageByRetailer": {
     "coop": {
-      "records": 3557,
-      "withPhoto": 3488
+      "records": 3995,
+      "withPhoto": 3974,
+      "withIngredients": 2818,
+      "withAdditives": 1227,
+      "withNutrition": 3749,
+      "withNutriscore": 2965
     },
     "migros": {
-      "records": 12270,
-      "withPhoto": 11573
+      "records": 13062,
+      "withPhoto": 12504,
+      "withIngredients": 6201,
+      "withAdditives": 3508,
+      "withNutrition": 12097,
+      "withNutriscore": 7134
     }
   },
   "licence": "ODbL 1.0; contents DbCL 1.0; images CC BY-SA 3.0",
-  "notice": "Community records with retailer and Switzerland tags. Migros was harvested by barcode prefix so it is not limited to one 10,000-hit search. This is still not an official assortment or branch stock.",
+  "notice": "Community records with retailer and Switzerland tags, enriched from the Open Food Facts bulk CSV so ingredients, additives and Nutri-Score can be reviewed. This is still not an official assortment or branch stock.",
   "previousSnapshot": {
     "records": 13249,
     "coop": 3534,
     "migros": 9759,
     "retrieved": "2026-09-05"
+  },
+  "analysisCoverage": {
+    "withIngredients": 8945,
+    "withAdditives": 4691,
+    "withNutrition": 15768,
+    "withNutriscore": 10033,
+    "dumpRowsRead": 4532767,
+    "matchedExisting": 15779,
+    "addedFromDump": 1173
   }
 }

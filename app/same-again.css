@@ -116,8 +116,37 @@
 .household-picker .choice{min-height:38px!important;font-size:13px!important}
 .product-card,.btn{transition:border-color .16s ease,box-shadow .16s ease,filter .16s ease}
 .list-surface{box-shadow:0 8px 30px rgb(35 60 52 / 4%)}
+.product-card{position:relative}
+.score-badge{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;border:1px solid var(--border);background:var(--card)}
+.product-card>.score-badge{position:absolute;top:12px;right:12px;z-index:2}
+.score-badge strong{font-size:14px}
+.score-large{padding:10px 14px}
+.score-large strong{font-size:28px;line-height:1}
+.score-good{background:#e7f6ea;color:#1f6b3a;border-color:#b7e0c2}
+.score-ok{background:#f7f3d9;color:#6b5b16;border-color:#eadb8a}
+.score-watch{background:#fcebd8;color:#8a4b12;border-color:#f0c48a}
+.score-bad{background:#fde4e2;color:#92261d;border-color:#f2b3ad}
+.score-unknown{background:var(--secondary);color:var(--muted);font-weight:600}
+.analysis-hero{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:start}
+.analysis-pills{margin-top:10px;gap:8px}
+.analysis-breakdown{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.analysis-breakdown article{border:1px solid var(--border);border-radius:16px;padding:14px 16px;background:var(--card)}
+.analysis-breakdown span,.analysis-breakdown small{display:block;color:var(--muted)}
+.analysis-breakdown strong{display:block;font-size:20px;margin:6px 0}
+.ingredient-chips{display:flex;flex-wrap:wrap;gap:8px}
+.ingredient-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:var(--secondary);font-size:13px}
+.ingredient-chip em{font-style:normal;font-size:11px;letter-spacing:.04em}
+.ingredient-chip.concern-low{background:#e7f6ea}
+.ingredient-chip.concern-moderate{background:#fcebd8}
+.ingredient-chip.concern-high,.evidence-card.concern-high{background:#fde4e2}
+.ingredient-chip.concern-unknown{background:#eee}
+.nutri-a{background:#1f6b3a;color:#fff}
+.nutri-b{background:#58a447;color:#fff}
+.nutri-c{background:#c4a012;color:#fff}
+.nutri-d{background:#d97820;color:#fff}
+.nutri-e{background:#c0392b;color:#fff}
+.nova-4{background:#4a2c5a;color:#fff}
 @media(max-width:760px){
- .list-toolbar{padding:8px 14px 10px;grid-template-columns:minmax(0,1fr) auto}
- .chip{min-height:38px;font-size:12px;padding:6px 10px}
- .coverage-card{padding:14px}
+ .analysis-hero,.analysis-breakdown{grid-template-columns:1fr}
+ .product-card>.score-badge{top:8px;right:8px}
 }

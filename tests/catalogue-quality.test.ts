@@ -49,7 +49,11 @@ test('Coop and Migros coverage reports stay honest and match the shipped snapsho
  assert.equal(imported.filter(p=>p.retailer==='migros-ch').length,retailerReport.retailers['migros-ch'].records);
  assert.equal(imported.filter(p=>p.retailer==='coop-ch'&&p.evidence==='retailer-page').length,retailerReport.retailers['coop-ch'].pageDetails);
  assert.equal(imported.filter(p=>p.retailer==='migros-ch'&&p.evidence==='retailer-page').length,retailerReport.retailers['migros-ch'].pageDetails);
- assert.ok(swiss.filter(p=>p.ingredients).length<=10,'Search-index snapshot is not a full ingredient catalogue');
+ assert.ok(swiss.filter(p=>p.ingredients).length>=8000,'Bulk CSV enrichment adds ingredient lists to the Swiss index');
+ assert.ok(swiss.filter(p=>p.additives?.length).length>=4000);
+ assert.equal(report.analysisCoverage.withIngredients,swiss.filter(p=>p.ingredients).length);
+ const oats=swiss.find(p=>p.barcode==='7610200011435');
+ assert.ok(oats?.ingredients);assert.equal(oats?.nutriscoreGrade,'a');
  assert.equal(new Set(swiss.map(p=>p.id)).size,swiss.length);
  assert.equal(report.completeRetailerCatalogue,false);
  assert.equal(retailerReport.complete,false);
