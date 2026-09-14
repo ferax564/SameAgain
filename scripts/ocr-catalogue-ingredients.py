@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import re
 import subprocess
 import sys
@@ -52,19 +53,25 @@ def useful(text: str) -> bool:
         return False
     if letters / max(len(text), 1) < 0.45:
         return False
+    if re.search(r"\b(kcal|kj|energiewert|nutri-?score)\b", text or "", re.I) and not re.search(
+        r"zutaten|ingr[eé]dients?|ingredienti", text or "", re.I
+    ):
+        return False
     return bool(re.search(r"[,;]|zutaten|ingr[eé]dients?|ingredienti", text or "", re.I))
 
 
-def ocr_url(url: str) -> str:
-    return url or ""
+def ocr_url(url: str, full: bool = False) -> str:
+    url = url or ""
+    if full:
+        return re.sub(r"\.(100|200|400)\.jpg$", ".full.jpg", url)
+    return url
 
 
-def ocr_image(url: str, path: Path | None = None) -> str:
+def ocr_image(url: str, path: Path | None = None, psm: str = "6") -> str:
     dest = Path("/tmp/off-ing-ocr")
     dest.mkdir(parents=True, exist_ok=True)
-    url = ocr_url(url)
     if path is None:
-        path = dest / (re.sub(r"\W+", "", url[-80:]) + ".jpg")
+        path = dest / (re.sub(r"\W+", "", (url or "")[-80:]) + ".jpg")
         result = subprocess.run(
             [
                 "aria2c",
@@ -87,12 +94,18 @@ def ocr_image(url: str, path: Path | None = None) -> str:
             return ""
     elif not path.exists() or path.stat().st_size < 800:
         return ""
-    ocr = subprocess.run(
-        ["tesseract", str(path), "stdout", "-l", LANGS, "--psm", "6"],
-        check=False,
-        capture_output=True,
-        timeout=20,
-    )
+    env = dict(os.environ)
+    env["OMP_THREAD_LIMIT"] = "1"
+    try:
+        ocr = subprocess.run(
+            ["tesseract", str(path), "stdout", "-l", LANGS, "--psm", psm],
+            check=False,
+            capture_output=True,
+            timeout=40,
+            env=env,
+        )
+    except subprocess.TimeoutExpired:
+        return ""
     return clean_ocr(ocr.stdout.decode("utf-8", "replace"))
 
 
@@ -101,50 +114,83 @@ def image_filename(product: dict) -> str:
     return re.sub(r"\W+", "", str(code)) + ".jpg"
 
 
-def download_jobs(jobs: list[dict], dest: Path) -> None:
+def download_jobs(jobs: list[dict], dest: Path, full: bool = False) -> None:
     dest.mkdir(parents=True, exist_ok=True)
     listing = dest / "aria2.txt"
     lines = []
     for product in jobs:
-        url = product.get("ingredientsImage")
+        url = ocr_url(product.get("ingredientsImage"), full)
         name = image_filename(product)
         path = dest / name
         if path.exists() and path.stat().st_size >= 800:
             continue
         lines.append(url)
         lines.append(f"  out={name}")
-    if not lines:
+    if lines:
+        listing.write_text("\n".join(lines) + "\n")
+        subprocess.run(
+            [
+                "aria2c",
+                "-i",
+                str(listing),
+                "-d",
+                str(dest),
+                "-j",
+                "6" if full else "8",
+                "-x",
+                "2",
+                "-s",
+                "2",
+                "--max-tries=4",
+                "--timeout=60" if full else "--timeout=35",
+                "--connect-timeout=20" if full else "--connect-timeout=15",
+                "--auto-file-renaming=false",
+                "--user-agent",
+                USER_AGENT,
+                "--quiet=true",
+            ],
+            check=False,
+            timeout=2400,
+        )
+    missing = [
+        product
+        for product in jobs
+        if not ((dest / image_filename(product)).exists() and (dest / image_filename(product)).stat().st_size >= 800)
+    ]
+    if not missing:
         return
-    listing.write_text("\n".join(lines) + "\n")
-    subprocess.run(
-        [
-            "aria2c",
-            "-i",
-            str(listing),
-            "-d",
-            str(dest),
-            "-j",
-            "12",
-            "-x",
-            "4",
-            "-s",
-            "4",
-            "--max-tries=3",
-            "--timeout=20",
-            "--connect-timeout=10",
-            "--auto-file-renaming=false",
-            "--user-agent",
-            USER_AGENT,
-            "--quiet=true",
-        ],
-        check=False,
-        timeout=1800,
-    )
+
+    def curl_one(product: dict) -> None:
+        path = dest / image_filename(product)
+        subprocess.run(
+            [
+                "curl",
+                "-fsSL",
+                "-A",
+                USER_AGENT,
+                "--max-time",
+                "40",
+                "--retry",
+                "2",
+                "-o",
+                str(path),
+                ocr_url(product.get("ingredientsImage"), full),
+            ],
+            check=False,
+            capture_output=True,
+            timeout=90,
+        )
+
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        list(pool.map(curl_one, missing))
 
 
 def main() -> int:
-    limit = int(sys.argv[1]) if len(sys.argv) > 1 else 0
-    workers = int(sys.argv[2]) if len(sys.argv) > 2 else 4
+    args = sys.argv[1:]
+    full = "full" in args
+    nums = [int(a) for a in args if a.isdigit()]
+    limit = nums[0] if nums else 0
+    workers = nums[1] if len(nums) > 1 else 3
     products = json.loads(INDEX.read_text())
     jobs = [
         p
@@ -154,17 +200,18 @@ def main() -> int:
     ]
     if limit:
         jobs = jobs[:limit]
-    dest = Path("/tmp/off-ing-ocr")
-    print(json.dumps({"downloading": len(jobs)}), flush=True)
-    download_jobs(jobs, dest)
+    dest = Path("/tmp/off-ing-ocr-full" if full else "/tmp/off-ing-ocr")
+    print(json.dumps({"downloading": len(jobs), "full": full}), flush=True)
+    download_jobs(jobs, dest, full)
     filled = failed = 0
     started = time.time()
     lock = threading.Lock()
     done = 0
+    psm = "4" if full else "6"
 
     def work(product: dict):
         path = dest / image_filename(product)
-        text = ocr_image(product.get("ingredientsImage"), path)
+        text = ocr_image(ocr_url(product.get("ingredientsImage"), full), path, psm)
         return product, text
 
     with ThreadPoolExecutor(max_workers=workers) as pool:

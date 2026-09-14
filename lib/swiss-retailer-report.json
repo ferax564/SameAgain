@@ -1,8 +1,8 @@
 {
-  "retrieved": "2026-09-14T19:09:47.000Z",
+  "retrieved": "2026-09-14T19:27:54.000Z",
   "source": "Open Food Facts",
   "completeRetailerCatalogue": false,
-  "harvestMethod": "off-csv-and-jsonl-complete-barcodes-photos-ingredients",
+  "harvestMethod": "off-csv-jsonl-uploaded-photos-and-ocr-ingredients",
   "records": 18333,
   "retailers": [
     {
@@ -99,7 +99,7 @@
       "records": 4306,
       "withBarcode": 4306,
       "withPhoto": 4297,
-      "withIngredients": 3000,
+      "withIngredients": 3137,
       "withAdditives": 1318,
       "withNutrition": 3956,
       "withNutriscore": 3131,
@@ -109,7 +109,7 @@
       "records": 14112,
       "withBarcode": 14112,
       "withPhoto": 13845,
-      "withIngredients": 6534,
+      "withIngredients": 7289,
       "withAdditives": 3654,
       "withNutrition": 12735,
       "withNutriscore": 7515,
@@ -128,13 +128,13 @@
     "records": 18333,
     "withBarcode": 18333,
     "withPhoto": 18057,
-    "withIngredients": 9455,
+    "withIngredients": 10343,
     "withAdditives": 4927,
     "withNutrition": 16607,
     "withNutriscore": 10574,
     "withIngredientsImage": 8858,
-    "jsonlRows": 18638,
-    "jsonlMatched": 18256,
-    "jsonlAdded": 0
+    "ocrJobs": 1190,
+    "ocrFilled": 888,
+    "ocrFailed": 302
   }
 }

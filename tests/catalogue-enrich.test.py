@@ -48,5 +48,15 @@ class EnrichTest(unittest.TestCase):
   self.assertTrue(merge.numeric_uploaded_url('7610177004508', {'1': {'sizes': {'400': {'w': 400}}}, 'front_de': {'rev': '6'}}).endswith('/1.400.jpg'))
   self.assertTrue(merge.named_image_url('2102738006205', {'front_de': {'rev': '6', 'sizes': {'400': {}}}}, 'front').endswith('front_de.6.400.jpg'))
 
+ def test_ocr_keeps_lists_and_rejects_noise(self):
+  spec = importlib.util.spec_from_file_location('ocr', pathlib.Path('scripts/ocr-catalogue-ingredients.py'))
+  ocr = importlib.util.module_from_spec(spec)
+  spec.loader.exec_module(ocr)
+  self.assertTrue(ocr.useful('Zutaten: Hafervollkorn, Zucker, Palmöl, Salz'))
+  self.assertFalse(ocr.useful('TN 42 pack photo'))
+  self.assertFalse(ocr.useful('FOOD FACTS 100 g enthalten Energiewert 1460 kJ (345kcal), Eiweiss 8 g, Kohlenhydrate 74g'))
+  self.assertIn('Hafervollkorn', ocr.clean_ocr('Zutaten: Hafervollkorn, Zucker'))
+
 if __name__ == '__main__':
  unittest.main()
+

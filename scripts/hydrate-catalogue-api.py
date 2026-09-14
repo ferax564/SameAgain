@@ -82,9 +82,16 @@ def needs_fill(product: dict) -> bool:
 
 
 def main() -> int:
-    limit = int(sys.argv[1]) if len(sys.argv) > 1 else 0
+    args = [a for a in sys.argv[1:] if a]
+    photos_only = "photos" in args
+    limit = next((int(a) for a in args if a.isdigit()), 0)
     products = json.loads(enrich.INDEX.read_text())
-    jobs = [p for p in products if needs_fill(p) and (p.get("barcode") or p.get("sourceIdentifier"))]
+    jobs = [
+        p
+        for p in products
+        if (p.get("barcode") or p.get("sourceIdentifier"))
+        and (not p.get("image") if photos_only else needs_fill(p))
+    ]
     if limit:
         jobs = jobs[:limit]
     filled_image = filled_ing = failed = 0
