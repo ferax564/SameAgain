@@ -1,8 +1,8 @@
 {
-  "retrieved": "2026-09-14T19:27:54.000Z",
+  "retrieved": "2026-09-14T19:49:05.000Z",
   "source": "Open Food Facts",
   "completeRetailerCatalogue": false,
-  "harvestMethod": "off-csv-jsonl-uploaded-photos-and-ocr-ingredients",
+  "harvestMethod": "off-csv-jsonl-ocr-and-product-api",
   "records": 18333,
   "retailers": [
     {
@@ -99,7 +99,7 @@
       "records": 4306,
       "withBarcode": 4306,
       "withPhoto": 4297,
-      "withIngredients": 3137,
+      "withIngredients": 3159,
       "withAdditives": 1318,
       "withNutrition": 3956,
       "withNutriscore": 3131,
@@ -109,7 +109,7 @@
       "records": 14112,
       "withBarcode": 14112,
       "withPhoto": 13845,
-      "withIngredients": 7289,
+      "withIngredients": 7434,
       "withAdditives": 3654,
       "withNutrition": 12735,
       "withNutriscore": 7515,
@@ -117,7 +117,7 @@
     }
   },
   "licence": "ODbL 1.0; contents DbCL 1.0; images CC BY-SA 3.0",
-  "notice": "Community records with retailer tags, filled from the Open Food Facts dump so every available barcode, photo and ingredient list is in the snapshot. This is still not an official assortment or branch stock.",
+  "notice": "Community records with retailer tags. Every available Open Food Facts barcode, photo and ingredient list is in the snapshot, including OCR of published ingredients photos. Remaining gaps have no photo or typed list on Open Food Facts. This is still not an official assortment or branch stock.",
   "previousSnapshot": {
     "records": 13249,
     "coop": 3534,
@@ -128,13 +128,18 @@
     "records": 18333,
     "withBarcode": 18333,
     "withPhoto": 18057,
-    "withIngredients": 10343,
+    "withIngredients": 10509,
     "withAdditives": 4927,
     "withNutrition": 16607,
     "withNutriscore": 10574,
     "withIngredientsImage": 8858,
-    "ocrJobs": 1190,
-    "ocrFilled": 888,
-    "ocrFailed": 302
+    "ocrFilled": 1065,
+    "ingredientsPhotoUnreadable": 136,
+    "photosUnavailableInOpenFoodFacts": 276,
+    "ingredientsMissingAfterHarvest": 7824,
+    "apiPhotoJobs": 276,
+    "apiPhotoFilled": 0,
+    "apiLeftoverIngredientJobs": 136,
+    "apiLeftoverIngredientFilled": 0
   }
 }

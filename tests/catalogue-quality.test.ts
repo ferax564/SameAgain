@@ -49,7 +49,7 @@ test('Coop and Migros coverage reports stay honest and match the shipped snapsho
  assert.equal(imported.filter(p=>p.retailer==='migros-ch').length,retailerReport.retailers['migros-ch'].records);
  assert.equal(imported.filter(p=>p.retailer==='coop-ch'&&p.evidence==='retailer-page').length,retailerReport.retailers['coop-ch'].pageDetails);
  assert.equal(imported.filter(p=>p.retailer==='migros-ch'&&p.evidence==='retailer-page').length,retailerReport.retailers['migros-ch'].pageDetails);
- assert.ok(swiss.filter(p=>p.ingredients).length>=8000,'Bulk CSV enrichment adds ingredient lists to the Swiss index');
+ assert.ok(swiss.filter(p=>p.ingredients).length>=10000,'Dump, JSONL and ingredients-photo OCR fill every available list');
  assert.ok(swiss.filter(p=>p.additives?.length).length>=4000);
  assert.equal(report.analysisCoverage.withIngredients,swiss.filter(p=>p.ingredients).length);
  const oats=swiss.find(p=>p.barcode==='7610200011435');
@@ -59,7 +59,11 @@ test('Coop and Migros coverage reports stay honest and match the shipped snapsho
  if(report.coverageByRetailer.coop.withBarcode!=null){
   assert.equal(report.coverageByRetailer.coop.withBarcode,swiss.filter(p=>hasStore(p.stores,'coop')&&(p.barcode||p.sourceIdentifier)).length);
  }
- assert.ok(swiss.filter(p=>p.image).length>=16000);
+ assert.ok(swiss.filter(p=>p.image).length>=18000);
+ assert.equal(report.analysisCoverage.photosUnavailableInOpenFoodFacts,swiss.filter(p=>!p.image).length);
+ assert.equal(report.analysisCoverage.ingredientsMissingAfterHarvest,swiss.filter(p=>!p.ingredients).length);
+ assert.equal(report.analysisCoverage.ingredientsPhotoUnreadable,swiss.filter(p=>!p.ingredients&&p.ingredientsImage).length);
+ assert.ok((report.analysisCoverage.ocrFilled||0)>=1000);
  assert.equal(report.completeRetailerCatalogue,false);
  assert.equal(retailerReport.complete,false);
  const scopeSrc=await readFile('lib/catalogue-scope.ts','utf8');
@@ -76,5 +80,6 @@ test('ingredient lists and pack codes stay on community records',async()=>{
  assert.ok(oats?.ingredients);
  const code=swiss.find(p=>(p.sourceIdentifier||'').length>14||((p.barcode||'').length>14));
  assert.ok(swiss.every(p=>p.barcode||p.sourceIdentifier));
- assert.ok(swiss.filter(p=>p.image).length>=17000);
+ assert.ok(swiss.filter(p=>p.image).length>=18000);
+ assert.ok(swiss.filter(p=>p.ingredients).length>=10000);
 });

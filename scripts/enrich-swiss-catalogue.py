@@ -316,7 +316,7 @@ def write_report(products: list[dict], extra: dict):
             "coverageByRetailer": {"coop": coverage(products, "coop"), "migros": coverage(products, "migros")},
             "analysisCoverage": {
                 **coverage(products),
-                **{k: v for k, v in extra.items() if k != "harvestMethod"},
+                **{k: v for k, v in extra.items() if k not in ("harvestMethod", "notice")},
             },
             "licence": "ODbL 1.0; contents DbCL 1.0; images CC BY-SA 3.0",
             "notice": extra.get("notice")

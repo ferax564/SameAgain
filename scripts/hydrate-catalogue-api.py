@@ -84,14 +84,22 @@ def needs_fill(product: dict) -> bool:
 def main() -> int:
     args = [a for a in sys.argv[1:] if a]
     photos_only = "photos" in args
+    leftover_ingredients = "leftover" in args
     limit = next((int(a) for a in args if a.isdigit()), 0)
     products = json.loads(enrich.INDEX.read_text())
-    jobs = [
-        p
-        for p in products
-        if (p.get("barcode") or p.get("sourceIdentifier"))
-        and (not p.get("image") if photos_only else needs_fill(p))
-    ]
+    jobs = []
+    for p in products:
+        code = p.get("barcode") or p.get("sourceIdentifier")
+        if not code:
+            continue
+        if photos_only:
+            if not p.get("image"):
+                jobs.append(p)
+        elif leftover_ingredients:
+            if not (p.get("ingredients") or "").strip() and (p.get("ingredientsImage") or "").startswith("https://images.openfoodfacts.org/"):
+                jobs.append(p)
+        elif needs_fill(p):
+            jobs.append(p)
     if limit:
         jobs = jobs[:limit]
     filled_image = filled_ing = failed = 0
