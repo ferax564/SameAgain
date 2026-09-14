@@ -146,7 +146,9 @@
 .nutri-c{background:#c4a012;color:#fff}
 .nutri-d{background:#d97820;color:#fff}
 .nutri-e{background:#c0392b;color:#fff}
-.nova-4{background:#4a2c5a;color:#fff}
+.catalogue-code{font-size:12px;font-variant-numeric:tabular-nums;letter-spacing:.02em;margin:6px 0 0;color:var(--foreground)}
+.catalogue-code.missing,.ingredient-preview.missing{color:var(--muted-foreground)}
+.ingredient-preview{font-size:12px;line-height:1.45;margin:6px 0 0;color:var(--muted-foreground);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 @media(max-width:760px){
  .analysis-breakdown{grid-template-columns:1fr}
  .product-card>.score-badge{top:8px;right:8px}

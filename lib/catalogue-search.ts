@@ -2,10 +2,12 @@ import {barcode,countryTag,type Product} from './domain';
 import {recordedAt} from './retailers';
 export function searchText(value:string){return value.normalize('NFKD').replace(/\p{M}/gu,'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim()}
 export function searchTerms(q:string){return searchText(q).split(/\s+/).filter(Boolean)}
-export function productSearchText(p:Pick<Product,'name'|'brand'|'barcode'|'pack'|'categories'>){return searchText([p.name,p.brand,p.barcode,p.pack,...p.categories].filter(Boolean).join(' '))}
+export function productSearchText(p:Pick<Product,'name'|'brand'|'barcode'|'pack'|'categories'|'ingredients'|'sourceIdentifier'>){return searchText([p.name,p.brand,p.barcode,p.sourceIdentifier,p.pack,p.ingredients,...p.categories].filter(Boolean).join(' '))}
 export function searchMatches(p:Product,q:string){return searchTerms(q).every(t=>productSearchText(p).includes(t))}
+export function catalogueCode(p:Pick<Product,'barcode'|'sourceIdentifier'>){return p.barcode||p.sourceIdentifier||''}
+export function ingredientPreview(text?:string,max=110){const t=(text||'').replace(/\s+/g,' ').trim();return t.length>max?t.slice(0,max-1)+'…':t}
 // Some source identifiers are retailer-specific or variable-weight codes, not GTINs.
-export function scannableProduct(p:Product):Product{return p.barcode&&!barcode(p.barcode).valid?{...p,sourceIdentifier:p.barcode,barcode:undefined} as Product:p}
+export function scannableProduct(p:Product):Product{return p.barcode&&!barcode(p.barcode).valid?{...p,sourceIdentifier:p.sourceIdentifier||p.barcode,barcode:undefined}:p}
 function relevance(p:Product,q:string){const name=searchText(p.name),brand=searchText(p.brand||''),text=searchText(q);const b=barcode(q);if(b.valid&&p.barcode&&barcode(p.barcode).code===b.code)return 1000;
  return (name===text?100:name.startsWith(text)&&text?70:name.includes(text)&&text?50:brand===text?45:20)+(p.ingredients?5:0)+(p.basis&&Object.keys(p.nutrition||{}).length?5:0)+(p.image?5:-10)+(p.pack?10:-25);
 }
