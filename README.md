@@ -81,17 +81,20 @@ The PWA caches the shell/static assets, not authenticated API responses. First v
 
 | Source snapshot | Records | Records with a front-photo URL | Scope |
 | --- | ---: | ---: | --- |
-| OFF, Switzerland, Coop tag | 3,534 | 3,470 | Partial community catalogue |
-| OFF, Switzerland, Migros tag | 9,759 | 9,230 | Partial community catalogue |
-| Unique Swiss OFF records | 13,249 | 12,658 | 44 records appear under both retailers |
+| OFF, Switzerland, Coop tag | 3,995 | 3,974 | Swiss Coop community snapshot, CSV-enriched |
+| OFF, Switzerland, Migros tag | 13,062 | 12,504 | Swiss Migros snapshot (search harvest + bulk CSV) |
+| Unique Swiss OFF records | 16,978 | 16,399 | Some records appear under both retailers |
+| With ingredient lists | 8,945 | — | Bulk CSV enrichment; still not every pack |
+| With additive tags | 4,691 | — | E-numbers when Open Food Facts recorded them |
+| With Nutri-Score grade | 10,033 | — | Official OFF grade when present |
 | Direct Coop pages/links | 31 | 0 imported | One page with verified factual details and nutrition |
 | Direct Migros pages/links | 182 | 0 imported | 28 detail records; six explicit nutrition tables |
 
-**591 Swiss source records still have no front photo.** The remaining photograph URLs are recorded coverage, not proof that every remote image always loads. The UI shows an honest fallback and lets households add their own pictures. It does not substitute generated packaging or another variant’s image. Direct retailer images are not copied without a reuse licence.
+**579 Swiss source records still have no front photo.** The remaining photograph URLs are recorded coverage, not proof that every remote image always loads. The UI shows an honest fallback and lets households add their own pictures. It does not substitute generated packaging or another variant’s image. Direct retailer images are not copied without a reuse licence.
 
-The licensed Swiss index is `public/catalogue/swiss-retailer-products.json`; its licence is adjacent. Barcode/search matches persist in D1 on use. At most 48 local results are shown; refine the query. The original collection was capped at the public 10,000-hit Migros search window. Unnamed/nonmatching records were excluded. No full-assortment claim follows from these counts.
+The licensed Swiss index is `public/catalogue/swiss-retailer-products.json`; its licence is adjacent. Barcode/search matches persist in D1 on use. Discover and store browse load **48 records per page** with **Load more** until the full indexed retailer snapshot is shown. Opening a product shows a **0–100 profile** (Nutri-Score 60 / additives 30 / organic 10), the ingredient list with matched E-numbers, and labelled nutrition. Unnamed/nonmatching records were excluded. No official Coop or Migros assortment or branch-stock claim follows from these counts. The profile uses Yuka’s published weights and Open Food Facts plus EFSA/IARC/WHO/ANSES citations; it is not Yuka’s score and not medical advice.
 
-`node scripts/import-swiss-catalogue.mjs` resumes ignored import checkpoints with a minimum eight-second interval and stops a retailer’s run on failure. For large refreshes use OFF bulk exports/local indexing, not thousands of product requests. `scripts/import-retailer-pages.py INPUT_DIRECTORY lib/retailer-products.json` extracts factual fields from saved public pages/index results. No unattended scraping or refresh job runs. Reports record scope, provenance, dates and hashes.
+`node scripts/import-swiss-catalogue.mjs` resumes ignored import checkpoints with a minimum eight-second interval. Coop uses the exact Switzerland + store query (already an exact OFF count). Migros is harvested by barcode prefix (`code:0*` … `code:9*`) so it is not limited to one public 10,000-hit search. `python3 scripts/enrich-swiss-catalogue.py` then streams the public Open Food Facts products CSV dump to fill ingredients, additives, Nutri-Score and NOVA. For still-larger refreshes use OFF bulk exports/local indexing. `scripts/import-retailer-pages.py INPUT_DIRECTORY lib/retailer-products.json` extracts factual fields from saved public pages/index results. No unattended scraping or refresh job runs. Reports record scope, provenance, dates and hashes.
 
 Direct Migros API documentation describes products/offers/stores, but the unauthenticated API returned HTTP 401 for a missing client key. Earlier basic Coop retrieval failed; one bounded official bread page was accessible during this review and its facts were added. Neither result establishes an authorized full feed. No credentials, browser-session keys, robots exclusions or access controls were bypassed.
 
@@ -183,9 +186,46 @@ Historical interactive checks used a separate demo. Raw receipt photos, OCR outp
 - Upload UI re-encodes supported images to metadata-free JPEG, maximum 1,600-pixel edge. The API accepts signature-checked JPEG/PNG up to 3 MB; direct API uploads do not receive server-side EXIF stripping or malware scanning. Orphan uploads persist until household deletion. Existing list/recipe/history snapshots retain earlier product data when a private master product changes.
 - Larger rollout needs cache/rate/operation cleanup, orphan-image retention, database pagination/push sync, monitoring, backup/recovery and load testing. These are not simulated by the current small-household release.
 
+## September 13 readiness review
+
+Implemented the remaining household-usability work and re-reviewed the Coop and Migros catalogues:
+
+- Discover search always uses the saved Swiss index, including in the isolated demo. Coop Switzerland and Migros shortcuts browse that index with an honest coverage card. Demo search no longer silently limits itself to six sample products.
+- Shared lists can be filtered by Everyone, Assigned to me, Unclaimed, or another member. Claiming an item cannot silently take someone else’s assignment. Household switcher is available when you belong to more than one household.
+- Retailer page search is accent-insensitive and uses the same `search_text` tokens as community search. Indexed Coop/Migros titles can show a pack size read from the title, labelled as such. Household goods such as drain cleaner are marked separately from groceries.
+- Store matching accepts both `coop` and `en:coop` tags, so community and live records do not drop out of a retailer browse.
+
+### Coop and Migros catalogue review
+
+| Source | Records | Photos / facts | What this is |
+| --- | ---: | --- | --- |
+| Open Food Facts · Switzerland · Coop tag | 3,995 | 3,974 photo URLs | Swiss Coop community snapshot + bulk CSV ingredients |
+| Open Food Facts · Switzerland · Migros tag | 13,062 | 12,504 photo URLs | Swiss Migros snapshot via barcode-prefix search and CSV enrichment |
+| Direct Coop pages/links | 31 | 1 page with verified facts and nutrition | Indexed titles plus Prix Garantie rye bread |
+| Direct Migros pages/links | 182 | 28 page details; 6 nutrition tables | Mostly discovery links; 149 earlier detail fetches failed |
+
+The Swiss search index includes **8,945 ingredient lists**, **4,691 additive tag sets** and **10,033 Nutri-Score grades** after merging the Open Food Facts bulk CSV. Opening a product shows nutrition, matched chemicals and a 0–100 profile. Direct retailer images are not copied. Neither feed is live stock, offers or branch inventory.
+
+## September 14 ingredient and additive review
+
+Discover product cards can show a 0–100 profile. Product details list ingredients (with matched E-numbers), Nutri-Score/NOVA when recorded, additive evidence cards, and per-100 g/ml nutrition. Additive notes cite EFSA, IARC, WHO or ANSES and never invent a dose. Missing ingredient lists stay incomplete rather than scoring as “clean”.
+
+## Merge this work to main
+
+Publish the catalogue, household-readiness and ingredient-analysis work with a fast-forward merge after review:
+
+```sh
+git fetch origin
+git checkout main
+git merge --ff-only origin/cursor/ingredient-analysis-a5b0
+git push origin main
+```
+
+If `main` has moved, merge the pull request from `cursor/ingredient-analysis-a5b0` into `main` instead of forcing a fast-forward.
+
 ## Public repository handover
 
-This snapshot was prepared on 13 September 2026 from application commit `54cff8707b1f46c888d21e734a312d2ec47656e3`. It contains the existing application, tests, migrations, provider adapters and attributed public catalogue assets. The usability improvements identified in the September 12 review have **not** been implemented in this snapshot.
+This snapshot was prepared on 13 September 2026 from application commit `54cff8707b1f46c888d21e734a312d2ec47656e3`, then updated with the September 13 readiness work.
 
 It deliberately excludes Git history, account/household databases, private photo storage, runtime caches, environment files, receipts and deployment credentials. `.openai/hosting.json` retains binding names only. Original-source code has no newly selected open-source licence; public visibility alone does not grant an MIT/Apache licence. Third-party dataset, image, OCR and vendor licences remain applicable and are included or referenced beside those assets.
 
@@ -201,4 +241,4 @@ npm run typecheck
 
 Follow the setup and deployment instructions above. Do not enable the deployment’s trusted identity headers on an unprotected public origin.
 
-Export validation on 13 September 2026: `npm test` passed all 116 checks; `npm run typecheck` passed. This does not imply the usability review’s proposed improvements or physical-device release checks are complete.
+Export validation after this readiness pass: `npm test`, `python3 tests/retailer-import.test.py` and `npm run typecheck`. Physical iPhone camera/PWA checks and hosted multi-account sign-in still need real devices and invited accounts.

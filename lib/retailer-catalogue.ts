@@ -1,6 +1,7 @@
-import {productSearchText} from './catalogue-search';
+import {productSearchText,searchTerms} from './catalogue-search';
 import products from './retailer-products.json';
 import report from './retailer-import-report.json';
+import {enrichIndexedProduct} from './catalogue-quality';
 import {db,one,run,query} from './server';
 import type {Product} from './domain';
 const revision='retailer-import:'+report.sha256;
@@ -11,9 +12,15 @@ export async function ensureRetailerCatalogue(){
 }
 export async function retailerCatalogue(retailer:string,q:string,page=1){
  await ensureRetailerCatalogue();
- const term='%'+q.replace(/[\\%_]/g,c=>'\\'+c)+'%';
- const where="json_extract(data,'$.retailer')=? AND (json_extract(data,'$.name') LIKE ? ESCAPE '\\' OR json_extract(data,'$.brand') LIKE ? ESCAPE '\\')";
- const total=await one('SELECT count(*) AS n FROM catalogue WHERE '+where,retailer,term,term);
- const rows=await query('SELECT data FROM catalogue WHERE '+where+" ORDER BY CASE WHEN json_extract(data,'$.evidence')='retailer-page' THEN 0 ELSE 1 END,json_extract(data,'$.name'),id LIMIT 24 OFFSET ?",retailer,term,term,(page-1)*24);
- return {products:rows.map(r=>JSON.parse(r.data) as Product),total:total.n,page,hasMore:page*24<total.n,coverage:{complete:false,imported:products.filter(p=>p.retailer===retailer).length,pageDetails:products.filter(p=>p.retailer===retailer&&p.evidence==='retailer-page').length},notice:'Partial import. Indexed titles are discovery links, not a current retailer assortment. Page details show their retrieval date. Stock and prices are not verified.'};
+ const terms=searchTerms(q);
+ if(q.trim()&&!terms.length)return {products:[],total:0,page,hasMore:false,coverage:{complete:false,imported:products.filter(p=>p.retailer===retailer).length,pageDetails:products.filter(p=>p.retailer===retailer&&p.evidence==='retailer-page').length},notice:'Partial import. Indexed titles are discovery links, not a current retailer assortment. Pack sizes taken from a title are labelled as such. Stock and prices are not verified.'};
+ const where=["json_extract(data,'$.retailer')=?"];
+ const params:any[]=[retailer];
+ if(terms.length){
+  for(const t of terms){where.push("search_text LIKE ? ESCAPE '\\'");params.push('%'+t.replace(/[\\%_]/g,c=>'\\'+c)+'%')}
+ }
+ const clause=where.join(' AND ');
+ const total=await one('SELECT count(*) AS n FROM catalogue WHERE '+clause,...params);
+ const rows=await query('SELECT data FROM catalogue WHERE '+clause+" ORDER BY CASE WHEN json_extract(data,'$.evidence')='retailer-page' THEN 0 ELSE 1 END,json_extract(data,'$.name'),id LIMIT 24 OFFSET ?",...params,(page-1)*24);
+ return {products:rows.map(r=>enrichIndexedProduct(JSON.parse(r.data) as Product)),total:total.n,page,hasMore:page*24<total.n,coverage:{complete:false,imported:products.filter(p=>p.retailer===retailer).length,pageDetails:products.filter(p=>p.retailer===retailer&&p.evidence==='retailer-page').length},notice:'Partial import. Indexed titles are discovery links, not a current retailer assortment. Pack sizes taken from a title are labelled as such. Stock and prices are not verified.'};
 }

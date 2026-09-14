@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {barcode,conversion,repeatItem,canMerge,totals,rank,type Product} from '../lib/domain.ts';
+import {matchesShopper,shopperTallies,claimAssignment} from '../lib/shopping.ts';
 const original:Product={id:'a',name:'Unsweetened oat drink',brand:'Oats',pack:'500 ml',categories:['en:foods','en:oat-drinks'],countries:['en:italy'],ingredients:'Water, oats, salt',ingredientTags:['en:water','en:oats','en:salt'],allergens:['en:gluten'],traces:[],labels:[],nutrition:{fat:1,sugars:0,proteins:1,salt:.1},basis:'100ml',source:'Deterministic test fixture',retrieved:1};
 const candidate={...original,id:'b',name:'Unsweetened oat drink local',countries:['en:france'],pack:'750 ml'};
 test('barcode preserves zeros and equivalent UPC-A/EAN-13 identity',()=>{assert.equal(barcode('036000291452').code,'0036000291452');assert.equal(barcode('0036000291452').valid,true);assert.equal(barcode('96385074').valid,true);assert.equal(barcode('3017620422004').valid,false);assert.equal(barcode('abc').valid,false)});
@@ -15,3 +16,17 @@ test('meaningful formulation mismatch is rejected',()=>{assert.equal(rank(origin
 test('repeat purchases clears old prices and purchase state while preserving identity',()=>{const d=repeatItem({name:'Milk',quantity:2,unit:'pack',notes:'plain',product:original,price:3,actualPrice:4,done:true,purchasedBy:'Sam',purchasedAt:1});assert.equal(d.price,null);assert.equal(d.actualPrice,null);assert.equal(d.done,false);assert.equal(d.product.id,original.id);assert.equal(d.quantity,2);assert.equal(d.notes,'plain')});
 test('currency totals never reinterpret a foreign price and record unpriced purchases',()=>{assert.deepEqual(totals([{quantity:2,price:3,priceCurrency:'CHF'},{quantity:1,done:true}], 'EUR'),{estimated:0,actual:0,missing:1,actualMissing:1});assert.equal(conversion('500 g','0 g',2),null)});
 test('duplicate products with different shoppers or intended members stay separate',()=>{const a={product:{id:'x'},unit:'pack',pack:'500g',assigned:'Sam'};assert(!canMerge(a,{...a,assigned:'Alex'}));assert(!canMerge(a,{...a,intendedFor:'Alex'}))});
+test('pack conversion understands compact units and centilitres',()=>{assert.deepEqual(conversion('500g','750 g',2),{exact:4/3,original:1000,unit:'g'});assert.deepEqual(conversion('33 cl','330 ml',1),{exact:1,original:330,unit:'ml'})});
+test('shopper filters keep unclaimed, personal and household views distinct',()=>{
+ const items=[{data:{assigned:'Alex',done:false}},{data:{assigned:'Sam',done:false}},{data:{done:false}},{data:{assigned:'Alex',done:true}}];
+ const members=[{user:'Alex',name:'Alex'},{user:'Sam',name:'Sam'}];
+ assert.equal(items.filter(i=>matchesShopper(i,'all','Alex')&&!i.data.done).length,3);
+ assert.equal(items.filter(i=>matchesShopper(i,'mine','Alex')&&!i.data.done).length,1);
+ assert.equal(items.filter(i=>matchesShopper(i,'unassigned','Alex')&&!i.data.done).length,1);
+ assert.equal(items.filter(i=>matchesShopper(i,'Sam','Alex')&&!i.data.done).length,1);
+ const t=shopperTallies(items,members,'Alex');
+ assert.deepEqual({all:t.all,mine:t.mine,unassigned:t.unassigned,sam:t.members[1].count},{all:3,mine:1,unassigned:1,sam:1});
+ assert.equal(claimAssignment('Alex','Alex'),'');
+ assert.equal(claimAssignment('','Alex'),'Alex');
+ assert.equal(claimAssignment('Sam','Alex'),'Sam');
+});
