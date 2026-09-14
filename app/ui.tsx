@@ -18,7 +18,7 @@ export function CatalogueFacts({product,note}:{product?:any;note?:string}){
  return <>
   <p className="muted">{pack}</p>
   {code?<p className="catalogue-code">Barcode {code}</p>:<p className="catalogue-code missing">Barcode not recorded</p>}
-  {preview?<p className="ingredient-preview">{preview.length>110?preview.slice(0,109)+'…':preview}</p>:<p className="ingredient-preview missing">Ingredients not recorded</p>}
+  {preview?<p className="ingredient-preview">{preview.length>110?preview.slice(0,109)+'…':preview}</p>:product?.ingredientsImage?<p className="ingredient-preview">Ingredient photo on file</p>:<p className="ingredient-preview missing">Ingredients not recorded</p>}
  </>
 }
 export function Brand(){return <div className="brand"><span className="brand-symbol"><Repeat2 size={28} strokeWidth={2.2}/></span><span>same again<span className="brand-dot">.</span></span></div>}

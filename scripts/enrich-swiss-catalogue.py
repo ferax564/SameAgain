@@ -203,7 +203,7 @@ def enrich_product(product: dict, row: dict) -> dict:
     if image and not product.get("image"):
         product["image"] = image
     ingredients_image = off_image(row.get("image_ingredients_url"), row.get("image_ingredients_small_url"))
-    if ingredients_image:
+    if ingredients_image and not product.get("ingredientsImage"):
         product["ingredientsImage"] = ingredients_image
     if row.get("quantity") and not product.get("pack"):
         product["pack"] = row["quantity"][:100]
@@ -230,12 +230,14 @@ def new_product(row: dict) -> dict | None:
         return None
     store_values = stores(row.get("stores") or "")
     countries = tags(row.get("countries_tags") or "")
-    swiss = "en:switzerland" in countries
+    tagged_swiss = "en:switzerland" in countries
     retailer = has_store(store_values, "coop") or has_store(store_values, "migros")
     if not retailer:
         return None
-    if not swiss and not code.startswith("76"):
+    if not tagged_swiss and not code.startswith("76"):
         return None
+    if "en:switzerland" not in countries:
+        countries = countries + ["en:switzerland"]
     ingredients, source = ingredients_from_row(row)
     product = {
         "id": "off:" + (gtin(code) or code[:48]),

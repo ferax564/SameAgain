@@ -1,9 +1,9 @@
 {
-  "retrieved": "2026-09-14T05:33:25.000Z",
+  "retrieved": "2026-09-14T18:54:35.000Z",
   "source": "Open Food Facts",
   "completeRetailerCatalogue": false,
-  "harvestMethod": "coop-store-query-migros-prefixes-and-off-csv-ingredients",
-  "records": 16978,
+  "harvestMethod": "off-csv-and-jsonl-complete-barcodes-photos-ingredients",
+  "records": 18333,
   "retailers": [
     {
       "key": "coop",
@@ -96,24 +96,28 @@
   ],
   "coverageByRetailer": {
     "coop": {
-      "records": 3995,
-      "withPhoto": 3974,
-      "withIngredients": 2818,
-      "withAdditives": 1227,
-      "withNutrition": 3749,
-      "withNutriscore": 2965
+      "records": 4306,
+      "withBarcode": 4306,
+      "withPhoto": 4297,
+      "withIngredients": 3000,
+      "withAdditives": 1318,
+      "withNutrition": 3956,
+      "withNutriscore": 3131,
+      "withIngredientsImage": 2962
     },
     "migros": {
-      "records": 13062,
-      "withPhoto": 12504,
-      "withIngredients": 6201,
-      "withAdditives": 3508,
-      "withNutrition": 12097,
-      "withNutriscore": 7134
+      "records": 14112,
+      "withBarcode": 14112,
+      "withPhoto": 13604,
+      "withIngredients": 6534,
+      "withAdditives": 3654,
+      "withNutrition": 12735,
+      "withNutriscore": 7515,
+      "withIngredientsImage": 5974
     }
   },
   "licence": "ODbL 1.0; contents DbCL 1.0; images CC BY-SA 3.0",
-  "notice": "Community records with retailer and Switzerland tags, enriched from the Open Food Facts bulk CSV so ingredients, additives and Nutri-Score can be reviewed. This is still not an official assortment or branch stock.",
+  "notice": "Community records with retailer tags, filled from the Open Food Facts dump so every available barcode, photo and ingredient list is in the snapshot. This is still not an official assortment or branch stock.",
   "previousSnapshot": {
     "records": 13249,
     "coop": 3534,
@@ -121,12 +125,13 @@
     "retrieved": "2026-09-05"
   },
   "analysisCoverage": {
-    "withIngredients": 8945,
-    "withAdditives": 4691,
-    "withNutrition": 15768,
-    "withNutriscore": 10033,
-    "dumpRowsRead": 4532767,
-    "matchedExisting": 15779,
-    "addedFromDump": 1173
+    "records": 18333,
+    "withBarcode": 18333,
+    "withPhoto": 17816,
+    "withIngredients": 9455,
+    "withAdditives": 4927,
+    "withNutrition": 16607,
+    "withNutriscore": 10574,
+    "withIngredientsImage": 8858
   }
 }

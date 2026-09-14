@@ -22,8 +22,9 @@ await test('destination substitutions never retain a different product household
 await test('cached API search backfills accent and category text during a provider outage',async()=>{
  const original=globalThis.fetch;globalThis.fetch=async()=>new Response('',{status:503});
  try{
-  await run('INSERT INTO catalogue(id,data,retrieved) VALUES(?,?,?)','cache-accent-fixture',JSON.stringify({...base,id:'cache-accent-fixture'}),Date.now());
-  for(const q of ['creme noisettes','hazelnut']){
+  const fixture={...base,id:'cache-accent-fixture',brand:'AccentCacheBrand'};
+  await run('INSERT INTO catalogue(id,data,retrieved) VALUES(?,?,?)','cache-accent-fixture',JSON.stringify(fixture),Date.now());
+  for(const q of ['creme noisettes AccentCacheBrand','AccentCacheBrand']){
    const r=await asUser('ReleaseSearch',()=>catalogue(new Request('https://same.test/api/catalogue?'+new URLSearchParams({q,country:'FR'}))));
    assert.equal(r.status,200);assert((await r.json()).products.some((p:any)=>p.id==='cache-accent-fixture'));
   }
@@ -68,6 +69,7 @@ await test('legacy nutrition excludes negative values and missing photos render 
  assert.match(renderToStaticMarkup(React.createElement(Photo,{product:{name:'Unknown'},large:true})),/Photo unavailable for Unknown/);
  assert.match(renderToStaticMarkup(React.createElement(CatalogueFacts,{product:{barcode:'7610200011435',pack:'500 g',ingredients:'oats, sugar'}})),/Barcode 7610200011435/);
  assert.match(renderToStaticMarkup(React.createElement(CatalogueFacts,{product:{ingredients:'oats'}})),/oats/);
+ assert.match(renderToStaticMarkup(React.createElement(CatalogueFacts,{product:{ingredientsImage:'https://images.openfoodfacts.org/x.jpg'}})),/Ingredient photo on file/);
 });
 
 await test('receipt photo fingerprint is identical with native crypto and portable fallback',async()=>{

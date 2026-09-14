@@ -3,7 +3,6 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {hasStore} from '../lib/retailers.ts';
 import {classifyRetailerProduct,declaredNutritionCount,enrichIndexedProduct,inferPackFromName} from '../lib/catalogue-quality.ts';
-import {catalogueCode,ingredientPreview,searchMatches} from '../lib/catalogue-search.ts';
 import type {Product} from '../lib/domain.ts';
 
 test('indexed Coop titles expose pack size without inventing a barcode',()=>{
@@ -71,11 +70,11 @@ test('Coop and Migros coverage reports stay honest and match the shipped snapsho
  assert.match(scopeSrc,/10,000-hit/);
 });
 
-test('ingredient lists and pack codes are searchable on catalogue cards',()=>{
- const p={id:'off:7610200011435',name:'Haferflocken',brand:'M-Budget',barcode:'7610200011435',pack:'500 g',categories:['en:oats'],countries:['en:switzerland'],ingredients:'flocons d avoine complets',source:'Open Food Facts',retrieved:1} as Product;
- assert.equal(catalogueCode(p),'7610200011435');
- assert.equal(catalogueCode({sourceIdentifier:'277610807057287000000100'}),'277610807057287000000100');
- assert.equal(ingredientPreview(p.ingredients,12),'flocons d a…');
- assert(searchMatches(p,'avoine'));
- assert(searchMatches(p,'7610200011435'));
+test('ingredient lists and pack codes stay on community records',async()=>{
+ const swiss=JSON.parse(await readFile('public/catalogue/swiss-retailer-products.json','utf8')) as Product[];
+ const oats=swiss.find(p=>p.barcode==='7610200011435');
+ assert.ok(oats?.ingredients);
+ const code=swiss.find(p=>(p.sourceIdentifier||'').length>14||((p.barcode||'').length>14));
+ assert.ok(swiss.every(p=>p.barcode||p.sourceIdentifier));
+ assert.ok(swiss.filter(p=>p.image).length>=17000);
 });

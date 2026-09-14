@@ -15,6 +15,36 @@ spec.loader.exec_module(enrich)
 JSONL = Path("/tmp/off-dump/swiss-retailer.jsonl")
 
 
+def barcode_image_path(code: str) -> str:
+    digits = enrich.digits_only(code)
+    if len(digits) <= 8:
+        return digits
+    if len(digits) < 13:
+        digits = digits.zfill(13)
+    if len(digits) == 14 and digits.startswith("0"):
+        digits = digits[1:]
+    return f"{digits[:3]}/{digits[3:6]}/{digits[6:9]}/{digits[9:]}"
+
+
+def selected_image_url(code: str, selected: dict | None, kind: str) -> str | None:
+    block = (selected or {}).get(kind) or {}
+    if not isinstance(block, dict):
+        return None
+    langs = ("en", "de", "fr", "it", "es") + tuple(block)
+    seen = set()
+    for lang in langs:
+        if lang in seen:
+            continue
+        seen.add(lang)
+        meta = block.get(lang)
+        if not isinstance(meta, dict) or meta.get("rev") in (None, ""):
+            continue
+        url = f"https://images.openfoodfacts.org/images/products/{barcode_image_path(code)}/{kind}_{lang}.{meta['rev']}.400.jpg"
+        if url.startswith("https://images.openfoodfacts.org/"):
+            return url
+    return None
+
+
 def structured_ingredients(product: dict) -> str:
     values = product.get("ingredients")
     if not isinstance(values, list):
@@ -33,21 +63,27 @@ def structured_ingredients(product: dict) -> str:
 
 
 def flatten(product: dict) -> dict:
-    selected = product.get("selected_images") or {}
-    front = (selected.get("front") or {}).get("display") or {}
-    ingredients = (selected.get("ingredients") or {}).get("display") or {}
-    nutrition = (selected.get("nutrition") or {}).get("display") or {}
+    selected = ((product.get("images") or {}).get("selected")) or product.get("selected_images") or {}
+    # Legacy selected_images.front.display.lang vs images.selected.front.lang.rev
+    front_display = (selected.get("front") or {}).get("display") or {}
+    ingredients_display = (selected.get("ingredients") or {}).get("display") or {}
+    nutrition_display = (selected.get("nutrition") or {}).get("display") or {}
     langs = ("en", "de", "fr", "it", "es")
+    code = str(product.get("code") or "")
     image = enrich.off_image(
         product.get("image_front_url"),
         product.get("image_url"),
-        *(front.get(lang) for lang in langs),
-        *(ingredients.get(lang) for lang in langs),
-        *(nutrition.get(lang) for lang in langs),
+        selected_image_url(code, selected, "front"),
+        *(front_display.get(lang) for lang in langs if isinstance(front_display, dict)),
+        selected_image_url(code, selected, "ingredients"),
+        *(ingredients_display.get(lang) for lang in langs if isinstance(ingredients_display, dict)),
+        selected_image_url(code, selected, "nutrition"),
+        *(nutrition_display.get(lang) for lang in langs if isinstance(nutrition_display, dict)),
     )
     ingredients_image = enrich.off_image(
         product.get("image_ingredients_url"),
-        *(ingredients.get(lang) for lang in langs),
+        selected_image_url(code, selected, "ingredients"),
+        *(ingredients_display.get(lang) for lang in langs if isinstance(ingredients_display, dict)),
     )
     stores = product.get("stores_tags") or product.get("stores") or []
     if isinstance(stores, str):

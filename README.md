@@ -81,16 +81,16 @@ The PWA caches the shell/static assets, not authenticated API responses. First v
 
 | Source snapshot | Records | Records with a front-photo URL | Scope |
 | --- | ---: | ---: | --- |
-| OFF, Switzerland, Coop tag | 3,995 | 3,974 | Swiss Coop community snapshot, CSV-enriched |
-| OFF, Switzerland, Migros tag | 13,062 | 12,504 | Swiss Migros snapshot (search harvest + bulk CSV) |
-| Unique Swiss OFF records | 16,978 | 16,399 | Some records appear under both retailers |
-| With ingredient lists | 8,945 | — | Bulk CSV enrichment; still not every pack |
-| With additive tags | 4,691 | — | E-numbers when Open Food Facts recorded them |
-| With Nutri-Score grade | 10,033 | — | Official OFF grade when present |
+| OFF, Switzerland, Coop tag | 4,306 | 4,297 | Swiss Coop community snapshot, dump-enriched |
+| OFF, Switzerland, Migros tag | 14,112 | 13,604 | Swiss Migros snapshot (search harvest + CSV + JSONL) |
+| Unique Swiss OFF records | 18,333 | 17,816 | Barcode or pack code on every record |
+| With ingredient lists | 9,455 | — | Typed lists from the OFF dump; still not every pack |
+| With additive tags | 4,927 | — | E-numbers when Open Food Facts recorded them |
+| With Nutri-Score grade | 10,574 | — | Official OFF grade when present |
 | Direct Coop pages/links | 31 | 0 imported | One page with verified factual details and nutrition |
 | Direct Migros pages/links | 182 | 0 imported | 28 detail records; six explicit nutrition tables |
 
-**579 Swiss source records still have no front photo.** The remaining photograph URLs are recorded coverage, not proof that every remote image always loads. The UI shows an honest fallback and lets households add their own pictures. It does not substitute generated packaging or another variant’s image. Direct retailer images are not copied without a reuse licence.
+**517 Swiss source records still have no photo** because Open Food Facts has none uploaded. **8,878 records still have no typed ingredient list.** Where an ingredients pack photo exists, product details show that photo. The UI does not invent a list. Direct retailer images are not copied without a reuse licence.
 
 The licensed Swiss index is `public/catalogue/swiss-retailer-products.json`; its licence is adjacent. Barcode/search matches persist in D1 on use. Discover and store browse load **48 records per page** with **Load more** until the full indexed retailer snapshot is shown. Opening a product shows a **0–100 profile** (Nutri-Score 60 / additives 30 / organic 10), the ingredient list with matched E-numbers, and labelled nutrition. Unnamed/nonmatching records were excluded. No official Coop or Migros assortment or branch-stock claim follows from these counts. The profile uses Yuka’s published weights and Open Food Facts plus EFSA/IARC/WHO/ANSES citations; it is not Yuka’s score and not medical advice.
 
@@ -199,12 +199,12 @@ Implemented the remaining household-usability work and re-reviewed the Coop and 
 
 | Source | Records | Photos / facts | What this is |
 | --- | ---: | --- | --- |
-| Open Food Facts · Switzerland · Coop tag | 3,995 | 3,974 photo URLs | Swiss Coop community snapshot + bulk CSV ingredients |
-| Open Food Facts · Switzerland · Migros tag | 13,062 | 12,504 photo URLs | Swiss Migros snapshot via barcode-prefix search and CSV enrichment |
+| Open Food Facts · Switzerland · Coop tag | 4,306 | Barcode on every record; 4,297 photo URLs | Swiss Coop community snapshot + dump ingredients/photos |
+| Open Food Facts · Switzerland · Migros tag | 14,112 | Barcode on every record; 13,604 photo URLs | Swiss Migros snapshot via barcode-prefix search, CSV and JSONL |
 | Direct Coop pages/links | 31 | 1 page with verified facts and nutrition | Indexed titles plus Prix Garantie rye bread |
 | Direct Migros pages/links | 182 | 28 page details; 6 nutrition tables | Mostly discovery links; 149 earlier detail fetches failed |
 
-The Swiss search index includes **8,945 ingredient lists**, **4,691 additive tag sets** and **10,033 Nutri-Score grades** after merging the Open Food Facts bulk CSV. Opening a product shows nutrition, matched chemicals and a 0–100 profile. Direct retailer images are not copied. Neither feed is live stock, offers or branch inventory.
+The Swiss search index currently includes **18,333 community records**, **a barcode or pack code on every record**, **17,816 photo URLs**, **9,455 typed ingredient lists**, plus additive tags and Nutri-Score grades. Discover cards show the photo, barcode and ingredient preview. Direct retailer images are not copied. Neither feed is live stock, offers or branch inventory. Products still missing a photo or typed ingredients do not have those fields in Open Food Facts.
 
 ## September 14 ingredient and additive review
 

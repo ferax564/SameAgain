@@ -36,5 +36,14 @@ class EnrichTest(unittest.TestCase):
   m.assign_codes(product, '7610200011435')
   self.assertEqual(product['barcode'], '7610200011435')
 
+ def test_off_image_path_keeps_leading_zeros(self):
+  spec = importlib.util.spec_from_file_location('merge', pathlib.Path('scripts/merge-off-jsonl.py'))
+  merge = importlib.util.module_from_spec(spec)
+  spec.loader.exec_module(merge)
+  self.assertEqual(merge.barcode_image_path('0000130028030'), '000/013/002/8030')
+  self.assertEqual(merge.barcode_image_path('130028030'), '000/013/002/8030')
+  self.assertEqual(merge.barcode_image_path('00025393'), '00025393')
+  self.assertEqual(merge.barcode_image_path('7610200011435'), '761/020/001/1435')
+
 if __name__ == '__main__':
  unittest.main()

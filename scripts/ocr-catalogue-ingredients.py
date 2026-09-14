@@ -12,9 +12,9 @@ import json
 import re
 import subprocess
 import sys
-import tempfile
+import threading
 import time
-import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -48,68 +48,84 @@ def clean_ocr(text: str) -> str:
 
 def useful(text: str) -> bool:
     letters = len(re.findall(r"[A-Za-zÀ-ÿ]", text or ""))
-    return letters >= 12 and len(text) >= 16
+    if letters < 24 or len(text or "") < 20:
+        return False
+    if letters / max(len(text), 1) < 0.45:
+        return False
+    return bool(re.search(r"[,;]|zutaten|ingr[eé]dients?|ingredienti", text or "", re.I))
+
+
+def ocr_url(url: str) -> str:
+    return re.sub(r"\.(100|200|400)\.jpg$", ".full.jpg", url or "")
 
 
 def ocr_image(url: str) -> str:
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "image/*"})
-    with urllib.request.urlopen(req, timeout=25) as response:
-        data = response.read()
-    if len(data) < 800:
+    url = ocr_url(url)
+    dest = Path("/tmp/off-ing-ocr")
+    dest.mkdir(parents=True, exist_ok=True)
+    path = dest / (re.sub(r"\W+", "", url[-80:]) + ".jpg")
+    result = subprocess.run(
+        ["curl", "-fsSL", "-A", USER_AGENT, "--max-time", "45", "-o", str(path), url],
+        check=False,
+        capture_output=True,
+        timeout=50,
+    )
+    if result.returncode != 0 or not path.exists() or path.stat().st_size < 800:
         return ""
-    with tempfile.NamedTemporaryFile(suffix=".jpg", delete=True) as handle:
-        handle.write(data)
-        handle.flush()
-        result = subprocess.run(
-            ["tesseract", handle.name, "stdout", "-l", LANGS, "--psm", "6"],
-            check=False,
-            capture_output=True,
-            timeout=40,
-        )
-    return clean_ocr(result.stdout.decode("utf-8", "replace"))
+    ocr = subprocess.run(
+        ["tesseract", str(path), "stdout", "-l", LANGS, "--psm", "4"],
+        check=False,
+        capture_output=True,
+        timeout=60,
+    )
+    return clean_ocr(ocr.stdout.decode("utf-8", "replace"))
 
 
 def main() -> int:
     limit = int(sys.argv[1]) if len(sys.argv) > 1 else 0
+    workers = int(sys.argv[2]) if len(sys.argv) > 2 else 2
     products = json.loads(INDEX.read_text())
     jobs = [
         p
         for p in products
         if not (p.get("ingredients") or "").strip()
-        and (p.get("ingredientsImage") or p.get("image") or "").startswith("https://images.openfoodfacts.org/")
-        and "ingredients" in (p.get("ingredientsImage") or "")
-    ]
-    # Prefer a dedicated ingredients photo; fall back to any remaining ingredients URL on image.
-    extra = [
-        p
-        for p in products
-        if p not in jobs
-        and not (p.get("ingredients") or "").strip()
         and (p.get("ingredientsImage") or "").startswith("https://images.openfoodfacts.org/")
     ]
-    jobs.extend(extra)
     if limit:
         jobs = jobs[:limit]
     filled = failed = 0
     started = time.time()
-    for i, product in enumerate(jobs, 1):
-        url = product.get("ingredientsImage") or product.get("image")
-        try:
-            text = ocr_image(url)
-        except Exception as exc:  # noqa: BLE001
-            failed += 1
-            print(json.dumps({"i": i, "barcode": product.get("barcode"), "error": str(exc)[:200]}), flush=True)
-            continue
-        if useful(text):
-            product["ingredients"] = text
-            product["ingredientsSource"] = "ocr-from-open-food-facts-ingredients-photo"
-            filled += 1
-        else:
-            failed += 1
-        if i % 25 == 0:
-            INDEX.write_text(json.dumps(products, ensure_ascii=False, separators=(",", ":")))
-            print(json.dumps({"done": i, "of": len(jobs), "filled": filled, "failed": failed, "seconds": round(time.time() - started)}), flush=True)
-        time.sleep(0.05)
+    lock = threading.Lock()
+    done = 0
+
+    def work(product: dict):
+        url = product.get("ingredientsImage")
+        text = ocr_image(url)
+        return product, text
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = [pool.submit(work, product) for product in jobs]
+        for future in as_completed(futures):
+            product, text = None, ""
+            try:
+                product, text = future.result()
+            except Exception as exc:  # noqa: BLE001
+                with lock:
+                    failed += 1
+                    done += 1
+                print(json.dumps({"done": done, "error": str(exc)[:200]}), flush=True)
+                continue
+            with lock:
+                done += 1
+                if useful(text):
+                    product["ingredients"] = text
+                    product["ingredientsSource"] = "ocr-from-open-food-facts-ingredients-photo"
+                    filled += 1
+                else:
+                    failed += 1
+                if done % 25 == 0:
+                    INDEX.write_text(json.dumps(products, ensure_ascii=False, separators=(",", ":")))
+                    print(json.dumps({"done": done, "of": len(jobs), "filled": filled, "failed": failed, "seconds": round(time.time() - started)}), flush=True)
     enrich.save(products)
     report = enrich.write_report(
         products,
@@ -117,7 +133,7 @@ def main() -> int:
             "ocrJobs": len(jobs),
             "ocrFilled": filled,
             "ocrFailed": failed,
-            "harvestMethod": "off-csv-and-ocr-ingredients-photos",
+            "harvestMethod": "off-csv-jsonl-and-ocr-ingredients-photos",
         },
     )
     print(json.dumps({"jobs": len(jobs), "filled": filled, "failed": failed, "seconds": round(time.time() - started), "analysis": report["analysisCoverage"]}, indent=2))
