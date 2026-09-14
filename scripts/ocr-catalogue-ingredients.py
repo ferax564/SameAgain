@@ -24,7 +24,7 @@ spec.loader.exec_module(enrich)
 
 INDEX = enrich.INDEX
 USER_AGENT = enrich.USER_AGENT
-LANGS = "deu+fra+ita+eng"
+LANGS = "fra+deu"
 HEADER = re.compile(
     r"^(zutaten|ingredients?|ingr[eé]dients?|ingredienti|samenstelling|zusammensetzung)\s*[:.]?\s*",
     re.I,
@@ -56,34 +56,95 @@ def useful(text: str) -> bool:
 
 
 def ocr_url(url: str) -> str:
-    return re.sub(r"\.(100|200|400)\.jpg$", ".full.jpg", url or "")
+    return url or ""
 
 
-def ocr_image(url: str) -> str:
-    url = ocr_url(url)
+def ocr_image(url: str, path: Path | None = None) -> str:
     dest = Path("/tmp/off-ing-ocr")
     dest.mkdir(parents=True, exist_ok=True)
-    path = dest / (re.sub(r"\W+", "", url[-80:]) + ".jpg")
-    result = subprocess.run(
-        ["curl", "-fsSL", "-A", USER_AGENT, "--max-time", "45", "-o", str(path), url],
-        check=False,
-        capture_output=True,
-        timeout=50,
-    )
-    if result.returncode != 0 or not path.exists() or path.stat().st_size < 800:
+    url = ocr_url(url)
+    if path is None:
+        path = dest / (re.sub(r"\W+", "", url[-80:]) + ".jpg")
+        result = subprocess.run(
+            [
+                "aria2c",
+                "-q",
+                "--max-tries=3",
+                "--timeout=25",
+                "--user-agent",
+                USER_AGENT,
+                "-d",
+                str(dest),
+                "-o",
+                path.name,
+                url,
+            ],
+            check=False,
+            capture_output=True,
+            timeout=40,
+        )
+        if result.returncode != 0 or not path.exists() or path.stat().st_size < 800:
+            return ""
+    elif not path.exists() or path.stat().st_size < 800:
         return ""
     ocr = subprocess.run(
-        ["tesseract", str(path), "stdout", "-l", LANGS, "--psm", "4"],
+        ["tesseract", str(path), "stdout", "-l", LANGS, "--psm", "6"],
         check=False,
         capture_output=True,
-        timeout=60,
+        timeout=20,
     )
     return clean_ocr(ocr.stdout.decode("utf-8", "replace"))
 
 
+def image_filename(product: dict) -> str:
+    code = product.get("barcode") or product.get("sourceIdentifier") or product.get("id") or "unknown"
+    return re.sub(r"\W+", "", str(code)) + ".jpg"
+
+
+def download_jobs(jobs: list[dict], dest: Path) -> None:
+    dest.mkdir(parents=True, exist_ok=True)
+    listing = dest / "aria2.txt"
+    lines = []
+    for product in jobs:
+        url = product.get("ingredientsImage")
+        name = image_filename(product)
+        path = dest / name
+        if path.exists() and path.stat().st_size >= 800:
+            continue
+        lines.append(url)
+        lines.append(f"  out={name}")
+    if not lines:
+        return
+    listing.write_text("\n".join(lines) + "\n")
+    subprocess.run(
+        [
+            "aria2c",
+            "-i",
+            str(listing),
+            "-d",
+            str(dest),
+            "-j",
+            "12",
+            "-x",
+            "4",
+            "-s",
+            "4",
+            "--max-tries=3",
+            "--timeout=20",
+            "--connect-timeout=10",
+            "--auto-file-renaming=false",
+            "--user-agent",
+            USER_AGENT,
+            "--quiet=true",
+        ],
+        check=False,
+        timeout=1800,
+    )
+
+
 def main() -> int:
     limit = int(sys.argv[1]) if len(sys.argv) > 1 else 0
-    workers = int(sys.argv[2]) if len(sys.argv) > 2 else 2
+    workers = int(sys.argv[2]) if len(sys.argv) > 2 else 4
     products = json.loads(INDEX.read_text())
     jobs = [
         p
@@ -93,20 +154,22 @@ def main() -> int:
     ]
     if limit:
         jobs = jobs[:limit]
+    dest = Path("/tmp/off-ing-ocr")
+    print(json.dumps({"downloading": len(jobs)}), flush=True)
+    download_jobs(jobs, dest)
     filled = failed = 0
     started = time.time()
     lock = threading.Lock()
     done = 0
 
     def work(product: dict):
-        url = product.get("ingredientsImage")
-        text = ocr_image(url)
+        path = dest / image_filename(product)
+        text = ocr_image(product.get("ingredientsImage"), path)
         return product, text
 
     with ThreadPoolExecutor(max_workers=workers) as pool:
         futures = [pool.submit(work, product) for product in jobs]
         for future in as_completed(futures):
-            product, text = None, ""
             try:
                 product, text = future.result()
             except Exception as exc:  # noqa: BLE001
@@ -123,7 +186,7 @@ def main() -> int:
                     filled += 1
                 else:
                     failed += 1
-                if done % 25 == 0:
+                if done % 50 == 0:
                     INDEX.write_text(json.dumps(products, ensure_ascii=False, separators=(",", ":")))
                     print(json.dumps({"done": done, "of": len(jobs), "filled": filled, "failed": failed, "seconds": round(time.time() - started)}), flush=True)
     enrich.save(products)
@@ -133,7 +196,7 @@ def main() -> int:
             "ocrJobs": len(jobs),
             "ocrFilled": filled,
             "ocrFailed": failed,
-            "harvestMethod": "off-csv-jsonl-and-ocr-ingredients-photos",
+            "harvestMethod": "off-csv-jsonl-uploaded-photos-and-ocr-ingredients",
         },
     )
     print(json.dumps({"jobs": len(jobs), "filled": filled, "failed": failed, "seconds": round(time.time() - started), "analysis": report["analysisCoverage"]}, indent=2))

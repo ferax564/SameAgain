@@ -44,6 +44,9 @@ class EnrichTest(unittest.TestCase):
   self.assertEqual(merge.barcode_image_path('130028030'), '000/013/002/8030')
   self.assertEqual(merge.barcode_image_path('00025393'), '00025393')
   self.assertEqual(merge.barcode_image_path('7610200011435'), '761/020/001/1435')
+  self.assertTrue(merge.uploaded_image_url('7610145651055', {'1': {'sizes': {'400': {'w': 400}}}}).endswith('/1.400.jpg'))
+  self.assertTrue(merge.numeric_uploaded_url('7610177004508', {'1': {'sizes': {'400': {'w': 400}}}, 'front_de': {'rev': '6'}}).endswith('/1.400.jpg'))
+  self.assertTrue(merge.named_image_url('2102738006205', {'front_de': {'rev': '6', 'sizes': {'400': {}}}}, 'front').endswith('front_de.6.400.jpg'))
 
 if __name__ == '__main__':
  unittest.main()
