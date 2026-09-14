@@ -8,7 +8,10 @@ export function catalogueCode(p:Pick<Product,'barcode'|'sourceIdentifier'>){retu
 export function ingredientPreview(text?:string,max=110){const t=(text||'').replace(/\s+/g,' ').trim();return t.length>max?t.slice(0,max-1)+'…':t}
 // Some source identifiers are retailer-specific or variable-weight codes, not GTINs.
 export function scannableProduct(p:Product):Product{return p.barcode&&!barcode(p.barcode).valid?{...p,sourceIdentifier:p.sourceIdentifier||p.barcode,barcode:undefined}:p}
-function relevance(p:Product,q:string){const name=searchText(p.name),brand=searchText(p.brand||''),text=searchText(q);const b=barcode(q);if(b.valid&&p.barcode&&barcode(p.barcode).code===b.code)return 1000;
+function coverageScore(p:Product){
+ return (p.image?8:0)+(p.ingredients?8:p.ingredientsImage?4:0)+(p.barcode||p.sourceIdentifier?4:0)+(p.pack?2:0);
+}
+function relevance(p:Product,q:string){const name=searchText(p.name),brand=searchText(p.brand||''),text=searchText(q);if(!text)return coverageScore(p);const b=barcode(q);if(b.valid&&p.barcode&&barcode(p.barcode).code===b.code)return 1000;
  return (name===text?100:name.startsWith(text)&&text?70:name.includes(text)&&text?50:brand===text?45:20)+(p.ingredients?5:0)+(p.basis&&Object.keys(p.nutrition||{}).length?5:0)+(p.image?5:-10)+(p.pack?10:-25);
 }
 export function bestCatalogueRecord(a:Product,b:Product){if(!!a.detailsRetrieved!==!!b.detailsRetrieved)return a.detailsRetrieved?a:b;return (a.detailsRetrieved||a.retrieved)>=(b.detailsRetrieved||b.retrieved)?a:b}
