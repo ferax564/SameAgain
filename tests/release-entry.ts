@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {GET as catalogue} from '../app/api/catalogue/route';
 import {GET as demoCatalogue} from '../app/api/demo-catalogue/route';
+import swissReport from '../lib/swiss-retailer-report.json';
 import {normalise} from '../lib/catalogue';
 import {rankSearch} from '../lib/catalogue-search';
 import {validateRecord} from '../lib/record-validation';
@@ -21,8 +22,9 @@ await test('destination substitutions never retain a different product household
 await test('cached API search backfills accent and category text during a provider outage',async()=>{
  const original=globalThis.fetch;globalThis.fetch=async()=>new Response('',{status:503});
  try{
-  await run('INSERT INTO catalogue(id,data,retrieved) VALUES(?,?,?)','cache-accent-fixture',JSON.stringify({...base,id:'cache-accent-fixture'}),Date.now());
-  for(const q of ['creme noisettes','hazelnut']){
+  const fixture={...base,id:'cache-accent-fixture',brand:'AccentCacheBrand'};
+  await run('INSERT INTO catalogue(id,data,retrieved) VALUES(?,?,?)','cache-accent-fixture',JSON.stringify(fixture),Date.now());
+  for(const q of ['creme noisettes AccentCacheBrand','AccentCacheBrand']){
    const r=await asUser('ReleaseSearch',()=>catalogue(new Request('https://same.test/api/catalogue?'+new URLSearchParams({q,country:'FR'}))));
    assert.equal(r.status,200);assert((await r.json()).products.some((p:any)=>p.id==='cache-accent-fixture'));
   }
@@ -32,10 +34,28 @@ await test('public demo catalogue reads only shipped products and applies retail
  for(const retailer of ['coop-ch','migros-ch']){
   const r=await demoCatalogue(new Request('https://same.test/api/demo-catalogue?'+new URLSearchParams({q:'haferflocken',country:'CH',retailer,household:'unrelated'})));
   assert.equal(r.status,200);const d=await r.json();assert(d.products.length>0);
-  assert(d.products.every((p:any)=>p.countries.includes('en:switzerland')&&p.stores.some((s:string)=>s.toLowerCase()===retailer.split('-')[0])));
+  assert(d.products.every((p:any)=>p.countries.includes('en:switzerland')&&p.stores.some((s:string)=>s.toLowerCase().includes(retailer.split('-')[0]))));
   assert(!d.products.some((p:any)=>p.id==='cache-accent-fixture'),'Database records are never exposed by demo endpoint');
  }
  assert.equal((await demoCatalogue(new Request('https://same.test/api/demo-catalogue?country=FR&retailer=coop-ch'))).status,400);
+ const browse=await demoCatalogue(new Request('https://same.test/api/demo-catalogue?country=CH&retailer=coop-ch'));
+ assert.equal(browse.status,200);const browsed=await browse.json();assert.equal(browsed.products.length,48);assert(browsed.hasMore);assert(browsed.total>=browsed.scope.communityRecords);assert(browsed.products.every((p:any)=>p.stores.some((s:string)=>s.toLowerCase().includes('coop')))); assert.equal(browsed.scope.communityRecords,swissReport.coverageByRetailer.coop.records);
+ assert.equal(browsed.scope.communityBarcodes,swissReport.coverageByRetailer.coop.withBarcode??swissReport.coverageByRetailer.coop.records);
+ assert.equal(browsed.scope.communityIngredients,swissReport.coverageByRetailer.coop.withIngredients);
+ assert.equal(browsed.products[0].source,'Open Food Facts');assert(browsed.products[0].image,'Empty Coop browse starts with photographed community records');
+ assert(browsed.products.every((p:any)=>p.barcode||p.sourceIdentifier));
+ assert(browsed.products.every((p:any)=>p.image),'Ranked Coop browse leads with photographed records');
+ assert(browsed.products.every((p:any)=>p.ingredients||p.ingredientsImage),'Ranked Coop browse leads with ingredients text or an ingredients photo');
+ assert.match(browsed.scope.notice,/official assortment/);
+ const coopPage2=await (await demoCatalogue(new Request('https://same.test/api/demo-catalogue?country=CH&retailer=coop-ch&page=2'))).json();
+ assert.equal(coopPage2.page,2);assert.equal(coopPage2.products.length,48);assert(!coopPage2.products.some((p:any)=>browsed.products.some((x:any)=>x.id===p.id)));
+ const migrosBrowse=await demoCatalogue(new Request('https://same.test/api/demo-catalogue?country=CH&retailer=migros-ch'));
+ const migros=await migrosBrowse.json();assert.equal(migros.products.length,48);assert(migros.hasMore);assert.equal(migros.scope.communityRecords,swissReport.coverageByRetailer.migros.records);assert.equal(migros.scope.communityIngredients,swissReport.coverageByRetailer.migros.withIngredients);assert.match(migros.scope.notice,/10,000-hit/);
+ assert.equal(migros.products[0].source,'Open Food Facts');assert(migros.products[0].image,'Empty Migros browse starts with photographed community records');
+ assert(migros.products.every((p:any)=>p.barcode||p.sourceIdentifier));
+ assert(migros.products.every((p:any)=>p.image));
+ assert(migros.products.every((p:any)=>p.ingredients||p.ingredientsImage));
+ assert.ok(migros.scope.communityRecords>10000,'Migros snapshot is no longer limited to one public search window');
 });
 await test('public demo barcode keeps leading zeros and separates invalid identifiers',async()=>{
  const r=await demoCatalogue(new Request('https://same.test/api/demo-catalogue?barcode=02425801'));const p=(await r.json()).product;assert.equal(p.barcode,'02425801');assert(p.image);
@@ -51,8 +71,11 @@ await test('item photos are household-authorised and survive repeating without m
 });
 await test('legacy nutrition excludes negative values and missing photos render an accessible fallback',async()=>{
  const p=normalise({code:'1',product_name:'Unknown',nutriments:{fat_100g:-1,proteins_100g:2},nutrition_data_per:'100g'});assert.equal(p.nutrition?.fat,undefined);assert.equal(p.nutrition?.proteins,2);
- const React=await import('react'),{renderToStaticMarkup}=await import('react-dom/server'),{Photo}=await import('../app/ui');
+ const React=await import('react'),{renderToStaticMarkup}=await import('react-dom/server'),{Photo,CatalogueFacts}=await import('../app/ui');
  assert.match(renderToStaticMarkup(React.createElement(Photo,{product:{name:'Unknown'},large:true})),/Photo unavailable for Unknown/);
+ assert.match(renderToStaticMarkup(React.createElement(CatalogueFacts,{product:{barcode:'7610200011435',pack:'500 g',ingredients:'oats, sugar'}})),/Barcode 7610200011435/);
+ assert.match(renderToStaticMarkup(React.createElement(CatalogueFacts,{product:{ingredients:'oats'}})),/oats/);
+ assert.match(renderToStaticMarkup(React.createElement(CatalogueFacts,{product:{ingredientsImage:'https://images.openfoodfacts.org/x.jpg'}})),/Ingredient photo on file/);
 });
 
 await test('receipt photo fingerprint is identical with native crypto and portable fallback',async()=>{

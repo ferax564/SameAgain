@@ -1,71 +1,146 @@
 {
-  "retrieved": "2026-09-05T13:16:50.035Z",
+  "retrieved": "2026-09-14T19:59:15.000Z",
   "source": "Open Food Facts",
   "completeRetailerCatalogue": false,
-  "records": 13249,
+  "harvestMethod": "off-csv-jsonl-ocr-and-product-api",
+  "records": 18333,
   "retailers": [
     {
-      "retailer": "coop",
+      "key": "coop",
+      "tag": "coop",
       "reported": 3661,
       "exact": true,
       "pagesFetched": 4,
       "pagesReported": 4
     },
     {
-      "retailer": "migros",
-      "reported": 10000,
-      "exact": false,
-      "pagesFetched": 10,
-      "pagesReported": 10
+      "key": "migros-code-0",
+      "tag": "migros",
+      "reported": 123,
+      "exact": true,
+      "pagesFetched": 1,
+      "pagesReported": 1
+    },
+    {
+      "key": "migros-code-1",
+      "tag": "migros",
+      "reported": 54,
+      "exact": true,
+      "pagesFetched": 1,
+      "pagesReported": 1
+    },
+    {
+      "key": "migros-code-2",
+      "tag": "migros",
+      "reported": 3302,
+      "exact": true,
+      "pagesFetched": 4,
+      "pagesReported": 4
+    },
+    {
+      "key": "migros-code-3",
+      "tag": "migros",
+      "reported": 92,
+      "exact": true,
+      "pagesFetched": 1,
+      "pagesReported": 1
+    },
+    {
+      "key": "migros-code-4",
+      "tag": "migros",
+      "reported": 120,
+      "exact": true,
+      "pagesFetched": 1,
+      "pagesReported": 1
+    },
+    {
+      "key": "migros-code-5",
+      "tag": "migros",
+      "reported": 73,
+      "exact": true,
+      "pagesFetched": 1,
+      "pagesReported": 1
+    },
+    {
+      "key": "migros-code-6",
+      "tag": "migros",
+      "reported": 17,
+      "exact": true,
+      "pagesFetched": 1,
+      "pagesReported": 1
+    },
+    {
+      "key": "migros-code-7",
+      "tag": "migros",
+      "reported": 8600,
+      "exact": true,
+      "pagesFetched": 9,
+      "pagesReported": 9
+    },
+    {
+      "key": "migros-code-8",
+      "tag": "migros",
+      "reported": 121,
+      "exact": true,
+      "pagesFetched": 1,
+      "pagesReported": 1
+    },
+    {
+      "key": "migros-code-9",
+      "tag": "migros",
+      "reported": 19,
+      "exact": true,
+      "pagesFetched": 1,
+      "pagesReported": 1
     }
   ],
-  "licence": "ODbL 1.0; contents DbCL 1.0; images CC BY-SA 3.0",
-  "notice": "Community records with retailer and Switzerland tags. Up to 10,000 search hits per retailer; no exhaustive assortment or branch stock claim.",
-  "photoRefresh": {
-    "date": "2026-09-10",
-    "repaired": [
-      {
-        "barcode": "3068320014067",
-        "image": "https://images.openfoodfacts.org/images/products/306/832/001/4067/front_en.115.400.jpg",
-        "retrieved": "2026-09-10T18:44:30.163506+00:00",
-        "sourceUrl": "https://world.openfoodfacts.org/api/v3.6/product/3068320014067.json"
-      },
-      {
-        "barcode": "3057640521683",
-        "image": "https://images.openfoodfacts.org/images/products/305/764/052/1683/front_fr.40.400.jpg",
-        "retrieved": "2026-09-10T18:44:39.810207+00:00",
-        "sourceUrl": "https://world.openfoodfacts.org/api/v3.6/product/3057640521683.json"
-      },
-      {
-        "barcode": "4000522006890",
-        "image": "https://images.openfoodfacts.org/images/products/400/052/200/6890/front_de.111.400.jpg",
-        "retrieved": "2026-09-10T18:44:49.467023+00:00",
-        "sourceUrl": "https://world.openfoodfacts.org/api/v3.6/product/4000522006890.json"
-      },
-      {
-        "barcode": "02425801",
-        "image": "https://images.openfoodfacts.org/images/products/000/000/242/5801/front_en.14.400.jpg",
-        "retrieved": "2026-09-10T18:44:59.402372+00:00",
-        "sourceUrl": "https://world.openfoodfacts.org/api/v3.6/product/02425801.json"
-      }
-    ],
-    "withPhoto": 12658
-  },
   "coverageByRetailer": {
     "coop": {
-      "records": 3534,
-      "withPhoto": 3470
+      "records": 4306,
+      "withBarcode": 4306,
+      "withPhoto": 4297,
+      "withIngredients": 3150,
+      "withAdditives": 1318,
+      "withNutrition": 3956,
+      "withNutriscore": 3131,
+      "withIngredientsImage": 2962
     },
     "migros": {
-      "records": 9759,
-      "withPhoto": 9230
+      "records": 14112,
+      "withBarcode": 14112,
+      "withPhoto": 13845,
+      "withIngredients": 7400,
+      "withAdditives": 3654,
+      "withNutrition": 12735,
+      "withNutriscore": 7515,
+      "withIngredientsImage": 5974
     }
   },
-  "detailRefresh": {
-    "date": "2026-09-10",
-    "barcode": "7610200011435",
-    "previousPack": "1000g",
-    "currentPack": "500g",
-    "notice": "Source changed; verify the current package."
+  "licence": "ODbL 1.0; contents DbCL 1.0; images CC BY-SA 3.0",
+  "notice": "Community records with retailer tags. Every available Open Food Facts barcode, photo and ingredient list is in the snapshot, including OCR of published ingredients photos. Remaining gaps have no photo or typed list on Open Food Facts. This is still not an official assortment or branch stock.",
+  "previousSnapshot": {
+    "records": 13249,
+    "coop": 3534,
+    "migros": 9759,
+    "retrieved": "2026-09-05"
+  },
+  "analysisCoverage": {
+    "records": 18333,
+    "withBarcode": 18333,
+    "withPhoto": 18057,
+    "withIngredients": 10466,
+    "withAdditives": 4927,
+    "withNutrition": 16607,
+    "withNutriscore": 10574,
+    "withIngredientsImage": 8858,
+    "ocrFilled": 1022,
+    "ingredientsPhotoUnreadable": 179,
+    "photosUnavailableInOpenFoodFacts": 276,
+    "ingredientsMissingAfterHarvest": 7867,
+    "ocrNutritionTablesRejected": 43,
+    "apiPhotoJobs": 276,
+    "apiPhotoFilled": 0,
+    "apiLeftoverIngredientJobs": 136,
+    "apiLeftoverIngredientFilled": 0
   }
 }

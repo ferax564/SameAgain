@@ -11,4 +11,14 @@ export function Photo({product,large=false}:{product?:any;large?:boolean}){
   {missing?<span className="photo-fallback" aria-label={product?.name?`Photo unavailable for ${product.name}`:'Photo unavailable'}><Package size={large?32:22} strokeWidth={1.4}/>{large&&<span>Photo unavailable</span>}</span>:<img key={url} src={url} alt={product.name||'Product'} loading="lazy" decoding="async" onError={()=>setFailed(url)}/>}
  </div>
 }
+export function CatalogueFacts({product,note}:{product?:any;note?:string}){
+ const code=product?.barcode||product?.sourceIdentifier;
+ const preview=(product?.ingredients||'').replace(/\s+/g,' ').trim();
+ const pack=[product?.pack||'Pack size not recorded',note].filter(Boolean).join(' · ');
+ return <>
+  <p className="muted">{pack}</p>
+  {code?<p className="catalogue-code">Barcode {code}</p>:<p className="catalogue-code missing">Barcode not recorded</p>}
+  {preview?<p className="ingredient-preview">{preview.length>110?preview.slice(0,109)+'…':preview}</p>:product?.ingredientsImage?<p className="ingredient-preview">Ingredient photo on file</p>:<p className="ingredient-preview missing">Ingredients not recorded</p>}
+ </>
+}
 export function Brand(){return <div className="brand"><span className="brand-symbol"><Repeat2 size={28} strokeWidth={2.2}/></span><span>same again<span className="brand-dot">.</span></span></div>}

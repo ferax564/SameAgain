@@ -74,6 +74,8 @@
       "salt": 0.11
     },
     "basis": "100g",
+    "nutriscoreGrade": "e",
+    "novaGroup": 4,
     "source": "Open Food Facts",
     "sourceUrl": "https://world.openfoodfacts.org/product/8000500082379",
     "retrieved": 1789066502032,
@@ -140,6 +142,8 @@
       "salt": 0.107
     },
     "basis": "100g",
+    "nutriscoreGrade": "e",
+    "novaGroup": 4,
     "source": "Open Food Facts",
     "sourceUrl": "https://world.openfoodfacts.org/product/3017620422003",
     "retrieved": 1789066502220,
@@ -318,6 +322,8 @@
       "salt": 0.01
     },
     "basis": "100g",
+    "nutriscoreGrade": "a",
+    "novaGroup": 1,
     "source": "Open Food Facts",
     "sourceUrl": "https://world.openfoodfacts.org/product/8076800195057",
     "retrieved": 1789066502597,
