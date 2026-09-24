@@ -1,0 +1,12 @@
+node_modules
+dist
+.sites-runtime
+.wrangler
+public/ocr
+public/catalogue
+drizzle
+vendor
+package-lock.json
+**/*.json
+*.md
+public/*.webmanifest

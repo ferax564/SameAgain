@@ -1,39 +1,381 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {GET as getPhoto,POST as uploadPhoto} from '../app/api/photo/route';
-import {GET,POST} from '../app/api/data/route';
-import {GET as foods} from '../app/api/foods/route';
-import {asUser} from './server-shim';
-import {recipeNutrition,recipeShopping,planShopping,nutrientText,sumNutrition} from '../lib/nutrition';
-import {offerSchema,safePhoto} from '../lib/meal-schema';
-import {reviewIngredients} from '../lib/ingredient-evidence';
-import {recordedAt,offerState} from '../lib/retailers';
+import { GET as getPhoto, POST as uploadPhoto } from '../app/api/photo/route';
+import { GET, POST } from '../app/api/data/route';
+import { GET as foods } from '../app/api/foods/route';
+import { asUser } from './server-shim';
+import {
+  recipeNutrition,
+  recipeShopping,
+  planShopping,
+  nutrientText,
+  sumNutrition,
+} from '../lib/nutrition';
+import { offerSchema, safePhoto } from '../lib/meal-schema';
+import { reviewIngredients } from '../lib/ingredient-evidence';
+import { recordedAt, offerState } from '../lib/retailers';
 import sample from '../lib/demo-recipes.json';
 import swiss from '../lib/swiss-foods.json';
-import {type Recipe} from '../lib/nutrition';
-const call=async(user:string,body?:any,h?:string)=>asUser(user,async()=>{const r=body?await POST(new Request('https://same.test/api/data',{method:'POST',headers:{'content-type':'application/json',origin:'https://same.test'},body:JSON.stringify(body)})):await GET(new Request('https://same.test/api/data'+(h?'?household='+h:'')));return{status:r.status,...await r.json()}});
-let h='',other='',recipe:any,meal:any;
-const recipeData=sample[0] as Recipe;
-const op=(kind:string,data:any,old?:any)=>({action:'op',household:h,op:{id:crypto.randomUUID(),record:old?.id||crypto.randomUUID(),kind,version:old?.version||0,data}});
-await test('recipes persist and a second household member can edit; unrelated account is denied',async()=>{h=(await call('Cook',{action:'createHousehold',name:'Meal family',country:'CH',currency:'CHF'})).household;const inv=await call('Cook',{action:'invite',household:h});await call('Diner',{action:'join',token:inv.token});other=(await call('Stranger',{action:'createHousehold',name:'Other family'})).household;const r=await call('Cook',op('recipe',recipeData));assert.equal(r.status,200);recipe=r.record;assert.equal((await call('Stranger',op('recipe',recipeData,recipe))).status,403);const edit=await call('Diner',op('recipe',{...recipeData,name:'Our oats'},recipe));assert.equal(edit.status,200);recipe=edit.record;assert.equal((await call('Cook',undefined,h)).records.find((r:any)=>r.id===recipe.id).data.name,'Our oats')});
-await test('meal snapshots are server-derived and remain unchanged after recipe edits',async()=>{const p={recipe:recipe.id,date:'2026-09-05',meal:'Breakfast',member:'Diner',servings:1,recipeSnapshot:{...recipeData,name:'Spoofed'}};const r=await call('Diner',op('meal',p));assert.equal(r.status,200);meal=r.record;assert.equal(meal.data.recipeSnapshot.name,'Our oats');recipe=(await call('Cook',op('recipe',{...recipe.data,name:'New version'},recipe))).record;const eaten=await call('Diner',op('meal',{...meal.data,eaten:true,recipeSnapshot:recipe.data},meal));assert.equal(eaten.record.data.recipeSnapshot.name,'Our oats');meal=eaten.record});
-await test('meal cannot reference another household recipe or unrelated member',async()=>{const foreign=await call('Stranger',{...op('recipe',recipeData),household:other});assert.equal((await call('Cook',op('meal',{...meal.data,recipe:foreign.record.id}))).status,400);assert.equal((await call('Cook',op('meal',{...meal.data,member:'Stranger'}))).status,403)});
-await test('concurrent meal edit conflicts and idempotent retries cannot duplicate portions',async()=>{const p=op('meal',{...meal.data,servings:2},meal);const saved=await call('Cook',p);assert.equal(saved.status,200);assert.equal((await call('Cook',p)).record.id,saved.record.id);assert.equal((await call('Diner',op('meal',{...meal.data,servings:3},meal))).status,409);assert.equal((await call('Cook',undefined,h)).records.filter((r:any)=>r.kind==='meal').length,1)});
-await test('nutrition preserves g/mg/µg, portions, missing values, and incompatible bases',()=>{const p={id:'fixture',name:'Food',categories:[],countries:[],source:'fixture',retrieved:0,basis:'100g' as const,nutrition:{proteins:10,calcium:50,'vitamin-b12':2}};const r:Recipe={name:'Test',servings:2,steps:['Mix'],ingredients:[{id:'a',name:'Food',amount:200,unit:'g',product:p},{id:'b',name:'Unknown',amount:10,unit:'g'}]};const n=recipeNutrition(r);assert.deepEqual(n.proteins,{value:10,known:1,total:2});assert.equal(n.calcium.value,50);assert.equal(n['vitamin-b12'].value,2);assert.equal(nutrientText(n.calcium,'calcium'),'≥ 50 mg');assert.equal(nutrientText(n['vitamin-b12'],'vitamin-b12'),'≥ 2 µg');assert.equal(nutrientText(n.iron,'iron'),'Unknown');r.ingredients[0].unit='ml';assert.equal(recipeNutrition(r).proteins.known,0);assert.equal(sumNutrition([n,n]).proteins.value,20)});
-await test('FSVO ingest keeps exact basis and numeric-only data; recipe shopping preserves mass versus packs',()=>{assert.equal(swiss.length,1215);assert(swiss.every(p=>p.basis==='100g'&&Object.values(p.nutrition).every(v=>typeof v==='number'&&v>=0)));const r=structuredClone(recipeData);const items=recipeShopping(r,4);assert.equal(items[0].quantity,200);assert.equal(items[0].unit,'g');assert(!('product' in items[0]));r.ingredients[0].product={...r.ingredients[0].product!,id:'off:123',pack:'750 g'};const exact=recipeShopping(r,4)[0];assert.equal(exact.quantity,1);assert.equal(exact.unit,'pack');assert.match(exact.notes,/200 g needed/);r.ingredients[0].product.pack='750 ml';assert.equal(recipeShopping(r,4)[0].unit,'g')});
-await test('generic food search is authenticated and returns preparation-state evidence',async()=>{assert.equal((await asUser('',()=>foods(new Request('https://same.test/api/foods?q=chickpea')))).status,401);const r=await asUser('Cook',()=>foods(new Request('https://same.test/api/foods?q=chickpea%20cooked')));const d=await r.json();assert(d.products[0].name.includes('cooked'));const detail=await asUser('Cook',()=>foods(new Request('https://same.test/api/foods?id='+d.products[0].id)));assert((await detail.json()).provenance.nutrients.proteins.derivation)});
-await test('household photos and unsafe source URLs are checked on new recipe inputs',async()=>{assert(safePhoto('/api/photo?key='+encodeURIComponent(h+'/photo'),h));assert(!safePhoto('/api/photo?key='+encodeURIComponent(other+'/photo'),h));assert.equal((await call('Cook',op('recipe',{...recipeData,image:'/api/photo?key='+encodeURIComponent(other+'/photo')}))).status,400);assert.equal((await call('Cook',op('recipe',{...recipeData,ingredients:[{...recipeData.ingredients[0],product:{...recipeData.ingredients[0].product,sourceUrl:'javascript:alert(1)'}}]}))).status,400)});
-const offer={name:'Oats',retailer:'coop-ch',country:'CH',store:'Coop example branch',price:2,currency:'CHF',pack:'500 g',start:'2026-09-05',end:'2026-09-08',sourceUrl:'https://www.coop.ch/en/',conditions:'Example test fixture only'};
-await test('offers require valid dates, attribution, retailer country and never imply current stock',async()=>{assert.equal(offerSchema.safeParse({...offer,end:'2026-02-31'}).success,false);assert.equal(offerSchema.safeParse({...offer,end:'2026-09-01'}).success,false);assert.equal(offerState(offer,'2026-09-09'),'Expired');assert.equal(offerState(offer,'2026-09-06'),'Within reported dates');const r=await call('Diner',op('offer',{...offer,reportedBy:'Spoofed',inventory:'In stock'}));assert.equal(r.status,200);assert.equal(r.record.data.reportedBy,'Diner');assert(!r.record.data.inventory);assert.equal((await call('Cook',op('offer',{...offer,country:'FR'}))).status,400);assert(recordedAt(['coop'],'coop-ch'));assert(!recordedAt(['migros'],'coop-ch'))});
-await test('private label micronutrients validate and personal targets are not shared with members',async()=>{const p={name:'My product',id:'local',barcode:'0036000291452',nutrition:{calcium:120,'vitamin-b12':0.5},basis:'100ml',ingredients:'Milk',categories:[],countries:[]};const r=await call('Cook',op('product',p));assert.equal(r.status,200);assert.equal(r.record.data.nutrition.calcium,120);assert.equal(r.record.data.barcode,'0036000291452');assert.equal((await call('Cook',{action:'profile',name:'Cook',preferences:{nutritionTargets:{proteins:80,calcium:900}}})).status,200);const shared=await call('Diner',undefined,h);assert(!JSON.stringify(shared.members).includes('nutritionTargets'));assert.equal((await call('Cook')).user.preferences.nutritionTargets.calcium,900)});
-await test('ingredient context identifies known sweeteners but never assumes dose or safety from missing data',()=>{const base={id:'a',name:'Drink',countries:[],categories:[],source:'fixture',retrieved:0};const r=reviewIngredients({...base,ingredients:'water, sweetener E 951'},[{kind:'allergy',value:'milk'}]);assert.equal(r.matches[0].id,'e951');assert(r.unknownExposure);assert(r.matches[0].summary.includes('phenylketonuria'));assert(reviewIngredients(base,[]).missing);assert.equal(reviewIngredients({...base,ingredients:'water'},[]).matches.length,0)});
+import { type Recipe } from '../lib/nutrition';
+const call = async (user: string, body?: any, h?: string) =>
+  asUser(user, async () => {
+    const r = body
+      ? await POST(
+          new Request('https://same.test/api/data', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json', origin: 'https://same.test' },
+            body: JSON.stringify(body),
+          }),
+        )
+      : await GET(new Request('https://same.test/api/data' + (h ? '?household=' + h : '')));
+    return { status: r.status, ...(await r.json()) };
+  });
+let h = '',
+  other = '',
+  recipe: any,
+  meal: any;
+const recipeData = sample[0] as Recipe;
+const op = (kind: string, data: any, old?: any) => ({
+  action: 'op',
+  household: h,
+  op: {
+    id: crypto.randomUUID(),
+    record: old?.id || crypto.randomUUID(),
+    kind,
+    version: old?.version || 0,
+    data,
+  },
+});
+await test('recipes persist and a second household member can edit; unrelated account is denied', async () => {
+  h = (
+    await call('Cook', {
+      action: 'createHousehold',
+      name: 'Meal family',
+      country: 'CH',
+      currency: 'CHF',
+    })
+  ).household;
+  const inv = await call('Cook', { action: 'invite', household: h });
+  await call('Diner', { action: 'join', token: inv.token });
+  other = (await call('Stranger', { action: 'createHousehold', name: 'Other family' })).household;
+  const r = await call('Cook', op('recipe', recipeData));
+  assert.equal(r.status, 200);
+  recipe = r.record;
+  assert.equal((await call('Stranger', op('recipe', recipeData, recipe))).status, 403);
+  const edit = await call('Diner', op('recipe', { ...recipeData, name: 'Our oats' }, recipe));
+  assert.equal(edit.status, 200);
+  recipe = edit.record;
+  assert.equal(
+    (await call('Cook', undefined, h)).records.find((r: any) => r.id === recipe.id).data.name,
+    'Our oats',
+  );
+});
+await test('meal snapshots are server-derived and remain unchanged after recipe edits', async () => {
+  const p = {
+    recipe: recipe.id,
+    date: '2026-09-05',
+    meal: 'Breakfast',
+    member: 'Diner',
+    servings: 1,
+    recipeSnapshot: { ...recipeData, name: 'Spoofed' },
+  };
+  const r = await call('Diner', op('meal', p));
+  assert.equal(r.status, 200);
+  meal = r.record;
+  assert.equal(meal.data.recipeSnapshot.name, 'Our oats');
+  recipe = (await call('Cook', op('recipe', { ...recipe.data, name: 'New version' }, recipe)))
+    .record;
+  const eaten = await call(
+    'Diner',
+    op('meal', { ...meal.data, eaten: true, recipeSnapshot: recipe.data }, meal),
+  );
+  assert.equal(eaten.record.data.recipeSnapshot.name, 'Our oats');
+  meal = eaten.record;
+});
+await test('meal cannot reference another household recipe or unrelated member', async () => {
+  const foreign = await call('Stranger', { ...op('recipe', recipeData), household: other });
+  assert.equal(
+    (await call('Cook', op('meal', { ...meal.data, recipe: foreign.record.id }))).status,
+    400,
+  );
+  assert.equal((await call('Cook', op('meal', { ...meal.data, member: 'Stranger' }))).status, 403);
+});
+await test('concurrent meal edit conflicts and idempotent retries cannot duplicate portions', async () => {
+  const p = op('meal', { ...meal.data, servings: 2 }, meal);
+  const saved = await call('Cook', p);
+  assert.equal(saved.status, 200);
+  assert.equal((await call('Cook', p)).record.id, saved.record.id);
+  assert.equal((await call('Diner', op('meal', { ...meal.data, servings: 3 }, meal))).status, 409);
+  assert.equal(
+    (await call('Cook', undefined, h)).records.filter((r: any) => r.kind === 'meal').length,
+    1,
+  );
+});
+await test('nutrition preserves g/mg/µg, portions, missing values, and incompatible bases', () => {
+  const p = {
+    id: 'fixture',
+    name: 'Food',
+    categories: [],
+    countries: [],
+    source: 'fixture',
+    retrieved: 0,
+    basis: '100g' as const,
+    nutrition: { proteins: 10, calcium: 50, 'vitamin-b12': 2 },
+  };
+  const r: Recipe = {
+    name: 'Test',
+    servings: 2,
+    steps: ['Mix'],
+    ingredients: [
+      { id: 'a', name: 'Food', amount: 200, unit: 'g', product: p },
+      { id: 'b', name: 'Unknown', amount: 10, unit: 'g' },
+    ],
+  };
+  const n = recipeNutrition(r);
+  assert.deepEqual(n.proteins, { value: 10, known: 1, total: 2 });
+  assert.equal(n.calcium.value, 50);
+  assert.equal(n['vitamin-b12'].value, 2);
+  assert.equal(nutrientText(n.calcium, 'calcium'), '≥ 50 mg');
+  assert.equal(nutrientText(n['vitamin-b12'], 'vitamin-b12'), '≥ 2 µg');
+  assert.equal(nutrientText(n.iron, 'iron'), 'Unknown');
+  r.ingredients[0].unit = 'ml';
+  assert.equal(recipeNutrition(r).proteins.known, 0);
+  assert.equal(sumNutrition([n, n]).proteins.value, 20);
+});
+await test('FSVO ingest keeps exact basis and numeric-only data; recipe shopping preserves mass versus packs', () => {
+  assert.equal(swiss.length, 1215);
+  assert(
+    swiss.every(
+      (p) =>
+        p.basis === '100g' &&
+        Object.values(p.nutrition).every((v) => typeof v === 'number' && v >= 0),
+    ),
+  );
+  const r = structuredClone(recipeData);
+  const items = recipeShopping(r, 4);
+  assert.equal(items[0].quantity, 200);
+  assert.equal(items[0].unit, 'g');
+  assert(!('product' in items[0]));
+  r.ingredients[0].product = { ...r.ingredients[0].product!, id: 'off:123', pack: '750 g' };
+  const exact = recipeShopping(r, 4)[0];
+  assert.equal(exact.quantity, 1);
+  assert.equal(exact.unit, 'pack');
+  assert.match(exact.notes, /200 g needed/);
+  r.ingredients[0].product.pack = '750 ml';
+  assert.equal(recipeShopping(r, 4)[0].unit, 'g');
+});
+await test('generic food search is authenticated and returns preparation-state evidence', async () => {
+  assert.equal(
+    (await asUser('', () => foods(new Request('https://same.test/api/foods?q=chickpea')))).status,
+    401,
+  );
+  const r = await asUser('Cook', () =>
+    foods(new Request('https://same.test/api/foods?q=chickpea%20cooked')),
+  );
+  const d = await r.json();
+  assert(d.products[0].name.includes('cooked'));
+  const detail = await asUser('Cook', () =>
+    foods(new Request('https://same.test/api/foods?id=' + d.products[0].id)),
+  );
+  assert((await detail.json()).provenance.nutrients.proteins.derivation);
+});
+await test('household photos and unsafe source URLs are checked on new recipe inputs', async () => {
+  assert(safePhoto('/api/photo?key=' + encodeURIComponent(h + '/photo'), h));
+  assert(!safePhoto('/api/photo?key=' + encodeURIComponent(other + '/photo'), h));
+  assert.equal(
+    (
+      await call(
+        'Cook',
+        op('recipe', {
+          ...recipeData,
+          image: '/api/photo?key=' + encodeURIComponent(other + '/photo'),
+        }),
+      )
+    ).status,
+    400,
+  );
+  assert.equal(
+    (
+      await call(
+        'Cook',
+        op('recipe', {
+          ...recipeData,
+          ingredients: [
+            {
+              ...recipeData.ingredients[0],
+              product: { ...recipeData.ingredients[0].product, sourceUrl: 'javascript:alert(1)' },
+            },
+          ],
+        }),
+      )
+    ).status,
+    400,
+  );
+});
+const offer = {
+  name: 'Oats',
+  retailer: 'coop-ch',
+  country: 'CH',
+  store: 'Coop example branch',
+  price: 2,
+  currency: 'CHF',
+  pack: '500 g',
+  start: '2026-09-05',
+  end: '2026-09-08',
+  sourceUrl: 'https://www.coop.ch/en/',
+  conditions: 'Example test fixture only',
+};
+await test('offers require valid dates, attribution, retailer country and never imply current stock', async () => {
+  assert.equal(offerSchema.safeParse({ ...offer, end: '2026-02-31' }).success, false);
+  assert.equal(offerSchema.safeParse({ ...offer, end: '2026-09-01' }).success, false);
+  assert.equal(offerState(offer, '2026-09-09'), 'Expired');
+  assert.equal(offerState(offer, '2026-09-06'), 'Within reported dates');
+  const r = await call(
+    'Diner',
+    op('offer', { ...offer, reportedBy: 'Spoofed', inventory: 'In stock' }),
+  );
+  assert.equal(r.status, 200);
+  assert.equal(r.record.data.reportedBy, 'Diner');
+  assert(!r.record.data.inventory);
+  assert.equal((await call('Cook', op('offer', { ...offer, country: 'FR' }))).status, 400);
+  assert(recordedAt(['coop'], 'coop-ch'));
+  assert(!recordedAt(['migros'], 'coop-ch'));
+});
+await test('private label micronutrients validate and personal targets are not shared with members', async () => {
+  const p = {
+    name: 'My product',
+    id: 'local',
+    barcode: '0036000291452',
+    nutrition: { calcium: 120, 'vitamin-b12': 0.5 },
+    basis: '100ml',
+    ingredients: 'Milk',
+    categories: [],
+    countries: [],
+  };
+  const r = await call('Cook', op('product', p));
+  assert.equal(r.status, 200);
+  assert.equal(r.record.data.nutrition.calcium, 120);
+  assert.equal(r.record.data.barcode, '0036000291452');
+  assert.equal(
+    (
+      await call('Cook', {
+        action: 'profile',
+        name: 'Cook',
+        preferences: { nutritionTargets: { proteins: 80, calcium: 900 } },
+      })
+    ).status,
+    200,
+  );
+  const shared = await call('Diner', undefined, h);
+  assert(!JSON.stringify(shared.members).includes('nutritionTargets'));
+  assert.equal((await call('Cook')).user.preferences.nutritionTargets.calcium, 900);
+});
+await test('ingredient context identifies known sweeteners but never assumes dose or safety from missing data', () => {
+  const base = {
+    id: 'a',
+    name: 'Drink',
+    countries: [],
+    categories: [],
+    source: 'fixture',
+    retrieved: 0,
+  };
+  const r = reviewIngredients({ ...base, ingredients: 'water, sweetener E 951' }, [
+    { kind: 'allergy', value: 'milk' },
+  ]);
+  assert.equal(r.matches[0].id, 'e951');
+  assert(r.unknownExposure);
+  assert(r.matches[0].summary.includes('phenylketonuria'));
+  assert(reviewIngredients(base, []).missing);
+  assert.equal(reviewIngredients({ ...base, ingredients: 'water' }, []).matches.length, 0);
+});
 
-await test('private photo upload persists bytes and denies unrelated viewing or uploads',async()=>{const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jf1sAAAAASUVORK5CYII=','base64');const request=()=>{const f=new FormData();f.set('household',h);f.set('file',new Blob([png],{type:'image/png'}),'test.png');return new Request('https://same.test/api/photo',{method:'POST',headers:{origin:'https://same.test'},body:f})};const r=await asUser('Cook',()=>uploadPhoto(request()));assert.equal(r.status,200);const d=await r.json();const viewed=await asUser('Diner',()=>getPhoto(new Request('https://same.test'+d.url)));assert.equal(viewed.status,200);assert.equal(viewed.headers.get('cache-control'),'private,no-store');assert.equal((await viewed.arrayBuffer()).byteLength,png.length);assert.equal((await asUser('Stranger',()=>getPhoto(new Request('https://same.test'+d.url)))).status,403);assert.equal((await asUser('Stranger',()=>uploadPhoto(request()))).status,403)});
-await test('photo endpoint rejects disguised HTML and oversized upload before storing',async()=>{const f=new FormData();f.set('household',h);f.set('file',new Blob(['<html><script>alert(1)</script></html>'],{type:'image/jpeg'}),'fake.jpg');assert.equal((await asUser('Cook',()=>uploadPhoto(new Request('https://same.test/api/photo',{method:'POST',body:f})))).status,400);assert.equal((await asUser('Cook',()=>uploadPhoto(new Request('https://same.test/api/photo',{method:'POST',headers:{'content-length':'4000000'},body:'x'})))).status,413)});
+await test('private photo upload persists bytes and denies unrelated viewing or uploads', async () => {
+  const png = Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jf1sAAAAASUVORK5CYII=',
+    'base64',
+  );
+  const request = () => {
+    const f = new FormData();
+    f.set('household', h);
+    f.set('file', new Blob([png], { type: 'image/png' }), 'test.png');
+    return new Request('https://same.test/api/photo', {
+      method: 'POST',
+      headers: { origin: 'https://same.test' },
+      body: f,
+    });
+  };
+  const r = await asUser('Cook', () => uploadPhoto(request()));
+  assert.equal(r.status, 200);
+  const d = await r.json();
+  const viewed = await asUser('Diner', () => getPhoto(new Request('https://same.test' + d.url)));
+  assert.equal(viewed.status, 200);
+  assert.equal(viewed.headers.get('cache-control'), 'private,no-store');
+  assert.equal((await viewed.arrayBuffer()).byteLength, png.length);
+  assert.equal(
+    (await asUser('Stranger', () => getPhoto(new Request('https://same.test' + d.url)))).status,
+    403,
+  );
+  assert.equal((await asUser('Stranger', () => uploadPhoto(request()))).status, 403);
+});
+await test('photo endpoint rejects disguised HTML and oversized upload before storing', async () => {
+  const f = new FormData();
+  f.set('household', h);
+  f.set(
+    'file',
+    new Blob(['<html><script>alert(1)</script></html>'], { type: 'image/jpeg' }),
+    'fake.jpg',
+  );
+  assert.equal(
+    (
+      await asUser('Cook', () =>
+        uploadPhoto(new Request('https://same.test/api/photo', { method: 'POST', body: f })),
+      )
+    ).status,
+    400,
+  );
+  assert.equal(
+    (
+      await asUser('Cook', () =>
+        uploadPhoto(
+          new Request('https://same.test/api/photo', {
+            method: 'POST',
+            headers: { 'content-length': '4000000' },
+            body: 'x',
+          }),
+        ),
+      )
+    ).status,
+    413,
+  );
+});
 
-await test('meal plan combines weighed requests before rounding packs and keeps variants separate',()=>{
- const r=structuredClone(recipeData);r.servings=1;r.ingredients=[{id:'one',name:'Oats',amount:100,unit:'g',product:{...r.ingredients[0].product!,id:'off:123',pack:'750 g'}}];
- const items=planShopping([{recipe:r,servings:2},{recipe:r,servings:2}]);assert.equal(items.length,1);assert.equal(items[0].quantity,1);assert.match(items[0].notes,/400 g needed/);
- const other=structuredClone(r);other.ingredients[0].product!.pack='500 g';assert.equal(planShopping([{recipe:r,servings:1},{recipe:other,servings:1}]).length,2);
- assert.equal(nutrientText({known:1,total:1,value:0.025},'vitamin-b1'),'0.025 mg');
+await test('meal plan combines weighed requests before rounding packs and keeps variants separate', () => {
+  const r = structuredClone(recipeData);
+  r.servings = 1;
+  r.ingredients = [
+    {
+      id: 'one',
+      name: 'Oats',
+      amount: 100,
+      unit: 'g',
+      product: { ...r.ingredients[0].product!, id: 'off:123', pack: '750 g' },
+    },
+  ];
+  const items = planShopping([
+    { recipe: r, servings: 2 },
+    { recipe: r, servings: 2 },
+  ]);
+  assert.equal(items.length, 1);
+  assert.equal(items[0].quantity, 1);
+  assert.match(items[0].notes, /400 g needed/);
+  const other = structuredClone(r);
+  other.ingredients[0].product!.pack = '500 g';
+  assert.equal(
+    planShopping([
+      { recipe: r, servings: 1 },
+      { recipe: other, servings: 1 },
+    ]).length,
+    2,
+  );
+  assert.equal(nutrientText({ known: 1, total: 1, value: 0.025 }, 'vitamin-b1'), '0.025 mg');
 });

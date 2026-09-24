@@ -1,26 +1,203 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {GET as catalogue} from '../app/api/catalogue/route';
-import {POST as data,GET as householdData} from '../app/api/data/route';
-import {rankSearch,searchMatches} from '../lib/catalogue-search';
-import {normalise,off} from '../lib/catalogue';
-import {persistSwiss,swissBarcode} from '../lib/swiss-catalogue';
-import {asUser,one,run} from './server-shim';
-const code='8000500082379';
+import { GET as catalogue } from '../app/api/catalogue/route';
+import { POST as data, GET as householdData } from '../app/api/data/route';
+import { rankSearch, searchMatches } from '../lib/catalogue-search';
+import { normalise, off } from '../lib/catalogue';
+import { persistSwiss, swissBarcode } from '../lib/swiss-catalogue';
+import { asUser, one, run } from './server-shim';
+const code = '8000500082379';
 // Deterministic regression based on the reported Nutella record. Never stock data.
-const full={code,product_name:'Nutella',brands:'Nutella, Ferrero',quantity:'1000g',ingredients_text:'Sugar, palm oil, hazelnuts (13%), skimmed milk powder, cocoa, soya lecithins, vanillin.',allergens_tags:['en:milk','en:nuts','en:soybeans'],countries_tags:['en:switzerland','en:france'],categories_tags:['en:hazelnut-spreads'],stores:['Coop'],nutrition:{aggregated_set:{preparation:'as_sold',per:'100g',nutrients:{'energy-kcal':{value:539,unit:'kcal',source:'packaging'},fat:{value:30.9,unit:'g',source:'packaging'},proteins:{value:6.3,unit:'g',source:'packaging'},calcium:{value:0.13,unit:'g',source:'estimate'}}}}};
-const other={code:'8000500357729',product_name:'Nutella',brands:['Ferrero'],quantity:'900g',countries_tags:['en:france'],categories_tags:['en:hazelnut-spreads'],stores:['Carrefour']};
-const originalFetch=globalThis.fetch;let productReads=0,searches=0;
-globalThis.fetch=async(url:any)=>{if(new URL(url).pathname.includes('/product/')){productReads++;return Response.json({product:full})}searches++;return Response.json({hits:[other],timed_out:false})};
-const get=(params:Record<string,string>,user='SearchTester')=>asUser(user,()=>catalogue(new Request('https://same.test/api/catalogue?'+new URLSearchParams(params))));
-await test('a local Nutella match does not suppress live/global variants',async()=>{const r=await get({q:'nutella'});assert.equal(r.status,200);const d=await r.json();assert(d.products.some((p:any)=>p.barcode===code));assert(d.products.some((p:any)=>p.barcode===other.code));assert.equal(searches,1);assert.equal(d.products.filter((p:any)=>p.barcode===code).length,1)});
-await test('opening a partial fresh search record hydrates ingredients, basis and nutrition',async()=>{const snapshot={...normalise({...full,quantity:'900 g',ingredients_text:undefined,nutrition:undefined}),retrieved:Date.now()};await run('UPDATE catalogue SET data=?,retrieved=? WHERE id=?',JSON.stringify(snapshot),snapshot.retrieved,snapshot.id);const r=await get({barcode:code,details:'1'});assert.equal(r.status,200);const {product}=await r.json();assert.equal(product.pack,'1000g');assert(product.ingredients.includes('hazelnuts'));assert.equal(product.basis,'100g');assert.equal(product.nutrition['energy-kcal'],539);assert.equal(product.nutrition.calcium,undefined,'estimated nutrients are not declared values');assert(product.detailsRetrieved);assert.equal(productReads,1);const db=JSON.parse((await one('SELECT data FROM catalogue WHERE id=?',product.id)).data);assert.equal(db.nutrition.fat,30.9)});
-await test('repeated detail opens use the versioned full-product cache',async()=>{await get({barcode:code,details:'1'});assert.equal(productReads,1)});
-await test('partial search and import cannot overwrite full product details',async()=>{const p=(await swissBarcode(code))!;await persistSwiss([{...p,retrieved:Date.now()+1000}]);globalThis.fetch=async()=>Response.json({hits:[{...full,ingredients_text:undefined,nutrition:undefined,quantity:'900 g'}],timed_out:false});await off.search('Nutella protection');const saved=JSON.parse((await one('SELECT data FROM catalogue WHERE id=?','off:'+code)).data);assert.equal(saved.pack,'1000g');assert.equal(saved.basis,'100g');assert(saved.ingredients)});
-await test('exact names outrank incidental mentions; accents and word order are supported',()=>{const p=normalise(full);const a={...p,id:'a',name:'Nutella biscuits'},b={...p,id:'b',name:'Crème de noisettes',brand:'Ferrero'},c={...p,id:'c',name:'Nutella'};assert.equal(rankSearch([a,c,b],'nutella')[0].id,'c');assert(searchMatches(b,'noisettes creme'));assert(searchMatches(b,'creme Ferrero'));assert(!searchMatches(b,'creme milk'))});
-await test('country, category, dietary and retailer requirements survive deduplication',()=>{const p=normalise(full),otherCountry={...p,id:'other',countries:['en:united-states']};assert.deepEqual(rankSearch([p,otherCountry],'nutella',{country:'US'}).map(p=>p.id),['other']);assert.equal(rankSearch([p],'nutella',{label:'vegan'}).length,0);assert.equal(rankSearch([p],'nutella',{retailer:'migros-ch'}).length,0);assert.equal(rankSearch([p],'nutella',{category:'en:milk'}).length,0)});
-await test('outage returns saved full details without pretending search is complete',async()=>{globalThis.fetch=async()=>new Response('outage',{status:503});const r=await get({q:'Nutella offline'});assert.equal(r.status,200);const d=await r.json();assert.match(d.notice,/limited to saved/);assert.equal(d.products.length,0);const details=await get({barcode:code,details:'1'});assert.equal((await details.json()).product.nutrition['energy-kcal'],539)});
-await test('hydrated product can be added to a persistent household list and read back',async()=>{const post=(body:any)=>asUser('SearchTester',()=>data(new Request('https://same.test/api/data',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})));const created=await post({action:'createHousehold',name:'Product verification'});const h=(await created.json()).household;const lists=await asUser('SearchTester',()=>householdData(new Request('https://same.test/api/data?household='+h)));const list=(await lists.json()).records.find((r:any)=>r.kind==='list');const p=JSON.parse((await one('SELECT data FROM catalogue WHERE id=?','off:'+code)).data);const added=await post({action:'op',household:h,op:{id:'search-add-operation',record:'search-added-item',kind:'item',version:0,data:{list:list.id,name:p.name,product:p,quantity:1,unit:'pack',pack:p.pack}}});assert.equal(added.status,200);const stored=JSON.parse((await one('SELECT data FROM records WHERE id=?','search-added-item')).data);assert.equal(stored.product.barcode,code);assert.equal(stored.pack,'1000g');assert.equal(stored.product.nutrition.fat,30.9)});
-await test('detail lookup with another household identifier is denied',async()=>{const r=await get({barcode:code,details:'1',household:'unrelated'},'Unrelated');assert.equal(r.status,403)});
-globalThis.fetch=originalFetch;
-await test('product nutrition renders label values without meal ingredient counters',async()=>{const React=await import('react');const {renderToStaticMarkup}=await import('react-dom/server');const {ProductNutrition}=await import('../app/nutrition-panel');const html=renderToStaticMarkup(React.createElement(ProductNutrition,{product:normalise(full)}));assert.match(html,/539 kcal/);assert.match(html,/30[.,]9 g/);assert.match(html,/100 g/);assert(!html.includes('ingredients recorded'));const missing=renderToStaticMarkup(React.createElement(ProductNutrition,{product:normalise({code:'1',product_name:'Unknown'})}));assert.match(missing,/Nutrition information incomplete/);assert(!missing.includes('per unknown basis'))});
+const full = {
+  code,
+  product_name: 'Nutella',
+  brands: 'Nutella, Ferrero',
+  quantity: '1000g',
+  ingredients_text:
+    'Sugar, palm oil, hazelnuts (13%), skimmed milk powder, cocoa, soya lecithins, vanillin.',
+  allergens_tags: ['en:milk', 'en:nuts', 'en:soybeans'],
+  countries_tags: ['en:switzerland', 'en:france'],
+  categories_tags: ['en:hazelnut-spreads'],
+  stores: ['Coop'],
+  nutrition: {
+    aggregated_set: {
+      preparation: 'as_sold',
+      per: '100g',
+      nutrients: {
+        'energy-kcal': { value: 539, unit: 'kcal', source: 'packaging' },
+        fat: { value: 30.9, unit: 'g', source: 'packaging' },
+        proteins: { value: 6.3, unit: 'g', source: 'packaging' },
+        calcium: { value: 0.13, unit: 'g', source: 'estimate' },
+      },
+    },
+  },
+};
+const other = {
+  code: '8000500357729',
+  product_name: 'Nutella',
+  brands: ['Ferrero'],
+  quantity: '900g',
+  countries_tags: ['en:france'],
+  categories_tags: ['en:hazelnut-spreads'],
+  stores: ['Carrefour'],
+};
+const originalFetch = globalThis.fetch;
+let productReads = 0,
+  searches = 0;
+globalThis.fetch = async (url: any) => {
+  if (new URL(url).pathname.includes('/product/')) {
+    productReads++;
+    return Response.json({ product: full });
+  }
+  searches++;
+  return Response.json({ hits: [other], timed_out: false });
+};
+const get = (params: Record<string, string>, user = 'SearchTester') =>
+  asUser(user, () =>
+    catalogue(new Request('https://same.test/api/catalogue?' + new URLSearchParams(params))),
+  );
+await test('a local Nutella match does not suppress live/global variants', async () => {
+  const r = await get({ q: 'nutella' });
+  assert.equal(r.status, 200);
+  const d = await r.json();
+  assert(d.products.some((p: any) => p.barcode === code));
+  assert(d.products.some((p: any) => p.barcode === other.code));
+  assert.equal(searches, 1);
+  assert.equal(d.products.filter((p: any) => p.barcode === code).length, 1);
+});
+await test('opening a partial fresh search record hydrates ingredients, basis and nutrition', async () => {
+  const snapshot = {
+    ...normalise({ ...full, quantity: '900 g', ingredients_text: undefined, nutrition: undefined }),
+    retrieved: Date.now(),
+  };
+  await run(
+    'UPDATE catalogue SET data=?,retrieved=? WHERE id=?',
+    JSON.stringify(snapshot),
+    snapshot.retrieved,
+    snapshot.id,
+  );
+  const r = await get({ barcode: code, details: '1' });
+  assert.equal(r.status, 200);
+  const { product } = await r.json();
+  assert.equal(product.pack, '1000g');
+  assert(product.ingredients.includes('hazelnuts'));
+  assert.equal(product.basis, '100g');
+  assert.equal(product.nutrition['energy-kcal'], 539);
+  assert.equal(product.nutrition.calcium, undefined, 'estimated nutrients are not declared values');
+  assert(product.detailsRetrieved);
+  assert.equal(productReads, 1);
+  const db = JSON.parse((await one('SELECT data FROM catalogue WHERE id=?', product.id)).data);
+  assert.equal(db.nutrition.fat, 30.9);
+});
+await test('repeated detail opens use the versioned full-product cache', async () => {
+  await get({ barcode: code, details: '1' });
+  assert.equal(productReads, 1);
+});
+await test('partial search and import cannot overwrite full product details', async () => {
+  const p = (await swissBarcode(code))!;
+  await persistSwiss([{ ...p, retrieved: Date.now() + 1000 }]);
+  globalThis.fetch = async () =>
+    Response.json({
+      hits: [{ ...full, ingredients_text: undefined, nutrition: undefined, quantity: '900 g' }],
+      timed_out: false,
+    });
+  await off.search('Nutella protection');
+  const saved = JSON.parse(
+    (await one('SELECT data FROM catalogue WHERE id=?', 'off:' + code)).data,
+  );
+  assert.equal(saved.pack, '1000g');
+  assert.equal(saved.basis, '100g');
+  assert(saved.ingredients);
+});
+await test('exact names outrank incidental mentions; accents and word order are supported', () => {
+  const p = normalise(full);
+  const a = { ...p, id: 'a', name: 'Nutella biscuits' },
+    b = { ...p, id: 'b', name: 'Crème de noisettes', brand: 'Ferrero' },
+    c = { ...p, id: 'c', name: 'Nutella' };
+  assert.equal(rankSearch([a, c, b], 'nutella')[0].id, 'c');
+  assert(searchMatches(b, 'noisettes creme'));
+  assert(searchMatches(b, 'creme Ferrero'));
+  assert(!searchMatches(b, 'creme milk'));
+});
+await test('country, category, dietary and retailer requirements survive deduplication', () => {
+  const p = normalise(full),
+    otherCountry = { ...p, id: 'other', countries: ['en:united-states'] };
+  assert.deepEqual(
+    rankSearch([p, otherCountry], 'nutella', { country: 'US' }).map((p) => p.id),
+    ['other'],
+  );
+  assert.equal(rankSearch([p], 'nutella', { label: 'vegan' }).length, 0);
+  assert.equal(rankSearch([p], 'nutella', { retailer: 'migros-ch' }).length, 0);
+  assert.equal(rankSearch([p], 'nutella', { category: 'en:milk' }).length, 0);
+});
+await test('outage returns saved full details without pretending search is complete', async () => {
+  globalThis.fetch = async () => new Response('outage', { status: 503 });
+  const r = await get({ q: 'Nutella offline' });
+  assert.equal(r.status, 200);
+  const d = await r.json();
+  assert.match(d.notice, /limited to saved/);
+  assert.equal(d.products.length, 0);
+  const details = await get({ barcode: code, details: '1' });
+  assert.equal((await details.json()).product.nutrition['energy-kcal'], 539);
+});
+await test('hydrated product can be added to a persistent household list and read back', async () => {
+  const post = (body: any) =>
+    asUser('SearchTester', () =>
+      data(
+        new Request('https://same.test/api/data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        }),
+      ),
+    );
+  const created = await post({ action: 'createHousehold', name: 'Product verification' });
+  const h = (await created.json()).household;
+  const lists = await asUser('SearchTester', () =>
+    householdData(new Request('https://same.test/api/data?household=' + h)),
+  );
+  const list = (await lists.json()).records.find((r: any) => r.kind === 'list');
+  const p = JSON.parse((await one('SELECT data FROM catalogue WHERE id=?', 'off:' + code)).data);
+  const added = await post({
+    action: 'op',
+    household: h,
+    op: {
+      id: 'search-add-operation',
+      record: 'search-added-item',
+      kind: 'item',
+      version: 0,
+      data: { list: list.id, name: p.name, product: p, quantity: 1, unit: 'pack', pack: p.pack },
+    },
+  });
+  assert.equal(added.status, 200);
+  const stored = JSON.parse(
+    (await one('SELECT data FROM records WHERE id=?', 'search-added-item')).data,
+  );
+  assert.equal(stored.product.barcode, code);
+  assert.equal(stored.pack, '1000g');
+  assert.equal(stored.product.nutrition.fat, 30.9);
+});
+await test('detail lookup with another household identifier is denied', async () => {
+  const r = await get({ barcode: code, details: '1', household: 'unrelated' }, 'Unrelated');
+  assert.equal(r.status, 403);
+});
+globalThis.fetch = originalFetch;
+await test('product nutrition renders label values without meal ingredient counters', async () => {
+  const React = await import('react');
+  const { renderToStaticMarkup } = await import('react-dom/server');
+  const { ProductNutrition } = await import('../app/nutrition-panel');
+  const html = renderToStaticMarkup(
+    React.createElement(ProductNutrition, { product: normalise(full) }),
+  );
+  assert.match(html, /539 kcal/);
+  assert.match(html, /30[.,]9 g/);
+  assert.match(html, /100 g/);
+  assert(!html.includes('ingredients recorded'));
+  const missing = renderToStaticMarkup(
+    React.createElement(ProductNutrition, {
+      product: normalise({ code: '1', product_name: 'Unknown' }),
+    }),
+  );
+  assert.match(missing, /Nutrition information incomplete/);
+  assert(!missing.includes('per unknown basis'));
+});

@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "Same Again",
-  description: "Your family favourites. One shared list. Find them wherever you are.",
-  manifest: "/manifest.webmanifest",
+  title: 'Same Again',
+  description: 'Your family favourites. One shared list. Find them wherever you are.',
+  manifest: '/manifest.webmanifest',
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
   },
 };
 

@@ -1,17 +1,148 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {barcode,conversion,repeatItem,canMerge,totals,rank,type Product} from '../lib/domain.ts';
-const original:Product={id:'a',name:'Unsweetened oat drink',brand:'Oats',pack:'500 ml',categories:['en:foods','en:oat-drinks'],countries:['en:italy'],ingredients:'Water, oats, salt',ingredientTags:['en:water','en:oats','en:salt'],allergens:['en:gluten'],traces:[],labels:[],nutrition:{fat:1,sugars:0,proteins:1,salt:.1},basis:'100ml',source:'Deterministic test fixture',retrieved:1};
-const candidate={...original,id:'b',name:'Unsweetened oat drink local',countries:['en:france'],pack:'750 ml'};
-test('barcode preserves zeros and equivalent UPC-A/EAN-13 identity',()=>{assert.equal(barcode('036000291452').code,'0036000291452');assert.equal(barcode('0036000291452').valid,true);assert.equal(barcode('96385074').valid,true);assert.equal(barcode('3017620422004').valid,false);assert.equal(barcode('abc').valid,false)});
-test('pack conversion keeps quantity separate and refuses mass/volume conversion',()=>{assert.deepEqual(conversion('500 g','750 g',2),{exact:4/3,original:1000,unit:'g'});assert.equal(conversion('500 ml','750 g',2),null);assert.equal(conversion('one large jar','750 g',2),null)});
-test('duplicates require matching identity, pack, units, notes and substitution',()=>{const a={product:{id:'p'},unit:'pack',pack:'500 g',notes:'plain',substitution:'exact'};assert(canMerge(a,{...a}));assert(!canMerge(a,{...a,pack:'750 g'}));assert(!canMerge(a,{...a,product:{id:'p-chocolate'}}));assert(!canMerge(a,{...a,unit:'kg'}));assert(!canMerge({name:'Milk'},{name:'Milk'}))});
-test('totals distinguish unknown, estimated and actual',()=>{assert.deepEqual(totals([{quantity:2,price:3},{quantity:1},{quantity:2,done:true,actualPrice:4}]),{estimated:6,actual:8,missing:1,actualMissing:0})});
-test('rank requires country and credible category; exact items never replaced',()=>{assert.equal(rank(original,[candidate],'FR').length,1);assert.equal(rank(original,[candidate],'US').length,0);assert.equal(rank(original,[candidate],'FR',[],'ingredients','exact').length,0);assert.equal(rank(original,[{...candidate,categories:['en:foods','en:spaghetti']}],'FR').length,0)});
-test('unknown ingredients do not satisfy exclusions; absent certification blocks',()=>{assert.equal(rank(original,[{...candidate,ingredients:undefined}],'FR',[{kind:'exclusion',value:'milk'}]).length,0);assert.equal(rank(original,[candidate],'FR',[{kind:'certification',value:'gluten-free'}]).length,0);assert.equal(rank(original,[candidate],'FR',[{kind:'allergy',value:'gluten'}]).length,0)});
-test('nutrition comparisons never mix bases; insufficient evidence gives no confident match',()=>{const m=rank(original,[{...candidate,basis:'100g'}],'FR');assert(!m[0].reasons.some(r=>r.includes('nutritional')));assert(m[0].unknown.includes('No compatible nutrition basis'));assert.equal(rank({...original,ingredientTags:[],nutrition:{},pack:undefined,brand:undefined},[{...candidate,ingredientTags:[],nutrition:{},pack:undefined,brand:undefined}],'FR').length,0)});
-test('meaningful formulation mismatch is rejected',()=>{assert.equal(rank(original,[{...candidate,name:'Sweetened oat drink'}],'FR').length,0)});
+import {
+  barcode,
+  conversion,
+  repeatItem,
+  canMerge,
+  totals,
+  rank,
+  type Product,
+} from '../lib/domain.ts';
+const original: Product = {
+  id: 'a',
+  name: 'Unsweetened oat drink',
+  brand: 'Oats',
+  pack: '500 ml',
+  categories: ['en:foods', 'en:oat-drinks'],
+  countries: ['en:italy'],
+  ingredients: 'Water, oats, salt',
+  ingredientTags: ['en:water', 'en:oats', 'en:salt'],
+  allergens: ['en:gluten'],
+  traces: [],
+  labels: [],
+  nutrition: { fat: 1, sugars: 0, proteins: 1, salt: 0.1 },
+  basis: '100ml',
+  source: 'Deterministic test fixture',
+  retrieved: 1,
+};
+const candidate = {
+  ...original,
+  id: 'b',
+  name: 'Unsweetened oat drink local',
+  countries: ['en:france'],
+  pack: '750 ml',
+};
+test('barcode preserves zeros and equivalent UPC-A/EAN-13 identity', () => {
+  assert.equal(barcode('036000291452').code, '0036000291452');
+  assert.equal(barcode('0036000291452').valid, true);
+  assert.equal(barcode('96385074').valid, true);
+  assert.equal(barcode('3017620422004').valid, false);
+  assert.equal(barcode('abc').valid, false);
+});
+test('pack conversion keeps quantity separate and refuses mass/volume conversion', () => {
+  assert.deepEqual(conversion('500 g', '750 g', 2), { exact: 4 / 3, original: 1000, unit: 'g' });
+  assert.equal(conversion('500 ml', '750 g', 2), null);
+  assert.equal(conversion('one large jar', '750 g', 2), null);
+});
+test('duplicates require matching identity, pack, units, notes and substitution', () => {
+  const a = {
+    product: { id: 'p' },
+    unit: 'pack',
+    pack: '500 g',
+    notes: 'plain',
+    substitution: 'exact',
+  };
+  assert(canMerge(a, { ...a }));
+  assert(!canMerge(a, { ...a, pack: '750 g' }));
+  assert(!canMerge(a, { ...a, product: { id: 'p-chocolate' } }));
+  assert(!canMerge(a, { ...a, unit: 'kg' }));
+  assert(!canMerge({ name: 'Milk' }, { name: 'Milk' }));
+});
+test('totals distinguish unknown, estimated and actual', () => {
+  assert.deepEqual(
+    totals([
+      { quantity: 2, price: 3 },
+      { quantity: 1 },
+      { quantity: 2, done: true, actualPrice: 4 },
+    ]),
+    { estimated: 6, actual: 8, missing: 1, actualMissing: 0 },
+  );
+});
+test('rank requires country and credible category; exact items never replaced', () => {
+  assert.equal(rank(original, [candidate], 'FR').length, 1);
+  assert.equal(rank(original, [candidate], 'US').length, 0);
+  assert.equal(rank(original, [candidate], 'FR', [], 'ingredients', 'exact').length, 0);
+  assert.equal(
+    rank(original, [{ ...candidate, categories: ['en:foods', 'en:spaghetti'] }], 'FR').length,
+    0,
+  );
+});
+test('unknown ingredients do not satisfy exclusions; absent certification blocks', () => {
+  assert.equal(
+    rank(original, [{ ...candidate, ingredients: undefined }], 'FR', [
+      { kind: 'exclusion', value: 'milk' },
+    ]).length,
+    0,
+  );
+  assert.equal(
+    rank(original, [candidate], 'FR', [{ kind: 'certification', value: 'gluten-free' }]).length,
+    0,
+  );
+  assert.equal(rank(original, [candidate], 'FR', [{ kind: 'allergy', value: 'gluten' }]).length, 0);
+});
+test('nutrition comparisons never mix bases; insufficient evidence gives no confident match', () => {
+  const m = rank(original, [{ ...candidate, basis: '100g' }], 'FR');
+  assert(!m[0].reasons.some((r) => r.includes('nutritional')));
+  assert(m[0].unknown.includes('No compatible nutrition basis'));
+  assert.equal(
+    rank(
+      { ...original, ingredientTags: [], nutrition: {}, pack: undefined, brand: undefined },
+      [{ ...candidate, ingredientTags: [], nutrition: {}, pack: undefined, brand: undefined }],
+      'FR',
+    ).length,
+    0,
+  );
+});
+test('meaningful formulation mismatch is rejected', () => {
+  assert.equal(rank(original, [{ ...candidate, name: 'Sweetened oat drink' }], 'FR').length, 0);
+});
 
-test('repeat purchases clears old prices and purchase state while preserving identity',()=>{const d=repeatItem({name:'Milk',quantity:2,unit:'pack',notes:'plain',product:original,price:3,actualPrice:4,done:true,purchasedBy:'Sam',purchasedAt:1});assert.equal(d.price,null);assert.equal(d.actualPrice,null);assert.equal(d.done,false);assert.equal(d.product.id,original.id);assert.equal(d.quantity,2);assert.equal(d.notes,'plain')});
-test('currency totals never reinterpret a foreign price and record unpriced purchases',()=>{assert.deepEqual(totals([{quantity:2,price:3,priceCurrency:'CHF'},{quantity:1,done:true}], 'EUR'),{estimated:0,actual:0,missing:1,actualMissing:1});assert.equal(conversion('500 g','0 g',2),null)});
-test('duplicate products with different shoppers or intended members stay separate',()=>{const a={product:{id:'x'},unit:'pack',pack:'500g',assigned:'Sam'};assert(!canMerge(a,{...a,assigned:'Alex'}));assert(!canMerge(a,{...a,intendedFor:'Alex'}))});
+test('repeat purchases clears old prices and purchase state while preserving identity', () => {
+  const d = repeatItem({
+    name: 'Milk',
+    quantity: 2,
+    unit: 'pack',
+    notes: 'plain',
+    product: original,
+    price: 3,
+    actualPrice: 4,
+    done: true,
+    purchasedBy: 'Sam',
+    purchasedAt: 1,
+  });
+  assert.equal(d.price, null);
+  assert.equal(d.actualPrice, null);
+  assert.equal(d.done, false);
+  assert.equal(d.product.id, original.id);
+  assert.equal(d.quantity, 2);
+  assert.equal(d.notes, 'plain');
+});
+test('currency totals never reinterpret a foreign price and record unpriced purchases', () => {
+  assert.deepEqual(
+    totals(
+      [
+        { quantity: 2, price: 3, priceCurrency: 'CHF' },
+        { quantity: 1, done: true },
+      ],
+      'EUR',
+    ),
+    { estimated: 0, actual: 0, missing: 1, actualMissing: 1 },
+  );
+  assert.equal(conversion('500 g', '0 g', 2), null);
+});
+test('duplicate products with different shoppers or intended members stay separate', () => {
+  const a = { product: { id: 'x' }, unit: 'pack', pack: '500g', assigned: 'Sam' };
+  assert(!canMerge(a, { ...a, assigned: 'Alex' }));
+  assert(!canMerge(a, { ...a, intendedFor: 'Alex' }));
+});

@@ -1,6 +1,10 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
-import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
-import handler from "vinext/server/app-router-entry";
+import {
+  handleImageOptimization,
+  DEFAULT_DEVICE_SIZES,
+  DEFAULT_IMAGE_SIZES,
+} from 'vinext/server/image-optimization';
+import handler from 'vinext/server/app-router-entry';
 
 interface Env {
   ASSETS: Fetcher;
@@ -29,23 +33,29 @@ const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
-    if (url.pathname === "/_vinext/image") {
+    if (url.pathname === '/_vinext/image') {
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
-      return handleImageOptimization(request, {
-        fetchAsset: (path) => env.ASSETS.fetch(new Request(new URL(path, request.url))),
-        transformImage: async (body, { width, format, quality }) => {
-          const result = await env.IMAGES.input(body).transform(width > 0 ? { width } : {}).output({ format, quality });
-          return result.response();
+      return handleImageOptimization(
+        request,
+        {
+          fetchAsset: (path) => env.ASSETS.fetch(new Request(new URL(path, request.url))),
+          transformImage: async (body, { width, format, quality }) => {
+            const result = await env.IMAGES.input(body)
+              .transform(width > 0 ? { width } : {})
+              .output({ format, quality });
+            return result.response();
+          },
         },
-      }, allowedWidths);
+        allowedWidths,
+      );
     }
 
     const response = await handler.fetch(request, env, ctx);
     const secured = new Response(response.body, response);
-    if(url.pathname==='/' && response.ok) secured.headers.set('X-Same-Again-Shell','1');
+    if (url.pathname === '/' && response.ok) secured.headers.set('X-Same-Again-Shell', '1');
     secured.headers.set('X-Content-Type-Options', 'nosniff');
     secured.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-    if(url.pathname.startsWith('/api/')) secured.headers.set('Cache-Control', 'no-store');
+    if (url.pathname.startsWith('/api/')) secured.headers.set('Cache-Control', 'no-store');
     return secured;
   },
 };

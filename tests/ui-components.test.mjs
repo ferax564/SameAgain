@@ -1,19 +1,19 @@
-import assert from "node:assert/strict";
-import { readdir, readFile } from "node:fs/promises";
-import path from "node:path";
-import test, { after } from "node:test";
-import { fileURLToPath } from "node:url";
+import assert from 'node:assert/strict';
+import { readdir, readFile } from 'node:fs/promises';
+import path from 'node:path';
+import test, { after } from 'node:test';
+import { fileURLToPath } from 'node:url';
 
-import React from "react";
-import { renderToStaticMarkup } from "react-dom/server";
-import { createServer } from "vite";
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { createServer } from 'vite';
 
-const root = fileURLToPath(new URL("..", import.meta.url));
+const root = fileURLToPath(new URL('..', import.meta.url));
 const vite = await createServer({
-  appType: "custom",
+  appType: 'custom',
   configFile: false,
   root,
-  resolve: { alias: { "@": root } },
+  resolve: { alias: { '@': root } },
   server: { middlewareMode: true },
 });
 
@@ -29,14 +29,14 @@ async function readCssTree(directory) {
       if (entry.isDirectory()) {
         return readCssTree(entryPath);
       }
-      return entry.name.endsWith(".css") ? readFile(entryPath, "utf8") : "";
+      return entry.name.endsWith('.css') ? readFile(entryPath, 'utf8') : '';
     }),
   );
-  return contents.join("\n");
+  return contents.join('\n');
 }
 
 test("emits the catalog's animation and scrolling utilities", async () => {
-  const css = await readCssTree(path.join(root, "dist"));
+  const css = await readCssTree(path.join(root, 'dist'));
 
   assert.match(css, /--tw-enter-opacity/);
   assert.match(css, /scrollbar-width:\s*thin/);
@@ -48,8 +48,8 @@ test("emits the catalog's animation and scrolling utilities", async () => {
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
 });
 
-test("forwards progress semantics to the primitive", async () => {
-  const { Progress } = await vite.ssrLoadModule("/components/ui/progress.tsx");
+test('forwards progress semantics to the primitive', async () => {
+  const { Progress } = await vite.ssrLoadModule('/components/ui/progress.tsx');
   const html = renderToStaticMarkup(React.createElement(Progress, { value: 37 }));
 
   assert.match(html, /aria-valuenow="37"/);
@@ -58,12 +58,12 @@ test("forwards progress semantics to the primitive", async () => {
 });
 
 test("emits chart themes for the starter's media dark mode", async () => {
-  const { ChartStyle } = await vite.ssrLoadModule("/components/ui/chart.tsx");
+  const { ChartStyle } = await vite.ssrLoadModule('/components/ui/chart.tsx');
   const html = renderToStaticMarkup(
     React.createElement(ChartStyle, {
-      id: "contract",
+      id: 'contract',
       config: {
-        latency: { theme: { light: "#ffffff", dark: "#000000" } },
+        latency: { theme: { light: '#ffffff', dark: '#000000' } },
       },
     }),
   );
@@ -73,10 +73,8 @@ test("emits chart themes for the starter's media dark mode", async () => {
   assert.doesNotMatch(html, /\.dark/);
 });
 
-test("renders sidebar skeletons deterministically", async () => {
-  const { SidebarMenuSkeleton } = await vite.ssrLoadModule(
-    "/components/ui/sidebar.tsx",
-  );
+test('renders sidebar skeletons deterministically', async () => {
+  const { SidebarMenuSkeleton } = await vite.ssrLoadModule('/components/ui/sidebar.tsx');
   const first = renderToStaticMarkup(React.createElement(SidebarMenuSkeleton));
   const second = renderToStaticMarkup(React.createElement(SidebarMenuSkeleton));
 

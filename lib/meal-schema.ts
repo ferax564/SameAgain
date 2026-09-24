@@ -1,11 +1,113 @@
-import {z} from 'zod';
-import {nutrients} from './nutrition';
-const short=z.string().trim().min(1).max(160);
-export const nutritionSchema=z.record(z.number().finite().min(0).max(10000000)).superRefine((n,ctx)=>{for(const k of Object.keys(n))if(!nutrients[k])ctx.addIssue({code:'custom',message:'Unsupported nutrient: '+k});});
-const product=z.object({id:z.string().max(120),name:short,brand:z.string().max(200).optional(),barcode:z.string().max(14).optional(),pack:z.string().max(100).optional(),image:z.string().max(600).optional(),categories:z.array(z.string().max(200)).max(100),countries:z.array(z.string().max(100)).max(100),ingredients:z.string().max(6000).optional(),ingredientTags:z.array(z.string()).max(100).optional(),allergens:z.array(z.string()).max(60).optional(),traces:z.array(z.string()).max(60).optional(),labels:z.array(z.string()).max(100).optional(),nutrition:nutritionSchema.optional(),basis:z.enum(['100g','100ml']).optional(),source:z.string().max(300),sourceUrl:z.string().url().max(600).optional(),retrieved:z.number().finite(),sourceUpdated:z.number().optional(),indexedAt:z.string().optional(),stores:z.array(z.string()).max(50).optional(),additives:z.array(z.string()).max(100).optional()});
-export const recipeSchema=z.object({name:short,description:z.string().max(800).optional(),image:z.string().max(600).optional(),photoCredit:z.string().max(500).optional(),servings:z.number().finite().positive().max(100),minutes:z.number().finite().min(0).max(10000).optional(),ingredients:z.array(z.object({id:z.string().max(120),name:short,amount:z.number().finite().positive().max(100000),unit:z.enum(['g','ml']),product:product.optional(),note:z.string().max(500).optional()})).min(1).max(40),steps:z.array(z.string().trim().min(1).max(2000)).min(1).max(30),tags:z.array(z.string().max(40)).max(10).optional(),sourceUrl:z.string().url().max(600).optional()});
-export const dateSchema=z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(v=>!Number.isNaN(Date.parse(v))&&new Date(v).toISOString().slice(0,10)===v,'Choose a valid date');
-export const mealSchema=z.object({recipe:z.string().min(1).max(120),date:dateSchema,meal:z.enum(['Breakfast','Lunch','Dinner','Snack']),servings:z.number().finite().positive().max(100),member:z.string().min(1).max(120),eaten:z.boolean().optional(),notes:z.string().max(500).optional(),recipeSnapshot:recipeSchema.optional()});
-export const offerSchema=z.object({name:short,retailer:z.string().min(1).max(80),store:z.string().max(160),country:z.string().length(2),price:z.number().finite().min(0).max(100000),currency:z.string().length(3),pack:z.string().max(100),start:dateSchema,end:dateSchema,sourceUrl:z.string().url().max(600),conditions:z.string().max(600),product:product.optional()}).refine(o=>o.end>=o.start,'End date must follow the start date');
-export function safePhoto(url:string|undefined,household:string){if(!url)return true;if(/^https:\/\/images\.openfoodfacts\.org\//.test(url))return true;if(['/recipes/blueberry-oatmeal.jpg','/recipes/chickpea-salad.jpg'].includes(url))return true;try{const u=new URL(url,'https://same.test');return u.origin==='https://same.test'&&u.pathname==='/api/photo'&&(u.searchParams.get('key')||'').split('/')[0]===household}catch{return false}}
-export function safeLink(url:string|undefined){if(!url)return true;try{return new URL(url).protocol==='https:'}catch{return false}}
+import { z } from 'zod';
+import { nutrients } from './nutrition';
+const short = z.string().trim().min(1).max(160);
+export const nutritionSchema = z
+  .record(z.number().finite().min(0).max(10000000))
+  .superRefine((n, ctx) => {
+    for (const k of Object.keys(n))
+      if (!nutrients[k]) ctx.addIssue({ code: 'custom', message: 'Unsupported nutrient: ' + k });
+  });
+const product = z.object({
+  id: z.string().max(120),
+  name: short,
+  brand: z.string().max(200).optional(),
+  barcode: z.string().max(14).optional(),
+  pack: z.string().max(100).optional(),
+  image: z.string().max(600).optional(),
+  categories: z.array(z.string().max(200)).max(100),
+  countries: z.array(z.string().max(100)).max(100),
+  ingredients: z.string().max(6000).optional(),
+  ingredientTags: z.array(z.string()).max(100).optional(),
+  allergens: z.array(z.string()).max(60).optional(),
+  traces: z.array(z.string()).max(60).optional(),
+  labels: z.array(z.string()).max(100).optional(),
+  nutrition: nutritionSchema.optional(),
+  basis: z.enum(['100g', '100ml']).optional(),
+  source: z.string().max(300),
+  sourceUrl: z.string().url().max(600).optional(),
+  retrieved: z.number().finite(),
+  sourceUpdated: z.number().optional(),
+  indexedAt: z.string().optional(),
+  stores: z.array(z.string()).max(50).optional(),
+  additives: z.array(z.string()).max(100).optional(),
+});
+export const recipeSchema = z.object({
+  name: short,
+  description: z.string().max(800).optional(),
+  image: z.string().max(600).optional(),
+  photoCredit: z.string().max(500).optional(),
+  servings: z.number().finite().positive().max(100),
+  minutes: z.number().finite().min(0).max(10000).optional(),
+  ingredients: z
+    .array(
+      z.object({
+        id: z.string().max(120),
+        name: short,
+        amount: z.number().finite().positive().max(100000),
+        unit: z.enum(['g', 'ml']),
+        product: product.optional(),
+        note: z.string().max(500).optional(),
+      }),
+    )
+    .min(1)
+    .max(40),
+  steps: z.array(z.string().trim().min(1).max(2000)).min(1).max(30),
+  tags: z.array(z.string().max(40)).max(10).optional(),
+  sourceUrl: z.string().url().max(600).optional(),
+});
+export const dateSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/)
+  .refine(
+    (v) => !Number.isNaN(Date.parse(v)) && new Date(v).toISOString().slice(0, 10) === v,
+    'Choose a valid date',
+  );
+export const mealSchema = z.object({
+  recipe: z.string().min(1).max(120),
+  date: dateSchema,
+  meal: z.enum(['Breakfast', 'Lunch', 'Dinner', 'Snack']),
+  servings: z.number().finite().positive().max(100),
+  member: z.string().min(1).max(120),
+  eaten: z.boolean().optional(),
+  notes: z.string().max(500).optional(),
+  recipeSnapshot: recipeSchema.optional(),
+});
+export const offerSchema = z
+  .object({
+    name: short,
+    retailer: z.string().min(1).max(80),
+    store: z.string().max(160),
+    country: z.string().length(2),
+    price: z.number().finite().min(0).max(100000),
+    currency: z.string().length(3),
+    pack: z.string().max(100),
+    start: dateSchema,
+    end: dateSchema,
+    sourceUrl: z.string().url().max(600),
+    conditions: z.string().max(600),
+    product: product.optional(),
+  })
+  .refine((o) => o.end >= o.start, 'End date must follow the start date');
+export function safePhoto(url: string | undefined, household: string) {
+  if (!url) return true;
+  if (/^https:\/\/images\.openfoodfacts\.org\//.test(url)) return true;
+  if (['/recipes/blueberry-oatmeal.jpg', '/recipes/chickpea-salad.jpg'].includes(url)) return true;
+  try {
+    const u = new URL(url, 'https://same.test');
+    return (
+      u.origin === 'https://same.test' &&
+      u.pathname === '/api/photo' &&
+      (u.searchParams.get('key') || '').split('/')[0] === household
+    );
+  } catch {
+    return false;
+  }
+}
+export function safeLink(url: string | undefined) {
+  if (!url) return true;
+  try {
+    return new URL(url).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
