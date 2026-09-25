@@ -6,7 +6,7 @@ import { off, normalise, searchUrl } from '../lib/catalogue';
 import { point, places } from '../lib/places';
 import { drain, conflictDraft, currentRefresh, correctedQueue } from '../lib/outbox';
 import { ScanSession, cameraError } from '../lib/scan-session';
-import { asUser, run, one } from './server-shim';
+import { asUser, one } from './server-shim';
 const fixture = {
   code: '0036000291452',
   product_name: 'Test cereal',

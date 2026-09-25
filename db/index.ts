@@ -9,5 +9,5 @@ export function getDb() {
     );
   }
 
-  return drizzle(env.DB as any, { schema });
+  return drizzle(env.DB as unknown as Parameters<typeof drizzle>[0], { schema });
 }

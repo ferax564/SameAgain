@@ -5,7 +5,11 @@ export const env = {
   ASSETS: {
     async fetch(req: Request) {
       const path = new URL(req.url).pathname;
-      if (path !== '/catalogue/swiss-retailer-products.json')
+      if (
+        !['/catalogue/swiss-retailer-products.json', '/catalogue/swiss-provenance.json'].includes(
+          path,
+        )
+      )
         return new Response('', { status: 404 });
       return new Response(await readFile('public' + path));
     },

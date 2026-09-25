@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { GET as exportData } from '../app/api/export/route';
 import { GET, POST } from '../app/api/data/route';
-import { asUser, run, one, hash } from './server-shim';
+import { asUser, run, one } from './server-shim';
 const call = async (user: string, body?: any, h?: string) =>
   asUser(user, async () => {
     const r = body

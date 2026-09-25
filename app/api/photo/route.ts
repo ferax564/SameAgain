@@ -1,10 +1,27 @@
 import { env } from 'cloudflare:workers';
-import { identity, member, sameOrigin, fail, responseError, rate } from '@/lib/server';
+import {
+  identity,
+  member,
+  sameOrigin,
+  fail,
+  responseError,
+  rate,
+  one,
+  run,
+  DAY,
+} from '@/lib/server';
+import { cleanPhoto, HOUSEHOLD_PHOTO_QUOTA } from '@/lib/photo-files';
+
+async function acceptingUploads(h: string) {
+  const house = await one('SELECT deleting FROM households WHERE id=?', h);
+  return Boolean(house && !house.deleting);
+}
 export async function POST(req: Request) {
   try {
     sameOrigin(req);
     const u = await identity();
     await rate('photo:' + u.id, 10);
+    await rate('photo-day:' + u.id, 100, DAY);
     if (Number(req.headers.get('content-length')) > 3100000)
       fail('Choose a photo under 3 MB.', 413);
     const reader = req.body?.getReader();
@@ -37,23 +54,34 @@ export async function POST(req: Request) {
     const file = f.get('file');
     if (!(file instanceof File) || file.size > 3000000 || file.size < 24)
       fail('Choose a photo under 3 MB.');
-    const bytes = new Uint8Array(await file.arrayBuffer());
-    const jpg =
-        file.type === 'image/jpeg' &&
-        bytes[bytes.length - 2] === 255 &&
-        bytes[bytes.length - 1] === 217 &&
-        bytes[0] === 255 &&
-        bytes[1] === 216 &&
-        bytes[2] === 255,
-      png =
-        file.type === 'image/png' &&
-        [137, 80, 78, 71, 13, 10, 26, 10].every((v, i) => bytes[i] === v) &&
-        String.fromCharCode(...bytes.slice(12, 16)) === 'IHDR';
-    if (!jpg && !png) fail('Use a JPEG or PNG photo.');
+    if (!(await acceptingUploads(h))) fail('This household is being deleted.', 410);
+    // Metadata (EXIF GPS, text chunks) is stripped here as well as on the
+    // device, so direct API uploads cannot keep location details.
+    const photo = cleanPhoto(new Uint8Array(await file.arrayBuffer()), file.type);
+    const used = await one(
+      'SELECT COALESCE(SUM(bytes),0) AS total FROM photos WHERE household=?',
+      h,
+    );
+    if (Number(used?.total || 0) + photo.bytes.length > HOUSEHOLD_PHOTO_QUOTA)
+      fail(
+        'This household has reached its 200 MB photo storage limit. Delete old photos first.',
+        413,
+      );
     const key = h + '/' + crypto.randomUUID();
-    await env.BUCKET.put(key, bytes, {
-      httpMetadata: { contentType: jpg ? 'image/jpeg' : 'image/png' },
-    });
+    await env.BUCKET.put(key, photo.bytes, { httpMetadata: { contentType: photo.type } });
+    await run(
+      'INSERT INTO photos(key,household,bytes,created) VALUES(?,?,?,?)',
+      key,
+      h,
+      photo.bytes.length,
+      Date.now(),
+    );
+    // The household may have been deleted while the upload was in flight.
+    if (!(await acceptingUploads(h))) {
+      await env.BUCKET.delete(key);
+      await run('DELETE FROM photos WHERE key=?', key);
+      fail('This household is being deleted.', 410);
+    }
     return Response.json({ url: '/api/photo?key=' + encodeURIComponent(key) });
   } catch (e) {
     return responseError(e);

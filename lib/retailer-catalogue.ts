@@ -8,15 +8,19 @@ export async function ensureRetailerCatalogue() {
   if (await one('SELECT key FROM cache WHERE key=?', revision)) return;
   for (let i = 0; i < products.length; i += 25)
     await db().batch(
-      products
-        .slice(i, i + 25)
-        .map((p) =>
-          db()
-            .prepare(
-              'INSERT INTO catalogue(id,data,retrieved,search_text) VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data,retrieved=excluded.retrieved,search_text=excluded.search_text WHERE catalogue.retrieved<=excluded.retrieved',
-            )
-            .bind(p.id, JSON.stringify(p), p.retrieved, productSearchText(p)),
-        ),
+      products.slice(i, i + 25).map((p) =>
+        db()
+          .prepare(
+            'INSERT INTO catalogue(id,data,retrieved,search_text,barcode) VALUES(?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data,retrieved=excluded.retrieved,search_text=excluded.search_text,barcode=excluded.barcode WHERE catalogue.retrieved<=excluded.retrieved',
+          )
+          .bind(
+            p.id,
+            JSON.stringify(p),
+            p.retrieved,
+            productSearchText(p),
+            (p as { barcode?: string }).barcode ?? null,
+          ),
+      ),
     );
   await run(
     'INSERT INTO cache(key,data,expires) VALUES(?,?,?) ON CONFLICT(key) DO NOTHING',

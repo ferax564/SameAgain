@@ -328,7 +328,13 @@ await test('photo endpoint rejects disguised HTML and oversized upload before st
   assert.equal(
     (
       await asUser('Cook', () =>
-        uploadPhoto(new Request('https://same.test/api/photo', { method: 'POST', body: f })),
+        uploadPhoto(
+          new Request('https://same.test/api/photo', {
+            method: 'POST',
+            headers: { origin: 'https://same.test' },
+            body: f,
+          }),
+        ),
       )
     ).status,
     400,
@@ -339,7 +345,7 @@ await test('photo endpoint rejects disguised HTML and oversized upload before st
         uploadPhoto(
           new Request('https://same.test/api/photo', {
             method: 'POST',
-            headers: { 'content-length': '4000000' },
+            headers: { 'content-length': '4000000', origin: 'https://same.test' },
             body: 'x',
           }),
         ),

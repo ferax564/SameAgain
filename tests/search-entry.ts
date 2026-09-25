@@ -146,7 +146,7 @@ await test('hydrated product can be added to a persistent household list and rea
       data(
         new Request('https://same.test/api/data', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', origin: 'https://same.test' },
           body: JSON.stringify(body),
         }),
       ),

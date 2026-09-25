@@ -1,20 +1,21 @@
-import { savedCatalogueCandidates } from '@/lib/catalogue-cache-search';
+import { savedCatalogueCandidates, savedCategoryCandidates } from '@/lib/catalogue-cache-search';
 import { rankSearch, searchTerms } from '@/lib/catalogue-search';
 import { lookupBarcode } from '@/lib/barcode-lookup';
 import { swissSearch, persistSwiss, swissCoverage } from '@/lib/swiss-catalogue';
-import { identity, member, one, query, fail, responseError, rate } from '@/lib/server';
+import { identity, member, one, query, fail, responseError, rate, DAY } from '@/lib/server';
 import { off } from '@/lib/catalogue';
 import { ensureRetailerCatalogue } from '@/lib/retailer-catalogue';
-import { retailers, recordedAt } from '@/lib/retailers';
-import { countries, countryTag, rank, barcode } from '@/lib/domain';
+import { retailers } from '@/lib/retailers';
+import { countries, rank, type Product } from '@/lib/domain';
 export async function GET(req: Request) {
   try {
     const u = await identity();
     await rate('catalogue:' + u.id, 30);
+    await rate('catalogue-day:' + u.id, 1000, DAY);
     const p = new URL(req.url).searchParams,
       c = p.get('country') || undefined,
       q = (p.get('q') || '').slice(0, 120);
-    if (c && !countries[c]) fail('Choose a supported country.');
+    if (c && !Object.hasOwn(countries, c)) fail('Choose a supported country.');
     if (p.get('barcode'))
       return Response.json(
         await lookupBarcode(
@@ -55,9 +56,9 @@ export async function GET(req: Request) {
       let products;
       let cachedNotice = '';
       try {
-        products = await off.search('', c, original.categories.at(-1));
+        products = await off.search('', c, original.categories.at(-1), undefined, u.id);
       } catch {
-        products = (await query('SELECT data FROM catalogue')).map((r) => JSON.parse(r.data));
+        products = await savedCategoryCandidates(original.categories.at(-1));
         cachedNotice =
           ' Live search is unavailable; candidates are limited to previously retrieved catalogue records.';
       }
@@ -79,7 +80,7 @@ export async function GET(req: Request) {
     if ((q.length < 2 || !searchTerms(q).length) && !p.get('retailer'))
       fail('Enter at least two letters or numbers.');
     const retailer = p.get('retailer') || undefined;
-    if (retailer && !retailers[retailer]) fail('Choose a supported retailer.');
+    if (retailer && !Object.hasOwn(retailers, retailer)) fail('Choose a supported retailer.');
     if (retailer && c !== retailers[retailer].country) fail('Retailer country must match.');
     const h = p.get('household');
     if (h) await member(h, u.id);
@@ -88,17 +89,17 @@ export async function GET(req: Request) {
       tag = retailer ? retailers[retailer].tag : undefined;
     const indexed = await swissSearch(q, c, category, tag, req.url).catch(() => []);
     await persistSwiss(indexed);
-    let live: any[] = [],
+    let live: Product[] = [],
       notice = '';
     // A local match must never suppress the rest of a country or the global catalogue.
     try {
-      live = await off.search(q, c, category, tag);
+      live = await off.search(q, c, category, tag, u.id);
     } catch {
       notice =
         'Live search is unavailable. Results are limited to saved catalogue records and private household products. Retry to search more widely.';
     }
     const stored = await savedCatalogueCandidates(q);
-    let privateProducts: any[] = [];
+    let privateProducts: Product[] = [];
     if (h && !c && !p.get('label') && !retailer && p.get('source') !== 'community')
       privateProducts = (
         await query(

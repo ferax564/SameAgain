@@ -36,16 +36,44 @@ export function distance(a: Point, b: Point) {
     )
   );
 }
-export function places(data: any, origin?: Point): Place[] {
+type Feature = {
+  properties?: {
+    osm_type?: string;
+    osm_id?: number;
+    osm_key?: string;
+    osm_value?: string;
+    name?: string;
+    housenumber?: string;
+    street?: string;
+    postcode?: string;
+    city?: string;
+    district?: string;
+    state?: string;
+    country?: string;
+    countrycode?: unknown;
+  };
+  geometry?: { coordinates?: unknown };
+};
+const OSM_TYPES: Record<string, string> = { N: 'node', W: 'way', R: 'relation' };
+export function places(response: unknown, origin?: Point): Place[] {
+  const data = (response && typeof response === 'object' ? response : {}) as {
+    features?: unknown;
+  };
   if (!Array.isArray(data.features)) throw new Error('Unreadable place response');
   const result: Place[] = [];
   const seen = new Set<string>();
-  for (const f of data.features) {
-    const p = f.properties || {},
-      coords = f.geometry?.coordinates;
-    const type = ({ N: 'node', W: 'way', R: 'relation' } as any)[p.osm_type];
+  for (const f of data.features as Feature[]) {
+    const p = f?.properties || {},
+      coords = f?.geometry?.coordinates;
+    const type =
+      typeof p.osm_type === 'string' && Object.hasOwn(OSM_TYPES, p.osm_type)
+        ? OSM_TYPES[p.osm_type]
+        : undefined;
     if (!type || !Number.isSafeInteger(p.osm_id) || !Array.isArray(coords)) continue;
-    if (origin && (p.osm_key !== 'shop' || !['supermarket', 'convenience'].includes(p.osm_value)))
+    if (
+      origin &&
+      (p.osm_key !== 'shop' || !['supermarket', 'convenience'].includes(p.osm_value || ''))
+    )
       continue;
     let at: Point;
     try {

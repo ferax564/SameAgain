@@ -2,7 +2,7 @@ import { productSearchText } from './catalogue-search';
 import { rankSearch } from './catalogue-search';
 import { env } from 'cloudflare:workers';
 import report from './swiss-retailer-report.json';
-import { barcode, countryTag, type Product } from './domain';
+import { barcode, type Product } from './domain';
 import { db } from './server';
 // Load the licensed data asset on the server, rather than compiling 13,000
 // product objects into JavaScript or sending the full index to each browser.
@@ -10,7 +10,9 @@ let loaded: Promise<{ products: Product[]; byBarcode: Map<string, Product> }> | 
 async function index(requestUrl?: string) {
   if (!loaded)
     loaded = (async () => {
-      const r = await (env as any).ASSETS.fetch(
+      const r = await (
+        env as unknown as { ASSETS: { fetch(request: Request): Promise<Response> } }
+      ).ASSETS.fetch(
         new Request(
           new URL(
             '/catalogue/swiss-retailer-products.json',
@@ -55,14 +57,12 @@ export async function swissSearch(
 export async function persistSwiss(products: Product[]) {
   for (let i = 0; i < products.length; i += 25)
     await db().batch(
-      products
-        .slice(i, i + 25)
-        .map((p) =>
-          db()
-            .prepare(
-              "INSERT INTO catalogue(id,data,retrieved,search_text) VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data,retrieved=excluded.retrieved,search_text=excluded.search_text WHERE catalogue.retrieved<=excluded.retrieved AND COALESCE(json_extract(catalogue.data,'$.detailsRetrieved'),0)=0",
-            )
-            .bind(p.id, JSON.stringify(p), p.retrieved, productSearchText(p)),
-        ),
+      products.slice(i, i + 25).map((p) =>
+        db()
+          .prepare(
+            "INSERT INTO catalogue(id,data,retrieved,search_text,barcode) VALUES(?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data,retrieved=excluded.retrieved,search_text=excluded.search_text,barcode=excluded.barcode WHERE catalogue.retrieved<=excluded.retrieved AND COALESCE(json_extract(catalogue.data,'$.detailsRetrieved'),0)=0",
+          )
+          .bind(p.id, JSON.stringify(p), p.retrieved, productSearchText(p), p.barcode ?? null),
+      ),
     );
 }
