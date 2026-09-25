@@ -1,6 +1,93 @@
 'use client';
-import {useState} from 'react';
-import {toast} from 'sonner';
-export default function PhotoUpload({household,demo,value,onChange,onBusy}:{household:string;demo:boolean;value?:string;onChange:(url:string)=>void;onBusy?:(busy:boolean)=>void}){
- const [busy,setBusy]=useState(false);return <div className="stack"><label>Household photo<input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={async e=>{const file=e.target.files?.[0];if(!file)return;if(demo){toast('Photo uploads are available in your own household.');return}if(file.size>20000000){toast.error('Choose an image under 20 MB.');return}setBusy(true);onBusy?.(true);try{const bitmap=await createImageBitmap(file);const scale=Math.min(1,1600/Math.max(bitmap.width,bitmap.height));const canvas=document.createElement('canvas');canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Use a JPEG or PNG photo in a supported browser.');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('Unable to read photo. Try JPEG or PNG.')),'image/jpeg',.86));const form=new FormData();form.set('household',household);form.set('file',blob,'photo.jpg');const r=await fetch('/api/photo',{method:'POST',body:form});const data=await r.json();if(!r.ok)throw new Error(data.error);onChange(data.url);toast.success('Photo saved privately')}catch(e:any){toast.error(e.message)}finally{setBusy(false);onBusy?.(false);e.target.value=''}}}/></label><p className="fine">{busy?'Preparing and saving photo…':'JPEG, PNG or WebP. Photos are resized and metadata removed before uploading. Only household members can view them. HEIC: export a JPEG first.'}</p>{value&&<div className="row"><img className="upload-preview" src={value} alt="Selected household photo"/><button type="button" className="link" onClick={()=>onChange('')}>Remove from this record</button></div>}</div>
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { errorMessage } from '@/lib/utils';
+export default function PhotoUpload({
+  household,
+  demo,
+  value,
+  onChange,
+  onBusy,
+}: {
+  household: string;
+  demo: boolean;
+  value?: string;
+  onChange: (url: string) => void;
+  onBusy?: (busy: boolean) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  return (
+    <div className="stack">
+      <label>
+        Household photo
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          disabled={busy}
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            if (demo) {
+              toast('Photo uploads are available in your own household.');
+              return;
+            }
+            if (file.size > 20000000) {
+              toast.error('Choose an image under 20 MB.');
+              return;
+            }
+            setBusy(true);
+            onBusy?.(true);
+            try {
+              const bitmap = await createImageBitmap(file);
+              const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
+              const canvas = document.createElement('canvas');
+              canvas.width = Math.round(bitmap.width * scale);
+              canvas.height = Math.round(bitmap.height * scale);
+              const ctx = canvas.getContext('2d');
+              if (!ctx) throw new Error('Use a JPEG or PNG photo in a supported browser.');
+              ctx.fillStyle = '#fff';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+              ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+              bitmap.close();
+              const blob = await new Promise<Blob>((resolve, reject) =>
+                canvas.toBlob(
+                  (b) =>
+                    b ? resolve(b) : reject(new Error('Unable to read photo. Try JPEG or PNG.')),
+                  'image/jpeg',
+                  0.86,
+                ),
+              );
+              const form = new FormData();
+              form.set('household', household);
+              form.set('file', blob, 'photo.jpg');
+              const r = await fetch('/api/photo', { method: 'POST', body: form });
+              const data = await r.json();
+              if (!r.ok) throw new Error(data.error);
+              onChange(data.url);
+              toast.success('Photo saved privately');
+            } catch (err) {
+              toast.error(errorMessage(err));
+            } finally {
+              setBusy(false);
+              onBusy?.(false);
+              e.target.value = '';
+            }
+          }}
+        />
+      </label>
+      <p className="fine">
+        {busy
+          ? 'Preparing and saving photo…'
+          : 'JPEG, PNG or WebP. Photos are resized and metadata removed before uploading. Only household members can view them. HEIC: export a JPEG first.'}
+      </p>
+      {value && (
+        <div className="row">
+          <img className="upload-preview" src={value} alt="Selected household photo" />
+          <button type="button" className="link" onClick={() => onChange('')}>
+            Remove from this record
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }

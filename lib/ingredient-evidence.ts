@@ -1,15 +1,78 @@
-import type {Product,Constraint} from './domain';
-const WHO='https://www.who.int/news/item/15-05-2023-who-advises-not-to-use-non-sugar-sweeteners-for-weight-control-in-newly-released-guideline';
-export const evidenceReviewed='2026-09-10';
-export const ingredientEvidence=[
- {id:'e951',name:'Aspartame',pattern:/\baspartam(?:e|o)?\b|\be\s*[-:]?\s*951\b/i,summary:'EFSA’s current acceptable daily intake is 40 mg/kg body weight/day for the general population. This does not apply to people with phenylketonuria (PKU), who need strict phenylalanine management.',certainty:'Regulatory risk assessment; individual dose is unknown',source:'https://www.efsa.europa.eu/en/topics/topic/aspartame'},
- {id:'e950',name:'Acesulfame K',pattern:/\bacesulfam(?:e|o)?(?:[ -]k)?\b|\be\s*[-:]?\s*950\b/i,summary:'EFSA reassessed acesulfame K in 2025 and set an acceptable daily intake of 15 mg/kg body weight/day. Presence on a label does not show whether someone approaches that intake.',certainty:'Regulatory risk assessment; exposure not calculated',source:'https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2025.9317'},
- {id:'e955',name:'Sucralose',pattern:/\bsucralos(?:e|io)?\b|\be\s*[-:]?\s*955\b/i,summary:'EFSA’s 2026 review found no safety concern at currently authorised uses and retained the 15 mg/kg/day ADI. It could not establish safety for a proposed extension to fine bakery products because of uncertainty about compounds formed during baking.',certainty:'Current uses assessed; some heating conditions remain uncertain',source:'https://www.efsa.europa.eu/en/plain-language-summary/re-evaluation-sucralose-e-955-food-additive'},
- {id:'e960',name:'Steviol glycosides',pattern:/\bsteviol|\bstevia|\be\s*[-:]?\s*960[a-d]?\b/i,summary:'A non-sugar sweetener. “Plant-derived” alone is not a health rating. WHO’s conditional guidance advises against relying on non-sugar sweeteners for long-term weight control; it is not a toxicological ban.',certainty:'Population guidance, not an individual toxicity finding',source:WHO},
+import type { Product, Constraint } from './domain';
+const WHO =
+  'https://www.who.int/news/item/15-05-2023-who-advises-not-to-use-non-sugar-sweeteners-for-weight-control-in-newly-released-guideline';
+export const evidenceReviewed = '2026-09-10';
+export const ingredientEvidence = [
+  {
+    id: 'e951',
+    name: 'Aspartame',
+    pattern: /\baspartam(?:e|o)?\b|\be\s*[-:]?\s*951\b/i,
+    summary:
+      'EFSA’s current acceptable daily intake is 40 mg/kg body weight/day for the general population. This does not apply to people with phenylketonuria (PKU), who need strict phenylalanine management.',
+    certainty: 'Regulatory risk assessment; individual dose is unknown',
+    source: 'https://www.efsa.europa.eu/en/topics/topic/aspartame',
+  },
+  {
+    id: 'e950',
+    name: 'Acesulfame K',
+    pattern: /\bacesulfam(?:e|o)?(?:[ -]k)?\b|\be\s*[-:]?\s*950\b/i,
+    summary:
+      'EFSA reassessed acesulfame K in 2025 and set an acceptable daily intake of 15 mg/kg body weight/day. Presence on a label does not show whether someone approaches that intake.',
+    certainty: 'Regulatory risk assessment; exposure not calculated',
+    source: 'https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2025.9317',
+  },
+  {
+    id: 'e955',
+    name: 'Sucralose',
+    pattern: /\bsucralos(?:e|io)?\b|\be\s*[-:]?\s*955\b/i,
+    summary:
+      'EFSA’s 2026 review found no safety concern at currently authorised uses and retained the 15 mg/kg/day ADI. It could not establish safety for a proposed extension to fine bakery products because of uncertainty about compounds formed during baking.',
+    certainty: 'Current uses assessed; some heating conditions remain uncertain',
+    source:
+      'https://www.efsa.europa.eu/en/plain-language-summary/re-evaluation-sucralose-e-955-food-additive',
+  },
+  {
+    id: 'e960',
+    name: 'Steviol glycosides',
+    pattern: /\bsteviol|\bstevia|\be\s*[-:]?\s*960[a-d]?\b/i,
+    summary:
+      'A non-sugar sweetener. “Plant-derived” alone is not a health rating. WHO’s conditional guidance advises against relying on non-sugar sweeteners for long-term weight control; it is not a toxicological ban.',
+    certainty: 'Population guidance, not an individual toxicity finding',
+    source: WHO,
+  },
 ];
-export function reviewIngredients(p:Product,constraints:Constraint[]=[]){const text=[p.ingredients,...p.ingredientTags||[],...p.additives||[]].filter(Boolean).join(' ');const matches=ingredientEvidence.filter(e=>e.pattern.test(text));
- const issues=constraints.filter(c=>c.kind!=='preference').map(c=>{const label=c.value.toLowerCase().replaceAll('-',' ').trim();if(c.kind==='certification')return{...c,state:p.labels?.some(l=>l.replace(/^[a-z]{2}:/,'').replaceAll('-',' ')===label)?'declared':'unknown'};
-  const evidence=[text,...p.allergens||[],...p.traces||[]].join(' ').toLowerCase().replaceAll('-',' ');return{...c,state:evidence.includes(label)?'detected':!p.ingredients?'unknown':'not detected; check label'};
- });return{matches,issues,missing:!p.ingredients,unknownExposure:matches.length>0};
+export function reviewIngredients(p: Product, constraints: Constraint[] = []) {
+  const text = [p.ingredients, ...(p.ingredientTags || []), ...(p.additives || [])]
+    .filter(Boolean)
+    .join(' ');
+  const matches = ingredientEvidence.filter((e) => e.pattern.test(text));
+  const issues = constraints
+    .filter((c) => c.kind !== 'preference')
+    .map((c) => {
+      const label = c.value.toLowerCase().replaceAll('-', ' ').trim();
+      if (c.kind === 'certification')
+        return {
+          ...c,
+          state: p.labels?.some((l) => l.replace(/^[a-z]{2}:/, '').replaceAll('-', ' ') === label)
+            ? 'declared'
+            : 'unknown',
+        };
+      const evidence = [text, ...(p.allergens || []), ...(p.traces || [])]
+        .join(' ')
+        .toLowerCase()
+        .replaceAll('-', ' ');
+      return {
+        ...c,
+        state: evidence.includes(label)
+          ? 'detected'
+          : !p.ingredients
+            ? 'unknown'
+            : 'not detected; check label',
+      };
+    });
+  return { matches, issues, missing: !p.ingredients, unknownExposure: matches.length > 0 };
 }
-export const sweetenerContext={source:WHO,text:'WHO’s recommendation against non-sugar sweeteners for long-term weight control is conditional and does not assess toxicological safety. It excludes people with pre-existing diabetes and does not cover polyols. Observational associations alone do not establish causation.'};
+export const sweetenerContext = {
+  source: WHO,
+  text: 'WHO’s recommendation against non-sugar sweeteners for long-term weight control is conditional and does not assess toxicological safety. It excludes people with pre-existing diabetes and does not cover polyols. Observational associations alone do not establish causation.',
+};

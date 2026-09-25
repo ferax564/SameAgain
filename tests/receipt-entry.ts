@@ -1,11 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {parseReceipt,receiptListItem,validDate} from '../lib/receipt';
-import {suggestPaperCrop} from '../lib/receipt-image';
-import {POST,GET} from '../app/api/data/route';
-import {asUser,one,run} from './server-shim';
-import {validateRecord} from '../lib/record-validation';
-const fixture=`Coop
+import { parseReceipt, receiptListItem, validDate } from '../lib/receipt';
+import { suggestPaperCrop } from '../lib/receipt-image';
+import { POST, GET } from '../app/api/data/route';
+import { asUser, one, run } from './server-shim';
+import { validateRecord } from '../lib/record-validation';
+const fixture = `Coop
 Example branch
 Artikel Menge Preis Aktion Total
 Beans 175G      1 4.50 4.05 4.05 0 A
@@ -18,17 +18,181 @@ TWINT 26.80
 VAT 0 2.60 26.80
 Coupon 1.00
 Card reference 1234567890123456`;
-const meta={fingerprint:'a'.repeat(64),store:'Coop',date:'2026-01-01',currency:'CHF'};
-await test('receipt columns preserve promotion totals, packs and multiple units',()=>{const d=parseReceipt(fixture);assert.equal(d.items.length,4);assert.equal(d.items[0].name,'Beans 175G');assert.equal(d.items[0].quantity,1);assert.equal(d.items[0].pack,'175G');assert.equal(d.items[0].lineTotal,4.05);assert.equal(d.items[1].quantity,2);assert.equal(d.items[1].lineTotal,7.6);assert.equal(d.total,26.8);assert.equal(d.date,'2026-01-01');assert(!d.warnings.some(w=>w.includes('do not match')))});
-await test('weighted quantities are explicit and an inferred unit is flagged',()=>{const i=parseReceipt(fixture).items[2];assert.equal(i.quantity,.750);assert.equal(i.unit,'kg');assert(i.warnings.some(w=>w.includes('Confirm the unit')));assert.equal(i.lineTotal,11.2)});
-await test('US style quantity prefix and comma-decimal European rows work',()=>{const us=parseReceipt('Market\n2 x Milk 1.50 3.00\nBread 1 2.00 2.00\nTOTAL USD 5.00');assert.equal(us.items[0].quantity,2);assert.equal(us.items[0].name,'Milk');const eu=parseReceipt('Migros\nPasta 500g 2 1,95 3,90\nTOTAL CHF 3,90');assert.equal(eu.items[0].quantity,2);assert.equal(eu.items[0].pack,'500g');assert.equal(eu.items[0].lineTotal,3.9)});
-await test('payment, tax, totals and footer numbers never become shopping products',()=>{const d=parseReceipt(fixture);assert(!d.items.some(i=>/TWINT|reference|Coupon|VAT/.test(i.name)));assert.equal(parseReceipt('TOTAL CHF 6.00\nVisa 6.00\nReference 12345').items.length,0)});
-await test('corrupted receipt quantities are not silently turned into bulk purchases',()=>{const d=parseReceipt('Artikel Menge Preis Total\nTofu nature      125220    2.20 0\nTOTAL CHF 2.20');assert.equal(d.items[0].quantity,1);assert.equal(d.items[0].selected,false);assert(d.items[0].warnings.some(w=>w.includes('unclear')));const merged=parseReceipt('Artikel Menge Preis Total\nLentils      111.965    1.95 0\nTOTAL CHF 1.95');assert.equal(merged.items[0].quantity,1);assert.equal(merged.items[0].selected,false)});
-await test('uncertain price rows remain editable without invented amounts',()=>{const d=parseReceipt('Artikel Menge Preis Total\nTofu nature      ]    ] 95      } 95 0\nTOTAL CHF 3.95');assert.equal(d.items.length,1);assert.equal(d.items[0].lineTotal,undefined);assert(d.warnings.some(w=>w.includes('do not match')))});
-await test('refunds and discounts are excluded with a reconciliation warning',()=>{const d=parseReceipt('Milk 1 3.00 3.00\nReturned Bread 1 -2.00 -2.00\nTOTAL EUR 1.00');assert.equal(d.items.length,1);assert(d.warnings.some(w=>w.includes('refund')));assert(d.warnings.some(w=>w.includes('do not match')))});
-await test('receipt provenance never implies catalogue identity or a new purchase price',()=>{const d=receiptListItem(parseReceipt(fixture).items[1],meta,'list');assert.equal(d.product,null);assert.equal(d.price,null);assert.equal(d.actualPrice,null);assert.equal(d.done,false);assert.equal(d.receipt.lineTotal,7.6);assert.equal(d.quantity,2);assert.equal(d.substitution,'ask');assert(!JSON.stringify(d).includes('Card reference'))});
-await test('review rejects invalid quantities, units, dates and prices before queuing',()=>{const i=parseReceipt(fixture).items[0];assert.throws(()=>receiptListItem({...i,quantity:0},meta,'list'));assert.throws(()=>receiptListItem({...i,lineTotal:-1},meta,'list'));assert.throws(()=>receiptListItem(i,{...meta,date:'2026-02-30'},'list'));assert.equal(validDate('2026-02-30'),'');assert.equal(validDate('2024-02-29'),'2024-02-29');assert.throws(()=>validateRecord('item',{...receiptListItem(i,meta,'list'),receipt:{...meta,line:'0',label:'Milk',lineTotal:NaN}},'h'))});
-await test('paper crop falls back safely and isolates a tall receipt',()=>{assert.deepEqual(suggestPaperCrop(new Uint8ClampedArray(100*100*4),100,100),{left:0,top:0,right:100,bottom:100});const rgba=new Uint8ClampedArray(100*200*4);for(let y=10;y<190;y++)for(let x=30;x<65;x++)rgba.fill(230,(y*100+x)*4,(y*100+x)*4+4);const c=suggestPaperCrop(rgba,100,200);assert(c.left<30&&c.right>64);assert(c.top<5&&c.bottom>94)});
-const post=(user:string,b:any)=>asUser(user,()=>POST(new Request('https://same.test/api/data',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)})));
-await test('reviewed receipt persists to a shared list, attributes the member and replays safely',async()=>{const created=await post('ReceiptOwner',{action:'createHousehold',name:'Receipt family',country:'CH',currency:'CHF'});const {household:h}=await created.json();const r=await asUser('ReceiptOwner',()=>GET(new Request('https://same.test/api/data?household='+h)));const list=(await r.json()).records.find((r:any)=>r.kind==='list');await run('INSERT INTO memberships(household,user,role) VALUES(?,?,?)',h,'ReceiptMember','member');const item=receiptListItem(parseReceipt(fixture).items[1],meta,list.id);const request={action:'op',household:h,op:{id:'receipt-operation',record:'receipt-item',kind:'item',version:0,data:item}};const added=await post('ReceiptMember',request);assert.equal(added.status,200);assert.equal((await added.json()).record.data.addedBy,'ReceiptMember');assert.equal((await post('ReceiptMember',request)).status,200);const stored=JSON.parse((await one('SELECT data FROM records WHERE id=?','receipt-item')).data);assert.equal(stored.quantity,2);assert.equal(stored.receipt.currency,'CHF');assert.equal(stored.receipt.lineTotal,7.6);const visible=await asUser('ReceiptOwner',()=>GET(new Request('https://same.test/api/data?household='+h)));assert((await visible.json()).records.some((r:any)=>r.id==='receipt-item'));assert.equal((await post('ReceiptOutsider',{...request,op:{...request.op,id:'receipt-attack'}})).status,403)});
-await test('receipt interface exposes camera, photo and text fallbacks',async()=>{const React=await import('react');const {renderToStaticMarkup}=await import('react-dom/server');const {default:Scanner}=await import('../app/receipt-scanner');const html=renderToStaticMarkup(React.createElement(Scanner,{lists:[],active:'',country:'CH',currency:'CHF',onAdd:()=>0}));assert.match(html,/Take a photo/);assert.match(html,/Choose photo/);assert.match(html,/Paste or type receipt text/);assert.match(html,/capture="environment"/);assert.match(html,/stay on this device/)});
+const meta = { fingerprint: 'a'.repeat(64), store: 'Coop', date: '2026-01-01', currency: 'CHF' };
+await test('receipt columns preserve promotion totals, packs and multiple units', () => {
+  const d = parseReceipt(fixture);
+  assert.equal(d.items.length, 4);
+  assert.equal(d.items[0].name, 'Beans 175G');
+  assert.equal(d.items[0].quantity, 1);
+  assert.equal(d.items[0].pack, '175G');
+  assert.equal(d.items[0].lineTotal, 4.05);
+  assert.equal(d.items[1].quantity, 2);
+  assert.equal(d.items[1].lineTotal, 7.6);
+  assert.equal(d.total, 26.8);
+  assert.equal(d.date, '2026-01-01');
+  assert(!d.warnings.some((w) => w.includes('do not match')));
+});
+await test('weighted quantities are explicit and an inferred unit is flagged', () => {
+  const i = parseReceipt(fixture).items[2];
+  assert.equal(i.quantity, 0.75);
+  assert.equal(i.unit, 'kg');
+  assert(i.warnings.some((w) => w.includes('Confirm the unit')));
+  assert.equal(i.lineTotal, 11.2);
+});
+await test('US style quantity prefix and comma-decimal European rows work', () => {
+  const us = parseReceipt('Market\n2 x Milk 1.50 3.00\nBread 1 2.00 2.00\nTOTAL USD 5.00');
+  assert.equal(us.items[0].quantity, 2);
+  assert.equal(us.items[0].name, 'Milk');
+  const eu = parseReceipt('Migros\nPasta 500g 2 1,95 3,90\nTOTAL CHF 3,90');
+  assert.equal(eu.items[0].quantity, 2);
+  assert.equal(eu.items[0].pack, '500g');
+  assert.equal(eu.items[0].lineTotal, 3.9);
+});
+await test('payment, tax, totals and footer numbers never become shopping products', () => {
+  const d = parseReceipt(fixture);
+  assert(!d.items.some((i) => /TWINT|reference|Coupon|VAT/.test(i.name)));
+  assert.equal(parseReceipt('TOTAL CHF 6.00\nVisa 6.00\nReference 12345').items.length, 0);
+});
+await test('corrupted receipt quantities are not silently turned into bulk purchases', () => {
+  const d = parseReceipt(
+    'Artikel Menge Preis Total\nTofu nature      125220    2.20 0\nTOTAL CHF 2.20',
+  );
+  assert.equal(d.items[0].quantity, 1);
+  assert.equal(d.items[0].selected, false);
+  assert(d.items[0].warnings.some((w) => w.includes('unclear')));
+  const merged = parseReceipt(
+    'Artikel Menge Preis Total\nLentils      111.965    1.95 0\nTOTAL CHF 1.95',
+  );
+  assert.equal(merged.items[0].quantity, 1);
+  assert.equal(merged.items[0].selected, false);
+});
+await test('uncertain price rows remain editable without invented amounts', () => {
+  const d = parseReceipt(
+    'Artikel Menge Preis Total\nTofu nature      ]    ] 95      } 95 0\nTOTAL CHF 3.95',
+  );
+  assert.equal(d.items.length, 1);
+  assert.equal(d.items[0].lineTotal, undefined);
+  assert(d.warnings.some((w) => w.includes('do not match')));
+});
+await test('refunds and discounts are excluded with a reconciliation warning', () => {
+  const d = parseReceipt('Milk 1 3.00 3.00\nReturned Bread 1 -2.00 -2.00\nTOTAL EUR 1.00');
+  assert.equal(d.items.length, 1);
+  assert(d.warnings.some((w) => w.includes('refund')));
+  assert(d.warnings.some((w) => w.includes('do not match')));
+});
+await test('receipt provenance never implies catalogue identity or a new purchase price', () => {
+  const d = receiptListItem(parseReceipt(fixture).items[1], meta, 'list');
+  assert.equal(d.product, null);
+  assert.equal(d.price, null);
+  assert.equal(d.actualPrice, null);
+  assert.equal(d.done, false);
+  assert.equal(d.receipt.lineTotal, 7.6);
+  assert.equal(d.quantity, 2);
+  assert.equal(d.substitution, 'ask');
+  assert(!JSON.stringify(d).includes('Card reference'));
+});
+await test('review rejects invalid quantities, units, dates and prices before queuing', () => {
+  const i = parseReceipt(fixture).items[0];
+  assert.throws(() => receiptListItem({ ...i, quantity: 0 }, meta, 'list'));
+  assert.throws(() => receiptListItem({ ...i, lineTotal: -1 }, meta, 'list'));
+  assert.throws(() => receiptListItem(i, { ...meta, date: '2026-02-30' }, 'list'));
+  assert.equal(validDate('2026-02-30'), '');
+  assert.equal(validDate('2024-02-29'), '2024-02-29');
+  assert.throws(() =>
+    validateRecord(
+      'item',
+      {
+        ...receiptListItem(i, meta, 'list'),
+        receipt: { ...meta, line: '0', label: 'Milk', lineTotal: NaN },
+      },
+      'h',
+    ),
+  );
+});
+await test('paper crop falls back safely and isolates a tall receipt', () => {
+  assert.deepEqual(suggestPaperCrop(new Uint8ClampedArray(100 * 100 * 4), 100, 100), {
+    left: 0,
+    top: 0,
+    right: 100,
+    bottom: 100,
+  });
+  const rgba = new Uint8ClampedArray(100 * 200 * 4);
+  for (let y = 10; y < 190; y++)
+    for (let x = 30; x < 65; x++) rgba.fill(230, (y * 100 + x) * 4, (y * 100 + x) * 4 + 4);
+  const c = suggestPaperCrop(rgba, 100, 200);
+  assert(c.left < 30 && c.right > 64);
+  assert(c.top < 5 && c.bottom > 94);
+});
+const post = (user: string, b: unknown) =>
+  asUser(user, () =>
+    POST(
+      new Request('https://same.test/api/data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', origin: 'https://same.test' },
+        body: JSON.stringify(b),
+      }),
+    ),
+  );
+await test('reviewed receipt persists to a shared list, attributes the member and replays safely', async () => {
+  const created = await post('ReceiptOwner', {
+    action: 'createHousehold',
+    name: 'Receipt family',
+    country: 'CH',
+    currency: 'CHF',
+  });
+  const { household: h } = await created.json();
+  const r = await asUser('ReceiptOwner', () =>
+    GET(new Request('https://same.test/api/data?household=' + h)),
+  );
+  const list = (await r.json()).records.find((r: { kind: string }) => r.kind === 'list');
+  await run(
+    'INSERT INTO memberships(household,user,role) VALUES(?,?,?)',
+    h,
+    'ReceiptMember',
+    'member',
+  );
+  const item = receiptListItem(parseReceipt(fixture).items[1], meta, list.id);
+  const request = {
+    action: 'op',
+    household: h,
+    op: { id: 'receipt-operation', record: 'receipt-item', kind: 'item', version: 0, data: item },
+  };
+  const added = await post('ReceiptMember', request);
+  assert.equal(added.status, 200);
+  assert.equal((await added.json()).record.data.addedBy, 'ReceiptMember');
+  assert.equal((await post('ReceiptMember', request)).status, 200);
+  const stored = JSON.parse(
+    (await one('SELECT data FROM records WHERE id=?', 'receipt-item')).data,
+  );
+  assert.equal(stored.quantity, 2);
+  assert.equal(stored.receipt.currency, 'CHF');
+  assert.equal(stored.receipt.lineTotal, 7.6);
+  const visible = await asUser('ReceiptOwner', () =>
+    GET(new Request('https://same.test/api/data?household=' + h)),
+  );
+  assert((await visible.json()).records.some((r: { id: string }) => r.id === 'receipt-item'));
+  assert.equal(
+    (await post('ReceiptOutsider', { ...request, op: { ...request.op, id: 'receipt-attack' } }))
+      .status,
+    403,
+  );
+});
+await test('receipt interface exposes camera, photo and text fallbacks', async () => {
+  const React = await import('react');
+  const { renderToStaticMarkup } = await import('react-dom/server');
+  const { default: Scanner } = await import('../app/receipt-scanner');
+  const html = renderToStaticMarkup(
+    React.createElement(Scanner, {
+      lists: [],
+      active: '',
+      country: 'CH',
+      currency: 'CHF',
+      onAdd: () => 0,
+    }),
+  );
+  assert.match(html, /Take a photo/);
+  assert.match(html, /Choose photo/);
+  assert.match(html, /Paste or type receipt text/);
+  assert.match(html, /capture="environment"/);
+  assert.match(html, /stay on this device/);
+});
