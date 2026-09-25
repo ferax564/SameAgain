@@ -630,3 +630,80 @@ await test('M15: account deletion scrubs invitations, receipts and limit keys', 
   const kept = JSON.parse((await one('SELECT data FROM records WHERE id=?', item.record.id)).data);
   assert.equal(kept.addedBy, 'Deleted member');
 });
+
+await test('M15: account deletion also scrubs households the person already left', async () => {
+  const inv = await call('Owner', { action: 'invite', household: h, email: 'former@example.test' });
+  assert.equal((await call('former', { action: 'join', token: inv.token })).status, 200);
+  const item = await apply(
+    'Owner',
+    op('item', { name: 'For former', list, quantity: 1, unit: 'pack', assigned: 'former' }),
+  );
+  assert.equal(item.status, 200);
+  assert.equal((await call('former', { action: 'leave', household: h })).status, 200);
+  assert.equal((await call('former', { action: 'deleteAccount' })).status, 200);
+  const data = (await one('SELECT data FROM records WHERE id=?', item.record.id)).data as string;
+  assert(!data.includes('"former"'), data);
+});
+
+await test('list currency side effects report only rows that were actually updated', async () => {
+  const l = await apply('Owner', op('list', { name: 'Race list', currency: 'EUR' }));
+  const item = await apply(
+    'Owner',
+    op('item', { name: 'Race butter', list: l.record.id, quantity: 1, unit: 'pack' }),
+  );
+  await run(
+    "UPDATE records SET data=json_remove(data,'$.priceCurrency') WHERE id=?",
+    item.record.id,
+  );
+  // Another shopper edits the item between the server's read and its batch: the trigger
+  // fires on the receipt insert, which runs inside the batch before the currency pin.
+  await run(
+    `CREATE TRIGGER race_edit AFTER INSERT ON operations BEGIN UPDATE records SET version=version+1 WHERE id='${item.record.id}'; END`,
+  );
+  try {
+    const changed = await apply(
+      'Owner',
+      op('list', { ...l.record.data, currency: 'CHF' }, l.record),
+    );
+    assert.equal(changed.status, 200);
+    const reported = changed.affected.find((r: { id: string }) => r.id === item.record.id);
+    const actual = await one('SELECT version,data FROM records WHERE id=?', item.record.id);
+    assert.equal(reported.version, actual.version);
+    assert.equal(reported.data.priceCurrency, JSON.parse(actual.data).priceCurrency);
+    assert.equal(JSON.parse(actual.data).priceCurrency, undefined);
+  } finally {
+    await run('DROP TRIGGER IF EXISTS race_edit');
+  }
+});
+
+await test('photo quota is reserved atomically across concurrent uploads', async () => {
+  const bytes = jpeg(640, 480);
+  const size = cleanJpeg(bytes).bytes.length;
+  const used = Number(
+    (await one('SELECT COALESCE(SUM(bytes),0) AS total FROM photos WHERE household=?', h)).total,
+  );
+  // Room for exactly one more photo.
+  await run(
+    'INSERT INTO photos(key,household,bytes,created) VALUES(?,?,?,?)',
+    h + '/race-filler',
+    h,
+    200 * 1024 * 1024 - used - Math.floor(size * 1.5),
+    Date.now(),
+  );
+  const upload = () => {
+    const f = new FormData();
+    f.set('household', h);
+    f.set('file', new Blob([jpeg(640, 480)], { type: 'image/jpeg' }), 'p.jpg');
+    return asUser('Owner', () =>
+      uploadPhoto(
+        new Request(origin + '/api/photo', { method: 'POST', headers: { origin }, body: f }),
+      ),
+    );
+  };
+  try {
+    const statuses = (await Promise.all([upload(), upload()])).map((r) => r.status).sort();
+    assert.deepEqual(statuses, [200, 413]);
+  } finally {
+    await run('DELETE FROM photos WHERE key=?', h + '/race-filler');
+  }
+});

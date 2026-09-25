@@ -836,6 +836,7 @@ async function applyOperation(u: { id: string }, h: string, rawOp: unknown) {
         updated: now,
       });
   }
+  let currencyUpdate: { index: number; ids: string[] } | undefined;
   if (op.kind === 'list' && before && before.currency !== d.currency) {
     const pinned = before.currency || 'EUR';
     const rows = (await query(
@@ -844,6 +845,7 @@ async function applyOperation(u: { id: string }, h: string, rawOp: unknown) {
       op.record,
     )) as Row[];
     if (rows.length) {
+      currencyUpdate = { index: extras.length, ids: rows.map((r) => r.id) };
       extras.push(
         db()
           .prepare(
@@ -882,6 +884,22 @@ async function applyOperation(u: { id: string }, h: string, rawOp: unknown) {
         .bind(h, op.id),
       ...extras,
     ]);
+    if (currencyUpdate && res[0].meta.changes) {
+      // The version-guarded currency pin skips items another shopper changed in the
+      // meantime; report the rows as they actually are, never a fabricated update.
+      const pinnedCount = res[3 + currencyUpdate.index].meta.changes;
+      if (pinnedCount !== currencyUpdate.ids.length) {
+        const ids = new Set(currencyUpdate.ids);
+        const actual = (await query(
+          'SELECT * FROM records WHERE household=? AND id IN (SELECT value FROM json_each(?))',
+          h,
+          JSON.stringify(currencyUpdate.ids),
+        )) as Row[];
+        const kept = affected.filter((r) => !ids.has(r.id));
+        affected.splice(0, affected.length, ...kept, ...actual.map(out));
+        await run('UPDATE operations SET result=? WHERE id=?', JSON.stringify(result), op.id);
+      }
+    }
     if (!res[0].meta.changes) {
       // A retry of an operation that already succeeded is not a conflict.
       const retry = await receiptFor(op.id, u.id, h);
@@ -927,13 +945,14 @@ async function deleteAccount(u: { id: string; email: string }) {
   if (owned.length)
     fail('Transfer household ownership or delete your households before deleting your account.');
   const pattern = '%' + likeEscape(u.id) + '%';
-  // Anonymise shared records in the person's households, plus any record they
-  // created or last edited elsewhere. Version-guarded updates are retried;
+  // Anonymise every record that mentions the person (including households they
+  // already left, where other members' records may still name them in fields such
+  // as `assigned` or `member`), plus any record they created or last edited.
+  // Account deletion is rare, so a full scan is acceptable. Version-guarded updates are retried;
   // the final round writes the freshly read data without a guard.
   for (let attempt = 0; attempt < 4; attempt++) {
     const rows = (await query(
-      "SELECT id,household,data,version FROM records WHERE kind!='feedback' AND ((household IN (SELECT household FROM memberships WHERE user=?) AND data LIKE ? ESCAPE '\\') OR created_by=? OR updated_by=?)",
-      u.id,
+      "SELECT id,household,data,version FROM records WHERE kind!='feedback' AND (data LIKE ? ESCAPE '\\' OR created_by=? OR updated_by=?)",
       pattern,
       u.id,
       u.id,

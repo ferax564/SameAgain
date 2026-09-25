@@ -161,6 +161,14 @@ export function useSameAgainController() {
       toast.error('Sync pending changes before changing access.');
       return;
     }
+    // Deleting the account clears this device's cache for every household, so queued
+    // changes anywhere (not just in the open household) must be synced first.
+    if (action === 'deleteAccount' && s.pendingAnywhere) {
+      toast.error(
+        'Some changes on this device have not synced yet. Go online and wait for them before deleting your account.',
+      );
+      return;
+    }
     if (s.demo) {
       toast('This action needs your own household. Demo data stays separate.');
       return;

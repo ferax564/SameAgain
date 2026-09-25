@@ -58,24 +58,30 @@ export async function POST(req: Request) {
     // Metadata (EXIF GPS, text chunks) is stripped here as well as on the
     // device, so direct API uploads cannot keep location details.
     const photo = cleanPhoto(new Uint8Array(await file.arrayBuffer()), file.type);
-    const used = await one(
-      'SELECT COALESCE(SUM(bytes),0) AS total FROM photos WHERE household=?',
-      h,
-    );
-    if (Number(used?.total || 0) + photo.bytes.length > HOUSEHOLD_PHOTO_QUOTA)
-      fail(
-        'This household has reached its 200 MB photo storage limit. Delete old photos first.',
-        413,
-      );
     const key = h + '/' + crypto.randomUUID();
-    await env.BUCKET.put(key, photo.bytes, { httpMetadata: { contentType: photo.type } });
-    await run(
-      'INSERT INTO photos(key,household,bytes,created) VALUES(?,?,?,?)',
+    // Reserve the bytes atomically before writing to R2, so concurrent uploads cannot
+    // together exceed the household quota. The reservation is released if the write fails.
+    const reserved = await run(
+      'INSERT INTO photos(key,household,bytes,created) SELECT ?,?,?,? WHERE (SELECT COALESCE(SUM(bytes),0) FROM photos WHERE household=?) + ? <= ?',
       key,
       h,
       photo.bytes.length,
       Date.now(),
+      h,
+      photo.bytes.length,
+      HOUSEHOLD_PHOTO_QUOTA,
     );
+    if (!reserved.meta.changes)
+      fail(
+        'This household has reached its 200 MB photo storage limit. Delete old photos first.',
+        413,
+      );
+    try {
+      await env.BUCKET.put(key, photo.bytes, { httpMetadata: { contentType: photo.type } });
+    } catch (e) {
+      await run('DELETE FROM photos WHERE key=?', key);
+      throw e;
+    }
     // The household may have been deleted while the upload was in flight.
     if (!(await acceptingUploads(h))) {
       await env.BUCKET.delete(key);
