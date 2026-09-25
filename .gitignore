@@ -60,3 +60,7 @@ next-env.d.ts
 *.db
 /uploads/
 /receipts/
+/.claude/worktrees/
+/playwright-report/
+/test-results/
+__pycache__/

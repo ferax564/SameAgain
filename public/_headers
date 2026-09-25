@@ -1,0 +1,12 @@
+# Cloudflare Workers static-asset headers. Because this file exists, vinext
+# copies it to dist/client/_headers instead of generating its default, so the
+# /assets/* rule vinext would have written is repeated here.
+
+# Content-hashed build output.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Receipt OCR worker, WASM cores and language models. The directory is
+# versioned (/ocr/v7/); bump it when any file below it changes.
+/ocr/*
+  Cache-Control: public, max-age=31536000, immutable

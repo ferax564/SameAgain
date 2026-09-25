@@ -1,5 +1,5 @@
 {
-  "name": "site-creator-vinext-starter",
+  "name": "same-again",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -11,43 +11,34 @@
     "build": "bash scripts/build-verified.sh",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
     "test": "node --experimental-strip-types --test tests/domain.test.ts && node tests/run-security.mjs && node --test tests/service-worker.test.mjs",
-    "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate",
+    "test:e2e": "playwright test",
+    "e2e:setup": "node scripts/e2e-setup.mjs",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate"
   },
   "dependencies": {
-    "@base-ui/react": "^1.7.0",
-    "@hookform/resolvers": "^5.7.1",
     "@noble/hashes": "1.8.0",
-    "@shadcn/react": "^0.3.0",
     "@zxing/browser": "^0.1.5",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
-    "cmdk": "^1.1.1",
-    "date-fns": "^4.4.0",
     "drizzle-orm": "0.45.2",
-    "embla-carousel-react": "^8.6.0",
-    "input-otp": "^1.4.2",
     "lucide-react": "^1.31.0",
     "next": "16.2.6",
-    "next-themes": "^0.4.6",
     "radix-ui": "^1.6.7",
     "react": "19.2.6",
-    "react-day-picker": "^10.0.1",
     "react-dom": "19.2.6",
-    "react-hook-form": "^7.85.0",
-    "react-resizable-panels": "^4.12.2",
-    "recharts": "^3.8.0",
     "sonner": "^2.0.8",
     "tailwind-merge": "3.6.0",
     "tesseract.js": "7.0.0",
-    "vaul": "^1.1.2",
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
     "@cloudflare/vite-plugin": "1.37.1",
+    "@playwright/test": "1.56.1",
     "@tailwindcss/postcss": "4.2.1",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
@@ -55,8 +46,10 @@
     "@vitejs/plugin-react": "6.0.2",
     "@vitejs/plugin-rsc": "0.5.26",
     "drizzle-kit": "0.31.10",
+    "esbuild": "0.28.0",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.6",
+    "eslint-config-prettier": "10.1.8",
     "prettier": "^3.9.9",
     "react-server-dom-webpack": "19.2.6",
     "tailwindcss": "4.2.1",
@@ -66,5 +59,8 @@
     "vite": "8.0.13",
     "wrangler": "4.92.0"
   },
-  "type": "module"
+  "type": "module",
+  "overrides": {
+    "playwright-core": "1.56.1"
+  }
 }
