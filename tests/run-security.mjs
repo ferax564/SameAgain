@@ -9,6 +9,9 @@ await build({
     'tests/search-entry.ts',
     'tests/receipt-entry.ts',
     'tests/release-entry.ts',
+    'tests/domain-fixes-entry.ts',
+    'tests/sync-fixes-entry.ts',
+    'tests/server-fixes-entry.ts',
   ],
   outdir: '.sites-runtime/tests',
   bundle: true,
@@ -34,3 +37,7 @@ await import('../.sites-runtime/tests/search-entry.mjs');
 await import('../.sites-runtime/tests/receipt-entry.mjs');
 
 await import('../.sites-runtime/tests/release-entry.mjs');
+
+await import('../.sites-runtime/tests/domain-fixes-entry.mjs');
+await import('../.sites-runtime/tests/sync-fixes-entry.mjs');
+await import('../.sites-runtime/tests/server-fixes-entry.mjs');
