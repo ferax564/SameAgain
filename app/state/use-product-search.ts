@@ -31,6 +31,8 @@ export function useProductSearch({
     [results, setResults] = useState<Product[]>([]),
     [searched, setSearched] = useState(false),
     [searchError, setSearchError] = useState(''),
+    // Informational source notes; errors stay in searchError.
+    [searchNotice, setSearchNotice] = useState(''),
     [product, setProduct] = useState<Product>(),
     [productLoading, setProductLoading] = useState(false),
     [productNotice, setProductNotice] = useState(''),
@@ -108,6 +110,7 @@ export function useProductSearch({
     clearTimeout(queryTimer.current);
     setBusy(true);
     setSearchError('');
+    setSearchNotice('');
     setSearched(true);
     try {
       if (!code && /^[\d\s-]{8,20}$/.test(query.trim())) code = query.trim();
@@ -141,7 +144,7 @@ export function useProductSearch({
               label: dietFilter || undefined,
             }),
           );
-          setSearchError(data.notice || '');
+          setSearchNotice(data.notice || '');
         }
       } else {
         const params = new URLSearchParams(
@@ -179,7 +182,7 @@ export function useProductSearch({
           }
         } else {
           setResults(d.products);
-          if (d.notice) setSearchError(d.notice);
+          setSearchNotice(d.notice || '');
         }
       }
     } catch (e) {
@@ -206,6 +209,7 @@ export function useProductSearch({
     setResults([]);
     setSearched(false);
     setSearchError('');
+    setSearchNotice('');
   }
   return {
     query,
@@ -221,6 +225,7 @@ export function useProductSearch({
     searched,
     setSearched,
     searchError,
+    searchNotice,
     search,
     product,
     setProduct,

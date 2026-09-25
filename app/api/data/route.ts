@@ -678,9 +678,19 @@ async function applyOperation(u: { id: string }, h: string, rawOp: unknown) {
     );
     if (!list || JSON.parse(list.data).archived) fail('Choose an active list in this household.');
     d.priceCurrency = d.priceCurrency || JSON.parse(list.data).currency || 'EUR';
-    if (d.intendedFor) await member(h, d.intendedFor);
-    if (d.assigned && !memberIds.has(d.assigned))
-      fail('Assigned shopper is not a household member.');
+    // A former member may still be named on an existing item; that must not block ticking,
+    // editing or deleting it. New items (e.g. "same again" from history) drop the name.
+    for (const k of ['assigned', 'intendedFor'] as const) {
+      const v = d[k];
+      if (typeof v !== 'string' || !v || memberIds.has(v) || v === before?.[k]) continue;
+      if (!before) delete d[k];
+      else
+        fail(
+          k === 'assigned'
+            ? 'Assigned shopper is not a household member.'
+            : 'Choose a current household member.',
+        );
+    }
     d.addedBy = before?.addedBy || u.id;
     if (d.done && !before?.done) {
       d.purchasedBy = u.id;

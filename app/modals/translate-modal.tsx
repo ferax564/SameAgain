@@ -279,13 +279,11 @@ export function TranslateModal() {
             )}
             <div className="row between">
               <span className="muted">
-                {Object.keys(decisions).length} of {outstanding.length} reviewed
+                {outstanding.filter((i) => decisions[i.id]).length} of {outstanding.length} reviewed
               </span>
               <button
                 className="btn primary"
-                disabled={
-                  !outstanding.length || Object.keys(decisions).length !== outstanding.length
-                }
+                disabled={!outstanding.length || outstanding.some((i) => !decisions[i.id])}
                 onClick={translate}
               >
                 Create destination list <ArrowRight size={18} />

@@ -121,3 +121,30 @@ test('the demo works without an account', async ({ page }) => {
   await expect(page.locator('article.item-row').first()).toBeVisible();
   await expectAccessible(page);
 });
+
+test('a product shows its health score, breakdown and better alternatives', async ({ page }) => {
+  await page.route(/openfoodfacts\.org/, (route) => route.abort());
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Explore the demo' }).first().click();
+  await expect(page.getByText('Demo household')).toBeVisible();
+  await openNav(page, 'Discover');
+  await page
+    .locator('.product-card', { hasText: 'Nutella' })
+    .first()
+    .locator('.product-open')
+    .click();
+  const panel = page.locator('.health-panel');
+  await expect(panel).toBeVisible();
+  await expect(panel.getByText(/Nutri-Score E/)).toBeVisible();
+  await expect(panel.locator('.score-verdict')).toContainText('/100');
+  await expect(panel.locator('.alternative').first()).toBeVisible({ timeout: 20_000 });
+  await panel.getByRole('button', { name: 'Migros' }).click();
+  await expect(panel.getByRole('button', { name: 'Migros' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(panel.locator('.alternative, p.fine').first()).toBeVisible();
+  await panel.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: test.info().outputPath('health-panel.png'), fullPage: false });
+  await expectAccessible(page);
+});

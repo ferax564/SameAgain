@@ -5,6 +5,7 @@ import { POST as data, GET as householdData } from '../app/api/data/route';
 import { rankSearch, searchMatches } from '../lib/catalogue-search';
 import { normalise, off } from '../lib/catalogue';
 import { persistSwiss, swissBarcode } from '../lib/swiss-catalogue';
+import { SNAPSHOT_MAX_AGE } from '../lib/barcode-lookup';
 import { asUser, one, run } from './server-shim';
 const code = '8000500082379';
 // Deterministic regression based on the reported Nutella record. Never stock data.
@@ -52,6 +53,11 @@ globalThis.fetch = async (url: any) => {
   searches++;
   return Response.json({ hits: [other], timed_out: false });
 };
+// The saved export holds this product with full details. Model an export older than the
+// snapshot window so these tests exercise live hydration; snapshot use is tested below.
+const exported = (await swissBarcode(code))!.detailsRetrieved!;
+const realNow = Date.now;
+Date.now = () => exported + SNAPSHOT_MAX_AGE + 86400000;
 const get = (params: Record<string, string>, user = 'SearchTester') =>
   asUser(user, () =>
     catalogue(new Request('https://same.test/api/catalogue?' + new URLSearchParams(params))),
@@ -182,6 +188,7 @@ await test('detail lookup with another household identifier is denied', async ()
   assert.equal(r.status, 403);
 });
 globalThis.fetch = originalFetch;
+Date.now = realNow;
 await test('product nutrition renders label values without meal ingredient counters', async () => {
   const React = await import('react');
   const { renderToStaticMarkup } = await import('react-dom/server');

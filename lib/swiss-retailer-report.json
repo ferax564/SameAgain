@@ -1,71 +1,86 @@
 {
-  "retrieved": "2026-09-05T13:16:50.035Z",
+  "retrieved": "2026-09-25T11:59:42Z",
   "source": "Open Food Facts",
+  "sourceExport": "https://openfoodfacts-ds.s3.eu-west-3.amazonaws.com/en.openfoodfacts.org.products.csv.gz",
+  "sourceSha256": "0eceb5f0fa98257ea1a74f22afc413879bc82393c9b324f63e62729f970915a5",
+  "method": "Nightly CSV export, streamed once; products tagged en:switzerland with a name and a valid numeric code.",
   "completeRetailerCatalogue": false,
-  "records": 13249,
-  "retailers": [
-    {
-      "retailer": "coop",
-      "reported": 3661,
-      "exact": true,
-      "pagesFetched": 4,
-      "pagesReported": 4
-    },
-    {
-      "retailer": "migros",
-      "reported": 10000,
-      "exact": false,
-      "pagesFetched": 10,
-      "pagesReported": 10
-    }
-  ],
-  "licence": "ODbL 1.0; contents DbCL 1.0; images CC BY-SA 3.0",
-  "notice": "Community records with retailer and Switzerland tags. Up to 10,000 search hits per retailer; no exhaustive assortment or branch stock claim.",
-  "photoRefresh": {
-    "date": "2026-09-10",
-    "repaired": [
-      {
-        "barcode": "3068320014067",
-        "image": "https://images.openfoodfacts.org/images/products/306/832/001/4067/front_en.115.400.jpg",
-        "retrieved": "2026-09-10T18:44:30.163506+00:00",
-        "sourceUrl": "https://world.openfoodfacts.org/api/v3.6/product/3068320014067.json"
-      },
-      {
-        "barcode": "3057640521683",
-        "image": "https://images.openfoodfacts.org/images/products/305/764/052/1683/front_fr.40.400.jpg",
-        "retrieved": "2026-09-10T18:44:39.810207+00:00",
-        "sourceUrl": "https://world.openfoodfacts.org/api/v3.6/product/3057640521683.json"
-      },
-      {
-        "barcode": "4000522006890",
-        "image": "https://images.openfoodfacts.org/images/products/400/052/200/6890/front_de.111.400.jpg",
-        "retrieved": "2026-09-10T18:44:49.467023+00:00",
-        "sourceUrl": "https://world.openfoodfacts.org/api/v3.6/product/4000522006890.json"
-      },
-      {
-        "barcode": "02425801",
-        "image": "https://images.openfoodfacts.org/images/products/000/000/242/5801/front_en.14.400.jpg",
-        "retrieved": "2026-09-10T18:44:59.402372+00:00",
-        "sourceUrl": "https://world.openfoodfacts.org/api/v3.6/product/02425801.json"
-      }
-    ],
-    "withPhoto": 12658
+  "records": 98179,
+  "indexRecords": 33759,
+  "coverage": {
+    "withPhoto": 85558,
+    "withNutrition": 85611,
+    "withIngredients": 33024,
+    "withNutriScore": 41132,
+    "withNova": 30130
   },
   "coverageByRetailer": {
     "coop": {
-      "records": 3534,
-      "withPhoto": 3470
+      "records": 12986,
+      "withPhoto": 10794,
+      "withNutrition": 12076,
+      "withNutriScore": 6529,
+      "withIngredients": 5795
     },
     "migros": {
-      "records": 9759,
-      "withPhoto": 9230
+      "records": 16831,
+      "withPhoto": 14815,
+      "withNutrition": 15743,
+      "withNutriScore": 8614,
+      "withIngredients": 7551
+    },
+    "denner": {
+      "records": 1672,
+      "withPhoto": 1467,
+      "withNutrition": 1538,
+      "withNutriScore": 868,
+      "withIngredients": 526
+    },
+    "lidl": {
+      "records": 1157,
+      "withPhoto": 1151,
+      "withNutrition": 1115,
+      "withNutriScore": 929,
+      "withIngredients": 904
+    },
+    "aldi": {
+      "records": 685,
+      "withPhoto": 679,
+      "withNutrition": 643,
+      "withNutriScore": 561,
+      "withIngredients": 537
+    },
+    "volg": {
+      "records": 261,
+      "withPhoto": 223,
+      "withNutrition": 247,
+      "withNutriScore": 126,
+      "withIngredients": 24
+    },
+    "spar": {
+      "records": 232,
+      "withPhoto": 224,
+      "withNutrition": 213,
+      "withNutriScore": 148,
+      "withIngredients": 115
+    },
+    "manor": {
+      "records": 152,
+      "withPhoto": 147,
+      "withNutrition": 129,
+      "withNutriScore": 105,
+      "withIngredients": 119
+    },
+    "globus": {
+      "records": 70,
+      "withPhoto": 69,
+      "withNutrition": 69,
+      "withNutriScore": 58,
+      "withIngredients": 68
     }
   },
-  "detailRefresh": {
-    "date": "2026-09-10",
-    "barcode": "7610200011435",
-    "previousPack": "1000g",
-    "currentPack": "500g",
-    "notice": "Source changed; verify the current package."
-  }
+  "retailerEvidence": "Community store tag or retailer own brand. Not a current assortment, price or branch stock claim.",
+  "licence": "ODbL 1.0; contents DbCL 1.0; images CC BY-SA 3.0",
+  "notice": "Community records tagged for Switzerland. Retailer coverage is partial; direct retailer feeds were not used.",
+  "sourceSha256Scope": "SHA-256 of the Switzerland-filtered copy (109,259 rows) streamed from that export, not of the full export."
 }

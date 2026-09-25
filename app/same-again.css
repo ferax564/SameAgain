@@ -1694,7 +1694,7 @@ main {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: #677764;
+  color: var(--muted-foreground);
   font-size: 12px;
   text-align: center;
 }

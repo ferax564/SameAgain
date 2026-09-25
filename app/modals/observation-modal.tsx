@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import { localDate } from '@/lib/nutrition';
 import { withProductRef } from '@/lib/record-types';
 import { Modal } from '../ui';
 import { useApp } from '../state/context';
@@ -43,7 +44,7 @@ export function ObservationModal() {
           <input
             required
             type="date"
-            max={new Date().toISOString().slice(0, 10)}
+            max={localDate()}
             value={draft.date || ''}
             onChange={(e) => setDraft({ ...draft, date: e.target.value })}
           />

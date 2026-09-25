@@ -49,8 +49,14 @@ export function ItemEditorModal() {
             min="0.01"
             max="10000"
             step="any"
-            value={draft.quantity || 1}
-            onChange={(e) => setDraft({ ...draft, quantity: Number(e.target.value) })}
+            value={draft.quantity === null ? '' : (draft.quantity ?? 1)}
+            onChange={(e) =>
+              // Keep an empty or partial entry (0, 0.) while typing; the form requires a value.
+              setDraft({
+                ...draft,
+                quantity: e.target.value === '' ? null : Number(e.target.value),
+              })
+            }
           />
         </label>
         <label>

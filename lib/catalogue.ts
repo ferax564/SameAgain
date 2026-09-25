@@ -3,7 +3,7 @@ import { Product, countryTag, barcode } from './domain';
 import { one, run, rate, fail, DAY } from './server';
 import { nutrients } from './nutrition';
 export const fields =
-  'code,product_name,product_name_en,product_name_de,product_name_fr,product_name_it,brands,quantity,image_front_url,ingredients_text,ingredients_text_en,ingredients_text_de,ingredients_text_fr,ingredients_text_it,ingredients_text_es,ingredients,allergens_tags,traces_tags,labels_tags,categories_tags,countries_tags,nutriments,nutrition,nutrition_data_per,product_quantity_unit,serving_size,last_modified_t,last_indexed_datetime,stores,stores_tags,additives_tags';
+  'code,product_name,product_name_en,product_name_de,product_name_fr,product_name_it,brands,quantity,image_front_url,ingredients_text,ingredients_text_en,ingredients_text_de,ingredients_text_fr,ingredients_text_it,ingredients_text_es,ingredients,allergens_tags,traces_tags,labels_tags,categories_tags,countries_tags,nutriments,nutrition,nutrition_data_per,product_quantity_unit,serving_size,last_modified_t,last_indexed_datetime,stores,stores_tags,additives_tags,nutriscore_grade,nutriscore_score,nova_group,environmental_score_grade,ecoscore_grade,ingredients_analysis_tags';
 export interface CatalogueProvider {
   lookup(code: string, user?: string): Promise<Product | null>;
   search(
@@ -57,6 +57,12 @@ export interface OffProduct {
   stores?: string | string[];
   stores_tags?: string[];
   additives_tags?: string[];
+  nutriscore_grade?: string;
+  nutriscore_score?: number;
+  nova_group?: number | string;
+  environmental_score_grade?: string;
+  ecoscore_grade?: string;
+  ingredients_analysis_tags?: string[];
   [key: string]: unknown;
 }
 /** A product or search response as cached, stamped with when it was fetched. */
@@ -116,7 +122,25 @@ export function normalise(p: OffProduct, retrieved = Date.now()): Product {
       const value = p.nutriments?.[k + '_100g'];
       if (typeof value === 'number' && Number.isFinite(value) && value >= 0) n[k] = value;
     }
+  const grade = String(p.nutriscore_grade || '').toLowerCase(),
+    nova = Number(p.nova_group),
+    eco = String(p.environmental_score_grade || p.ecoscore_grade || '').toLowerCase(),
+    analysis = Array.isArray(p.ingredients_analysis_tags)
+      ? p.ingredients_analysis_tags.filter((t) => typeof t === 'string' && !t.endsWith('-unknown'))
+      : [];
   return {
+    ...(/^[a-e]$/.test(grade)
+      ? {
+          nutriscore: {
+            grade: grade as 'a',
+            ...(Number.isInteger(p.nutriscore_score) ? { score: p.nutriscore_score } : {}),
+            source: 'Open Food Facts',
+          },
+        }
+      : {}),
+    ...([1, 2, 3, 4].includes(nova) ? { nova: nova as 1 } : {}),
+    ...(/^(?:a-plus|[a-f])$/.test(eco) ? { ecoscore: eco } : {}),
+    ...(analysis.length ? { analysis: analysis.slice(0, 20) } : {}),
     id: 'off:' + String(p.code),
     barcode: String(p.code),
     name: (
@@ -281,7 +305,7 @@ export const off: CatalogueProvider = {
     const b = barcode(raw);
     if (!b.valid) fail(b.error);
     const data = await cached(
-      'product-details-v2:' + b.code,
+      'product-details-v3:' + b.code,
       'https://world.openfoodfacts.org/api/v3.6/product/' + b.code + '.json?fields=' + fields,
       'product',
       user,
@@ -294,7 +318,7 @@ export const off: CatalogueProvider = {
   },
   async search(q, country, category, store, user) {
     const url = searchUrl(q, country, category, store);
-    const data = await cached('search-v2:' + url, url, 'search', user);
+    const data = await cached('search-v3:' + url, url, 'search', user);
     // `cached` checked that a search response has `hits`.
     const products = (data?.hits ?? [])
       .filter((p) => p.code && (p.product_name || p.product_name_en))
