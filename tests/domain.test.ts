@@ -141,6 +141,12 @@ test('currency totals never reinterpret a foreign price and record unpriced purc
   );
   assert.equal(conversion('500 g', '0 g', 2), null);
 });
+test('weight prices are per kg, UPC-E expands and pack parses multipacks', () => {
+  assert.equal(totals([{ quantity: 500, unit: 'g', price: 2.5 }]).estimated, 1.25);
+  assert.equal(barcode('04252614').code, '0042100005264');
+  assert.equal(barcode('025000044786').local, false);
+  assert.equal(conversion('6 x 330 ml', '330 ml', 1)?.exact, 6);
+});
 test('duplicate products with different shoppers or intended members stay separate', () => {
   const a = { product: { id: 'x' }, unit: 'pack', pack: '500g', assigned: 'Sam' };
   assert(!canMerge(a, { ...a, assigned: 'Alex' }));

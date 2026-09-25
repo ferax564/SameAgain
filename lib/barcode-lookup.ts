@@ -11,11 +11,18 @@ export async function lookupBarcode(
 ) {
   const b = barcode(raw);
   if (!b.valid) fail(b.error);
-  const aliases = [b.code];
-  if (b.code.length === 13) {
-    aliases.push('0' + b.code);
-    if (b.code.startsWith('0')) aliases.push(b.code.slice(1));
+  // Equivalent spellings: 13/14-digit padding, UPC-A without the leading zero, and the UPC-A
+  // expansion of an 8-digit code that is also a valid UPC-E.
+  const aliases: string[] = [];
+  for (const code of [b.code, ...(b.alternatives || [])]) {
+    aliases.push(code);
+    if (code.length === 13) {
+      aliases.push('0' + code);
+      if (code.startsWith('0')) aliases.push(code.slice(1));
+    }
+    if (code.length === 12) aliases.push('0' + code);
   }
+  aliases.splice(0, aliases.length, ...new Set(aliases));
   const slots = aliases.map(() => '?').join(',');
   if (household) {
     await member(household, user);
@@ -31,7 +38,7 @@ export async function lookupBarcode(
       };
   }
   let stored = await one(
-    `SELECT data FROM catalogue WHERE json_extract(data,'$.barcode') IN (${slots}) ORDER BY retrieved DESC LIMIT 1`,
+    `SELECT data FROM catalogue WHERE barcode IN (${slots}) ORDER BY retrieved DESC LIMIT 1`,
     ...aliases,
   );
   const imported = await swissBarcode(b.code, requestUrl).catch(() => undefined);
@@ -59,7 +66,7 @@ export async function lookupBarcode(
         localNotice,
     };
   try {
-    const fresh = await off.lookup(b.code);
+    const fresh = await off.lookup(b.code, user);
     if (fresh) return { product: fresh, notice: localNotice || undefined };
     if (product)
       return {

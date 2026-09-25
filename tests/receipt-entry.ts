@@ -123,12 +123,12 @@ await test('paper crop falls back safely and isolates a tall receipt', () => {
   assert(c.left < 30 && c.right > 64);
   assert(c.top < 5 && c.bottom > 94);
 });
-const post = (user: string, b: any) =>
+const post = (user: string, b: unknown) =>
   asUser(user, () =>
     POST(
       new Request('https://same.test/api/data', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', origin: 'https://same.test' },
         body: JSON.stringify(b),
       }),
     ),
@@ -144,7 +144,7 @@ await test('reviewed receipt persists to a shared list, attributes the member an
   const r = await asUser('ReceiptOwner', () =>
     GET(new Request('https://same.test/api/data?household=' + h)),
   );
-  const list = (await r.json()).records.find((r: any) => r.kind === 'list');
+  const list = (await r.json()).records.find((r: { kind: string }) => r.kind === 'list');
   await run(
     'INSERT INTO memberships(household,user,role) VALUES(?,?,?)',
     h,
@@ -170,7 +170,7 @@ await test('reviewed receipt persists to a shared list, attributes the member an
   const visible = await asUser('ReceiptOwner', () =>
     GET(new Request('https://same.test/api/data?household=' + h)),
   );
-  assert((await visible.json()).records.some((r: any) => r.id === 'receipt-item'));
+  assert((await visible.json()).records.some((r: { id: string }) => r.id === 'receipt-item'));
   assert.equal(
     (await post('ReceiptOutsider', { ...request, op: { ...request.op, id: 'receipt-attack' } }))
       .status,

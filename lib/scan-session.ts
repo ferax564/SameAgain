@@ -45,10 +45,11 @@ export class ScanSession {
     }
   }
 }
-export function cameraError(e: any) {
-  return e?.name === 'NotAllowedError'
+export function cameraError(e: unknown) {
+  const name = (e as { name?: unknown } | null | undefined)?.name;
+  return name === 'NotAllowedError'
     ? 'Camera permission was denied. On iPhone, allow Camera access in Safari’s website settings, then try again. Manual entry and photo upload are always available.'
-    : e?.name === 'NotFoundError'
+    : name === 'NotFoundError'
       ? 'No camera was found. Enter the barcode or upload a photo.'
       : 'Could not start the camera. Close other apps using it and retry, or enter the barcode below.';
 }

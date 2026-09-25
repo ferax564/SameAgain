@@ -7,10 +7,16 @@ import {
   MultiFormatReader,
 } from '@zxing/library';
 export function groceryHints() {
-  return new Map<DecodeHintType, any>([
+  return new Map<DecodeHintType, unknown>([
     [
       DecodeHintType.POSSIBLE_FORMATS,
-      [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.UPC_A, BarcodeFormat.ITF],
+      [
+        BarcodeFormat.EAN_13,
+        BarcodeFormat.EAN_8,
+        BarcodeFormat.UPC_A,
+        BarcodeFormat.UPC_E,
+        BarcodeFormat.ITF,
+      ],
     ],
     [DecodeHintType.TRY_HARDER, true],
   ]);
