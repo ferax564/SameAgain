@@ -4,6 +4,8 @@ Your family’s favourites. One shared list. Find them—or a suitable alternati
 
 A TypeScript/React application on Vinext and Cloudflare Workers, with D1 shared persistence, authenticated R2 photos and platform-managed Sign in with ChatGPT. This source snapshot omits the original deployment project ID. Configure a new hosting project when deploying your own instance; do not reuse another household’s infrastructure.
 
+Release history is in [CHANGELOG.md](CHANGELOG.md). The September 2026 review is in [docs/REVIEW-2026-09.md](docs/REVIEW-2026-09.md).
+
 ## Start using it
 
 1. Sign in, create or join a household, and create a list. Country, currency and language preferences are optional and editable.
@@ -14,32 +16,20 @@ A TypeScript/React application on Vinext and Cloudflare Workers, with D1 shared 
 
 Publishing this repository does not publish household records or grant access to the hosted application. A new deployment must retain authenticated, server-authorised household access.
 
-## September 10 release review
-
-- Fixed accent-insensitive and category searches in saved catalogue records, including when the live provider fails. A `search_text` migration supports consistent token matching; older cache rows are backfilled in small batches. Search remains explicitly submitted, bounded and cached.
-- Fixed the static catalogue asset binding/origin used by the managed preview. Both Coop and Migros searches now work in the browser. A read-only demo endpoint exposes only shipped public catalogue snapshots, never household or private-photo data.
-- Improved product photography, missing-image states, keyboard focus, mobile product actions and dark mode. Fixed mobile item-editor overflow from long dropdown labels and compacted shopping mode. Failed image URLs no longer prevent a later valid photo from displaying. Every shopping item can receive an optional private household photo; repeat purchases preserve it. A different destination substitute does not inherit the original product’s photo.
-- Simplified store discovery: retailer/country, source choice, explicit search and coverage are visible together; individual-shop settings are collapsible. Choosing a product in a branch context retains that shop when adding the item.
-- Refreshed six demo products from full live records and repaired four exact product photos. Migros oats `7610200011435` changed from a saved 1,000 g record to a current source record of 500 g. Product-detail hydration flags such discrepancies; the physical label remains authoritative.
-- Kept 146 nonstandard source identifiers searchable without presenting them as validated EAN/UPC barcodes.
-- Fixed receipt photo processing when native browser SHA-256 is unavailable. The small, lazy-loaded `@noble/hashes@1.8.0` fallback produces the same fingerprint and does not change authentication.
-- Corrected the acesulfame K evidence link and rejected negative legacy nutrition values. Unknown or incompatible nutrition remains unknown.
-
-This is suitable for continued private household evaluation. Physical iPhone camera/PWA reconnection and the outer hosting gate with actual invited accounts remain release checks before claiming broad device or family-access certification. There is no complete retailer assortment, live branch inventory or automatic offers feed.
-
 ## Setup and deployment
 
-Requirements: Node 22.13+ (Node 24 for the supplied SQLite test adapter), npm and a Sites environment supporting Cloudflare Workers, D1 and R2.
+Requirements: Node 22.13 or newer (the test harness uses `node:sqlite`, which needs no flag from 22.13), npm, Python 3 for the retailer-import tests, and a Sites environment supporting Cloudflare Workers, D1 and R2 for deployment. CI runs on Node 22.
 
 ```sh
+git clone https://github.com/ferax564/SameAgain.git
+cd SameAgain
 npm ci
-npm run typecheck
-npm test
-python3 tests/retailer-import.test.py
-npm run build
+npm run dev      # Vite dev server with the Worker runtime and local D1/R2
 ```
 
-After a schema change, run `npm run db:generate` and commit the generated migration. The checked-in lockfile is authoritative. Sites applies packaged `drizzle/` migrations before deployment. Application routes never create tables at runtime. For local authenticated testing, apply the migrations to the local D1 binding with the environment’s migration tooling. Managed preview has no real sign-in identity by itself; use the isolated demo or the deterministic route harness.
+See [Development](#development) for the checks to run before pushing.
+
+After a schema change, run `npm run db:generate` and commit the generated migration. The checked-in lockfile is authoritative. Sites applies packaged `drizzle/` migrations before deployment. Application routes never create tables at runtime. For local testing, `npm run e2e:setup` applies the migrations to the local D1 database used by `npm run dev`. Managed preview has no real sign-in identity by itself; use the isolated demo or the deterministic route harness.
 
 Use the Sites build helper, commit and push the exact source, package the built Worker/client assets/migrations, validate the archive, save the matching version and deploy it to the authorized audience. Do not expose the raw Worker behind a proxy that accepts spoofable identity headers. A non-Sites deployment requires a verified authentication integration.
 
@@ -56,6 +46,34 @@ Use the Sites build helper, commit and push the exact source, package the built 
 
 No required `.env` values, client secrets, external OCR account, paid service, retailer keys or email provider are needed. `/signin-with-chatgpt` and `/signout-with-chatgpt` belong to the hosting dispatcher. Future contracted retailer feeds require their own server-only configuration; none is secretly connected.
 
+## Development
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Vite dev server (vinext + `@cloudflare/vite-plugin`) with local D1/R2 bindings named `same-again-*` |
+| `npm run format` / `npm run format:check` | Prettier (`.prettierrc.json`, `.prettierignore`); formatting-only commits are listed in `.git-blame-ignore-revs` |
+| `npm run lint` | ESLint (`eslint.config.mjs`: Next core-web-vitals + TypeScript rules, `eslint-config-prettier`) |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Domain tests, production API routes against an in-memory `node:sqlite` D1 harness (bundled with esbuild), and service-worker tests |
+| `python3 tests/retailer-import.test.py` | Retailer page import tests |
+| `npm run test:e2e` | Playwright. `scripts/e2e-setup.mjs` applies `drizzle/` migrations to `.wrangler/state`, then the dev server starts. Tests live in `e2e/` (none yet). Install a browser first with `npx playwright install chromium` |
+| `npm run build` | `scripts/build-verified.sh`: prepares the OCR runtime and runs a time-bounded `vinext build` into `dist/` |
+
+To make `git blame` skip the formatting commit, run `git config blame.ignoreRevsFile .git-blame-ignore-revs`.
+
+### Continuous integration
+
+`.github/workflows/ci.yml` runs on every push to `main` and on every pull request:
+
+- **check** job: `npm ci`, the Prettier check, typecheck, lint, `npm test`, the Python tests and the build.
+- **e2e** job: `npx playwright install --with-deps chromium`, then `npm run test:e2e`: onboarding, invitations, multi-member sync, offline replay and conflicts, a 30-item trip, security headers, API error codes, the demo and axe accessibility scans, on desktop and mobile viewports.
+
+All checks, including lint with no warnings, are expected to pass on every commit.
+
+### Review
+
+[`docs/REVIEW-2026-09.md`](docs/REVIEW-2026-09.md) is the September 2026 review of the whole application: security, data integrity, UX, accessibility and tooling. Its final section records how each finding was resolved.
+
 ## Architecture and security
 
 - `lib/use-household.ts`: user/household-keyed cache, ordered optimistic outbox, polling, retries and conflict review.
@@ -69,9 +87,21 @@ Typed records cover lists/items, private products, favourites, personal feedback
 
 Account deletion requires transferring ownership or deleting owned households. Retained shared history is anonymised; personal profile, feedback, memberships and operation receipts are removed. Household deletion removes its R2 prefix. JSON export includes authenticated photo URLs, not a bundled photo archive. Sign-out clears household caches on that device.
 
+## Security hardening
+
+**Optional signed identity.** If the Worker has the secret `IDENTITY_ASSERTION_SECRET` (`wrangler secret put IDENTITY_ASSERTION_SECRET`), every request must also carry `oai-authenticated-assertion-ts` (Unix seconds, within ±300 s) and `oai-authenticated-assertion` = lowercase hex HMAC-SHA256(secret, `<user-id>\n<email>\n<ts>`), computed by the trusted dispatcher over the exact `oai-authenticated-user-id` and `oai-authenticated-user-email` values. Requests without a valid assertion are treated as signed out (401). Without the secret the identity headers are trusted as before; in that case make sure the Worker is reachable only through the dispatcher (disable `workers_dev` and preview routes).
+
+**Headers.** Every response carries a nonce-based Content-Security-Policy (`frame-ancestors 'none'`, `connect-src 'self'`, images from the app and Open Food Facts only), `X-Frame-Options: DENY`, `Permissions-Policy: camera=(self), geolocation=(self), microphone=()`, HSTS, `nosniff` and a strict referrer policy. State-changing requests require a same-origin `Origin` or `Sec-Fetch-Site`, and `POST /api/data` requires `application/json`.
+
+**Input.** Malformed input returns 400 and is never retried by the client; only genuine infrastructure failures return 503. Country, retailer and language values are checked against own-property allow-lists.
+
+**Limits.** Photos: JPEG/PNG up to 3 MB and 8000 px; EXIF/XMP/text metadata is stripped on the server; 200 MB per household. Per-account rate limits and daily caps stay below the shared Photon (12/min, 300/day) and Open Food Facts (12 product / 8 search per minute) limits.
+
+**Retention.** Deleted records, operation receipts, expired cache and rate-limit rows are purged after 30 days by a bounded, opportunistic clean-up. Account deletion scrubs invitations, receipts that mention the account and rate-limit keys.
+
 ## Sync and offline behavior
 
-D1 is authoritative. Active data polls every four seconds. Offline add/edit/check operations update the local view and replay in order when the app reconnects. Stable operation IDs make retries idempotent. Each update checks an expected record version; an old client never replaces an entire list snapshot. Mutation and operation receipt commit atomically.
+D1 is authoritative. While the tab is visible the app polls every four seconds for changes since its last cursor (`GET /api/data?household=H&since=<cursor>`, with ETag/304); polling pauses in hidden tabs and backs off after failures. Requests time out after 15 seconds. Queued changes are stored one per key so several open tabs cannot overwrite each other, and only one tab sends at a time. Offline add/edit/check operations update the local view and replay in order when the app reconnects. Stable operation IDs make retries idempotent. Each update checks an expected record version; an old client never replaces an entire list snapshot. Mutation and operation receipt commit atomically.
 
 Different-item edits proceed independently. Same-item conflicts preserve the latest local draft and show it beside shared values for review. Undo checks the post-change version and cannot silently reverse another member’s later edit. Definitively rejected edits show a reason with retry/discard choices. Household switching is blocked while changes are pending. Finishing a trip atomically records purchase snapshots and removes matching completed items; stale snapshots are rejected.
 
@@ -129,7 +159,7 @@ Plan portions for each member/date/meal, record eaten status and undo it. Saved 
 
 Daily totals distinguish planned from eaten portions for the selected member. Nutrient units and bases are explicit (g, mg, µg, kcal). Partial sums show ≥ and coverage; percentages appear only with complete data. Missing, prepared-only, serving-only, below-detection and nonnumeric source values are not converted into measured amounts. OFF v3.6 imports compatible declared macro/micronutrients from its current schema; legacy search-index data may contain only macros. The app does not calculate nutrition from photographs.
 
-The [FSVO Swiss Food Composition Database v7.1, 1 July 2026](https://valeursnutritives.ch/en/downloads/) permits dataset integration/commercial reuse with acknowledgement. `python3 scripts/import-swiss-foods.py workbook.xlsx` rebuilds the bounded per-100-g edible-portion index (openpyxl required). `lib/swiss-provenance.json` records workbook hash, units, version and derivations. This licence does not authorize unrelated website imagery.
+The [FSVO Swiss Food Composition Database v7.1, 1 July 2026](https://valeursnutritives.ch/en/downloads/) permits dataset integration/commercial reuse with acknowledgement. `python3 scripts/import-swiss-foods.py workbook.xlsx` rebuilds the bounded per-100-g edible-portion index (openpyxl required). `public/catalogue/swiss-provenance.json` records workbook hash, units, version and derivations. This licence does not authorize unrelated website imagery.
 
 Ingredient evidence covers four sweeteners, not a comprehensive hazard score: aspartame, acesulfame K, sucralose and steviol glycosides. It links source assessments and distinguishes them from dislikes, allergies and certifications. Missing concentrations prevent exposure estimates. No “allergy-safe”, personalized risk or universal “good/bad” label is issued. The corrected [EFSA acesulfame K assessment](https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2025.9317) is distinct from its aspartame assessment. Evidence is a versioned snapshot requiring periodic review; meal totals do not establish medical suitability.
 
@@ -153,27 +183,6 @@ The first scan needs connectivity to load self-hosted Tesseract.js 7 resources/l
 
 Tesseract.js/core use Apache-2.0. Pinned `@tesseract.js-data/*@1.0.0` packages supply `4.0.0_best_int` models (npm packaging MIT, upstream trained data Apache-2.0). Source URLs, licence and SHA-256 values are under `public/ocr/v7/lang/`. `scripts/download-receipt-languages.py` deliberately refreshes pinned models; `scripts/prepare-receipt-ocr.mjs` copies locked worker/core assets before builds. The SHA-256 compatibility fallback uses MIT-licensed noble-hashes. No OCR API key is required.
 
-## Verification performed on September 10, 2026
-
-**118 automated checks passed:** 116 TypeScript/Node tests (`npm test`: 11 domain + 101 route/feature + 4 service-worker cases), plus two Python retailer-import tests. TypeScript validation is required before publication.
-
-The API suite executes production routes and membership, identity, role, rate, origin and database helpers. Only trusted platform identity headers, D1 adapter and R2 runtime are substituted. Coverage includes two-member collaboration; outsider denial; expired/revoked/reused and wrong-recipient invitations; role/ownership rules; offline replay/idempotence; stale undo and same-item conflicts; scoped exports/photos; exact account anonymisation; atomic trip completion; recipes/meal quantities; missing and incompatible nutrition; unknown required attributes; no matches; original-list preservation; branch scope; partial totals; provider outages and cache isolation.
-
-Scanner tests decode actual EAN-13, EAN-8 and UPC-A images at four orientations and cover permission rejection, duplicate events, interrupted camera startup, unknown products and leading-zero lookup. Receipt tests cover multilingual columns, discounts, fractional units, missing prices, payment/footer exclusion, corruption, crop suggestions, private provenance and shared persistence. New regressions cover accented/category cache searches, public demo isolation, photo identity/authorization/repeat/substitution behavior, invalid catalogue identifiers and native/fallback SHA-256 test vectors.
-
-Live provider checks are separate from fixtures and use production adapter/routes with a local SQLite D1 harness:
-
-| Barcode | Retailer tag | Live record | Pack | Nutrition basis | Front image |
-| --- | --- | --- | --- | --- | --- |
-| `7610097171076` | Coop | Take it easy | 500 ml | 100 ml | HTTP 200 |
-| `7624841290944` | Coop | Haferflocken | 500 g | 100 g | HTTP 200 |
-| `7617027869157` | Migros | Hagelzucker | 250 g | 100 g | HTTP 200 |
-| `7610200011435` | Migros | Vollkorn Haferflocken (Grob) | 500 g | 100 g | HTTP 200 |
-
-All four were retrieved and persisted/read back successfully on September 10. Take it easy still has no ingredient declaration. A repeat run later timed out after its first success; it is not another complete pass. General search returned 24 Nutella results with live success; Barilla (21) and Swiss oats (5) used saved fallback after a provider failure. Six separate full-product barcode lookups succeeded with photos, ingredients and declared bases, including `0737628064502`. These checks do not establish retailer ownership of OFF records or inventory. Opt-in scripts: `node scripts/verify-live-search.mjs`, `node scripts/verify-live-retailers.mjs`; provider outages deliberately cause live assertions to fail.
-
-Historical interactive checks used a separate demo. Raw receipt photos, OCR output and household screenshots are not distributed. These checks do not certify physical iPhone behaviour or hosted multi-account access.
-
 ## Remaining release and operating limits
 
 - Physical iPhone camera/autofocus, OS permissions/photo picker, PWA install and secure-context airplane-mode reconnection still need device testing. `/device-check` provides capability readouts and a concrete two-device checklist; it never marks these passed automatically.
@@ -183,22 +192,10 @@ Historical interactive checks used a separate demo. Raw receipt photos, OCR outp
 - Upload UI re-encodes supported images to metadata-free JPEG, maximum 1,600-pixel edge. The API accepts signature-checked JPEG/PNG up to 3 MB; direct API uploads do not receive server-side EXIF stripping or malware scanning. Orphan uploads persist until household deletion. Existing list/recipe/history snapshots retain earlier product data when a private master product changes.
 - Larger rollout needs cache/rate/operation cleanup, orphan-image retention, database pagination/push sync, monitoring, backup/recovery and load testing. These are not simulated by the current small-household release.
 
-## Public repository handover
+## Source and licensing
 
-This snapshot was prepared on 13 September 2026 from application commit `54cff8707b1f46c888d21e734a312d2ec47656e3`. It contains the existing application, tests, migrations, provider adapters and attributed public catalogue assets. The usability improvements identified in the September 12 review have **not** been implemented in this snapshot.
+This repository was published on 13 September 2026 (see [CHANGELOG.md](CHANGELOG.md)). It contains the application, tests, migrations, provider adapters and attributed public catalogue assets. It deliberately excludes account/household databases, private photo storage, runtime caches, environment files, receipts and deployment credentials. `.openai/hosting.json` retains binding names only.
 
-It deliberately excludes Git history, account/household databases, private photo storage, runtime caches, environment files, receipts and deployment credentials. `.openai/hosting.json` retains binding names only. Original-source code has no newly selected open-source licence; public visibility alone does not grant an MIT/Apache licence. Third-party dataset, image, OCR and vendor licences remain applicable and are included or referenced beside those assets.
+The original source code has no open-source licence yet. Public visibility alone does not grant an MIT or Apache licence. Third-party dataset, image, OCR and vendor licences still apply; they are included or referenced beside those assets.
 
-### Get the source
-
-```sh
-git clone https://github.com/ferax564/SameAgain.git
-cd SameAgain
-npm ci
-npm test
-npm run typecheck
-```
-
-Follow the setup and deployment instructions above. Do not enable the deployment’s trusted identity headers on an unprotected public origin.
-
-Export validation on 13 September 2026: `npm test` passed all 116 checks; `npm run typecheck` passed. This does not imply the usability review’s proposed improvements or physical-device release checks are complete.
+Do not enable the deployment’s trusted identity headers on an unprotected public origin.
