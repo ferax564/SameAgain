@@ -1,10 +1,11 @@
 import recipes from './demo-recipes.json';
 import { localDate } from './nutrition';
 import samples from './sample-products.json';
-import { Product, RecordData } from './domain';
+import { Product, RecordData, type RecordFields } from './domain';
+import type { Household, Member } from './sync-core';
 export const demoProducts = samples as unknown as Product[];
 const now = 1788599400000;
-export const demoHousehold = {
+export const demoHousehold: Household = {
   id: 'demo',
   name: 'The Sunday household',
   role: 'owner',
@@ -23,11 +24,11 @@ export const demoHousehold = {
     ],
   },
 };
-export const demoMembers = [
+export const demoMembers: Member[] = [
   { user: 'demo-alex', name: 'Alex', role: 'owner' },
   { user: 'demo-sam', name: 'Sam', role: 'member' },
 ];
-function record(id: string, kind: string, data: any): RecordData {
+function record(id: string, kind: string, data: RecordFields): RecordData {
   return {
     id,
     household: 'demo',

@@ -48,6 +48,7 @@ export function Modal({
   onClose,
   children,
   wide = false,
+  dismissible = true,
 }: {
   title: string;
   description?: string;
@@ -55,22 +56,35 @@ export function Modal({
   onClose: () => void;
   children: ReactNode;
   wide?: boolean;
+  /** When false the dialog has no close button and ignores Escape/outside clicks: the user must pick an action. */
+  dismissible?: boolean;
 }) {
+  const block = (e: Event) => e.preventDefault();
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className={'modal ' + (wide ? 'wide' : '')}>
+    <Dialog open={open} onOpenChange={(v) => !v && dismissible && onClose()}>
+      <DialogContent
+        className={'modal ' + (wide ? 'wide' : '')}
+        showCloseButton={dismissible}
+        {...(dismissible ? {} : { onEscapeKeyDown: block, onInteractOutside: block })}
+        {...(description ? {} : { 'aria-describedby': undefined })}
+      >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>
-            {description || 'Same Again · your shared household'}
-          </DialogDescription>
+          {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         {children}
       </DialogContent>
     </Dialog>
   );
 }
-export function Photo({ product, large = false }: { product?: any; large?: boolean }) {
+export type PhotoProduct = { name?: string; image?: string | null };
+export function Photo({
+  product,
+  large = false,
+}: {
+  product?: PhotoProduct | null;
+  large?: boolean;
+}) {
   const [failed, setFailed] = useState('');
   const url = product?.image;
   const missing = !url || failed === url;
@@ -81,6 +95,7 @@ export function Photo({ product, large = false }: { product?: any; large?: boole
       {missing ? (
         <span
           className="photo-fallback"
+          role="img"
           aria-label={product?.name ? `Photo unavailable for ${product.name}` : 'Photo unavailable'}
         >
           <Package size={large ? 32 : 22} strokeWidth={1.4} />
@@ -90,7 +105,9 @@ export function Photo({ product, large = false }: { product?: any; large?: boole
         <img
           key={url}
           src={url}
-          alt={product.name || 'Product'}
+          alt={product?.name || 'Product'}
+          width={large ? 320 : 96}
+          height={large ? 320 : 96}
           loading="lazy"
           decoding="async"
           onError={() => setFailed(url)}

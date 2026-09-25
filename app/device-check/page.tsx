@@ -3,12 +3,21 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Scanner from '../scanner';
 import { Photo } from '../ui';
-import { barcode } from '@/lib/domain';
+import { barcode, type Product } from '@/lib/domain';
+import { errorMessage } from '@/lib/utils';
 import '../same-again.css';
+/** Device capabilities the shopping flows rely on. */
+type Checks = {
+  secure: boolean;
+  camera: boolean;
+  online: boolean;
+  worker: boolean;
+  installed: boolean;
+};
 export default function DeviceCheck() {
-  const [checks, setChecks] = useState<any>(),
+  const [checks, setChecks] = useState<Checks>(),
     [code, setCode] = useState(''),
-    [product, setProduct] = useState<any>(),
+    [product, setProduct] = useState<Product | null>(),
     [lookup, setLookup] = useState(''),
     [checking, setChecking] = useState(false);
   async function check(value: string) {
@@ -27,8 +36,8 @@ export default function DeviceCheck() {
           ? d.notice || 'Product found in the catalogue.'
           : 'Barcode recognised; no catalogue product found. You can create a private product from your household scanner.',
       );
-    } catch (e: any) {
-      setLookup(e.message || 'Lookup unavailable. Please retry.');
+    } catch (e) {
+      setLookup(errorMessage(e) || 'Lookup unavailable. Please retry.');
     }
   }
   async function sample() {
@@ -40,8 +49,8 @@ export default function DeviceCheck() {
         new File([await response.blob()], 'ean13.png', { type: 'image/png' }),
       );
       await check(barcode(value).code);
-    } catch (e: any) {
-      setLookup(e.message);
+    } catch (e) {
+      setLookup(errorMessage(e));
     } finally {
       setChecking(false);
     }
@@ -55,7 +64,7 @@ export default function DeviceCheck() {
         worker: !!navigator.serviceWorker?.controller,
         installed:
           window.matchMedia('(display-mode: standalone)').matches ||
-          (navigator as any).standalone === true,
+          ('standalone' in navigator && navigator.standalone === true),
       });
     update();
     window.addEventListener('online', update);

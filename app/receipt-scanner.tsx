@@ -13,10 +13,11 @@ import {
 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Choice } from './ui';
-import { receiptFingerprint } from '@/lib/receipt-fingerprint';
+import { receiptFingerprint, receiptTextFingerprint } from '@/lib/receipt-fingerprint';
 import {
   parseReceipt,
   receiptListItem,
+  type ReceiptListItem,
   validDate,
   type ReceiptDraft,
   type ReceiptItem,
@@ -30,6 +31,7 @@ import {
   type Crop,
 } from '@/lib/receipt-image';
 import type { RecordData } from '@/lib/domain';
+import { errorMessage } from '@/lib/utils';
 import type { Worker } from 'tesseract.js';
 import './receipt-scanner.css';
 const languages = {
@@ -66,7 +68,7 @@ export default function ReceiptScanner({
   active: string;
   country: string;
   currency: string;
-  onAdd: (items: any[], list: string) => number;
+  onAdd: (items: ReceiptListItem[], list: string) => number;
 }) {
   const [photo, setPhoto] = useState<HTMLImageElement>(),
     [turns, setTurns] = useState(0),
@@ -89,6 +91,8 @@ export default function ReceiptScanner({
     [text, setText] = useState(''),
     [draft, setDraft] = useState<ReceiptDraft>(),
     [fingerprint, setFingerprint] = useState(''),
+    // Deterministic fingerprint of pasted/edited text so the same receipt is recognised on re-import.
+    [textPrint, setTextPrint] = useState(''),
     [list, setList] = useState(active),
     [finished, setFinished] = useState<number | null>(null),
     [reviewed, setReviewed] = useState(false);
@@ -101,16 +105,18 @@ export default function ReceiptScanner({
     canvas = useRef<HTMLCanvasElement | null>(null);
   useEffect(() => {
     mounted.current = true;
+    // The counter ref itself is stable; bumping it on unmount invalidates in-flight OCR runs.
+    const runs = serial;
     return () => {
       mounted.current = false;
-      serial.current++;
+      runs.current++;
       void worker.current?.terminate();
       worker.current = null;
     };
   }, []);
-  useEffect(() => {
-    if (!photo) return;
-    const c = rotatedReceipt(photo, turns);
+  /** Renders the rotated receipt preview and proposes a paper crop for a new photo or rotation. */
+  function prepare(img: HTMLImageElement, t: number) {
+    const c = rotatedReceipt(img, t);
     canvas.current = c;
     setPreview(c.toDataURL('image/jpeg', 0.8));
     const probe = document.createElement('canvas');
@@ -125,7 +131,7 @@ export default function ReceiptScanner({
         probe.height,
       ),
     );
-  }, [photo, turns]);
+  }
   async function select(file?: File) {
     if (!file) return;
     cancel();
@@ -144,8 +150,9 @@ export default function ReceiptScanner({
       setFingerprint(digest);
       setPhoto(img);
       setTurns(0);
-    } catch (e: any) {
-      if (n === serial.current) setError(e.message);
+      prepare(img, 0);
+    } catch (e) {
+      if (n === serial.current) setError(errorMessage(e));
     }
   }
   function cancel() {
@@ -156,8 +163,15 @@ export default function ReceiptScanner({
   }
   function review(t: string) {
     setReviewed(false);
-    const parsed = parseReceipt(t);
+    const parsed = parseReceipt(t, { currency });
     if (!parsed.currency) parsed.currency = currency;
+    setTextPrint('');
+    const n = serial.current;
+    void receiptTextFingerprint(t)
+      .then((fp) => {
+        if (mounted.current && serial.current === n) setTextPrint(fp);
+      })
+      .catch(() => {});
     setDraft(parsed);
     setFinished(null);
     adding.current = false;
@@ -214,10 +228,11 @@ export default function ReceiptScanner({
       if (!mounted.current || n !== serial.current || !result) return;
       setText(result.data.text);
       review(result.data.text);
-    } catch (e: any) {
+    } catch (e) {
       if (mounted.current && n === serial.current)
         setError(
-          e.message || 'Could not read this photo. Try a sharper JPEG or paste the text below.',
+          errorMessage(e) ||
+            'Could not read this photo. Try a sharper JPEG or paste the text below.',
         );
     } finally {
       clearTimeout(timeout);
@@ -243,7 +258,7 @@ export default function ReceiptScanner({
       if (draft.date && !validDate(draft.date)) throw new Error('Check the purchase date.');
       const selected = draft.items.filter((i) => i.selected);
       if (!selected.length) throw new Error('Select at least one item.');
-      const id = fingerprint || crypto.randomUUID();
+      const id = fingerprint || textPrint || crypto.randomUUID();
       const items = selected.map((i) =>
         receiptListItem(
           i,
@@ -259,9 +274,9 @@ export default function ReceiptScanner({
       adding.current = true;
       const count = onAdd(items, list);
       setFinished(count);
-    } catch (e: any) {
+    } catch (e) {
       adding.current = false;
-      setError(e.message);
+      setError(errorMessage(e));
     }
   }
   const selected = draft?.items.filter((i) => i.selected) || [];
@@ -358,7 +373,15 @@ export default function ReceiptScanner({
                     </div>
                   </div>
                   <div className="row wrap">
-                    <button className="btn" disabled={busy} onClick={() => setTurns((t) => t + 1)}>
+                    <button
+                      className="btn"
+                      disabled={busy}
+                      onClick={() => {
+                        const t = turns + 1;
+                        setTurns(t);
+                        if (photo) prepare(photo, t);
+                      }}
+                    >
                       <RotateCw size={17} /> Rotate
                     </button>
                     <button
@@ -508,7 +531,7 @@ export default function ReceiptScanner({
                   <Choice
                     label="Receipt destination list"
                     value={list}
-                    options={Object.fromEntries(lists.map((l) => [l.id, l.data.name]))}
+                    options={Object.fromEntries(lists.map((l) => [l.id, l.data.name ?? '']))}
                     onChange={setList}
                   />
                 </label>

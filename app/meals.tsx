@@ -11,12 +11,11 @@ import {
   Check,
   ShoppingBasket,
   Search,
-  ArrowLeft,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { useHousehold, api } from '@/lib/use-household';
-import { uid, type RecordData, type Product } from '@/lib/domain';
+import { api, type OpenHouseholdState } from '@/lib/use-household';
+import { uid, type RecordData, type RecordFields, type Product } from '@/lib/domain';
 import {
   nutrients,
   nutrientText,
@@ -26,15 +25,35 @@ import {
   weekDates,
   localDate,
   type Recipe,
-  type RecipeIngredient,
 } from '@/lib/nutrition';
 import { recipeSchema } from '@/lib/meal-schema';
+import {
+  isMealRecord,
+  isProductRecord,
+  isRecipeRecord,
+  productSnapshot,
+  type MealFields,
+  type MealRecord,
+  type RecipeRecord,
+} from '@/lib/record-types';
+import { errorMessage } from '@/lib/utils';
 import sampleRecipes from '@/lib/demo-recipes.json';
 import { demoProducts } from '@/lib/demo';
 import { Modal, Choice, Photo } from './ui';
 import PhotoUpload from './photo-upload';
 import { NutritionPanel, NutritionFields, IngredientReview } from './nutrition-panel';
-type State = ReturnType<typeof useHousehold>;
+type State = OpenHouseholdState;
+/** The meal plan form: fields fill in as the member edits them. */
+type PlanDraft = Partial<MealFields>;
+/** An ingredient line proposed for a shopping list, and whether to add it. */
+type ShopLine = ReturnType<typeof planShopping>[number] & { selected: boolean };
+/** A recipe ingredient entered by hand (no catalogue record). */
+type ManualIngredient = {
+  name: string;
+  ingredients?: string;
+  nutrition: Record<string, number>;
+  basis: '100g' | '100ml';
+};
 const emptyRecipe = (): Recipe => ({
   name: '',
   description: '',
@@ -54,15 +73,15 @@ export default function Meals({
   s: State;
   lists: RecordData[];
   active?: RecordData;
-  onAdd: (data: any, to?: string) => void;
+  onAdd: (data: RecordFields, to?: string) => void;
 }) {
-  const recipes = s.records.filter((r) => r.kind === 'recipe'),
-    plans = s.records.filter((r) => r.kind === 'meal');
+  const recipes = s.records.filter(isRecipeRecord),
+    plans = s.records.filter(isMealRecord);
   const [tab, setTab] = useState('recipes'),
     [mode, setMode] = useState(''),
-    [current, setCurrent] = useState<RecordData>(),
+    [current, setCurrent] = useState<RecipeRecord | MealRecord>(),
     [draft, setDraft] = useState<Recipe>(emptyRecipe),
-    [plan, setPlan] = useState<any>({}),
+    [plan, setPlan] = useState<PlanDraft>({}),
     [week, setWeek] = useState(localDate()),
     [day, setDay] = useState(localDate()),
     [person, setPerson] = useState(s.user.id),
@@ -71,26 +90,29 @@ export default function Meals({
       s.user.preferences?.nutritionTargets || {},
     ),
     [busy, setBusy] = useState(false),
-    [shop, setShop] = useState<any[]>([]),
+    [shop, setShop] = useState<ShopLine[]>([]),
     [to, setTo] = useState(active?.id || ''),
     [portions, setPortions] = useState(1);
+  // `current` is the recipe in the detail and edit views, and the meal entry in the plan view.
+  const currentRecipe = current && isRecipeRecord(current) ? current : undefined,
+    currentMeal = current && isMealRecord(current) ? current : undefined;
   const dates = weekDates(week),
     weekPlans = plans.filter((r) => dates.includes(r.data.date)),
     dayPlans = plans.filter(
       (r) => r.data.date === day && r.data.member === person && (!eaten || r.data.eaten),
     ),
     summary = sumNutrition(
-      dayPlans
-        .filter((r) => r.data.recipeSnapshot)
-        .map((r) => recipeNutrition(r.data.recipeSnapshot, r.data.servings)),
+      dayPlans.flatMap((r) =>
+        r.data.recipeSnapshot ? [recipeNutrition(r.data.recipeSnapshot, r.data.servings)] : [],
+      ),
     );
   const memberName = (id: string) => s.members.find((m) => m.user === id)?.name || 'Former member';
-  function detail(r: RecordData) {
+  function detail(r: RecipeRecord) {
     setCurrent(r);
     setPortions(r.data.servings);
     setMode('detail');
   }
-  function schedule(r: RecordData, date = localDate()) {
+  function schedule(r: RecipeRecord, date = localDate()) {
     setPlan({
       recipe: r.id,
       date,
@@ -169,7 +191,7 @@ export default function Meals({
             <>
               <div className="recipe-grid">
                 {recipes.map((r) => {
-                  const n = recipeNutrition(r.data as Recipe);
+                  const n = recipeNutrition(r.data);
                   return (
                     <article className="recipe-card" key={r.id}>
                       <button className="recipe-open" onClick={() => detail(r)}>
@@ -209,9 +231,7 @@ export default function Meals({
                         <button
                           className="iconbtn"
                           aria-label={'Shop ingredients for ' + r.data.name}
-                          onClick={() =>
-                            shopping([{ recipe: r.data as Recipe, servings: r.data.servings }])
-                          }
+                          onClick={() => shopping([{ recipe: r.data, servings: r.data.servings }])}
                         >
                           <ShoppingBasket size={20} />
                         </button>
@@ -252,9 +272,11 @@ export default function Meals({
               disabled={!weekPlans.length || !lists.length}
               onClick={() =>
                 shopping(
-                  weekPlans
-                    .filter((r) => r.data.recipeSnapshot && !r.data.eaten)
-                    .map((r) => ({ recipe: r.data.recipeSnapshot, servings: r.data.servings })),
+                  weekPlans.flatMap((r) =>
+                    r.data.recipeSnapshot && !r.data.eaten
+                      ? [{ recipe: r.data.recipeSnapshot, servings: r.data.servings }]
+                      : [],
+                  ),
                 )
               }
             >
@@ -271,7 +293,9 @@ export default function Meals({
               <section className={'day-column ' + (date === localDate() ? 'today' : '')} key={date}>
                 <div className="day-heading">
                   <span>
-                    {new Date(date + 'T12:00:00').toLocaleDateString('en', { weekday: 'short' })}
+                    {new Date(date + 'T12:00:00').toLocaleDateString(undefined, {
+                      weekday: 'short',
+                    })}
                   </span>
                   <strong>{new Date(date + 'T12:00:00').getDate()}</strong>
                   <button
@@ -366,7 +390,7 @@ export default function Meals({
                   label="Nutrition member"
                   value={person}
                   onChange={setPerson}
-                  options={Object.fromEntries(s.members.map((m) => [m.user, m.name]))}
+                  options={Object.fromEntries(s.members.map((m) => [m.user, m.name ?? '']))}
                 />
               </label>
               <label>
@@ -401,6 +425,7 @@ export default function Meals({
         wide
       >
         <RecipeEditor
+          key={current?.id || 'new'}
           s={s}
           value={draft}
           setValue={setDraft}
@@ -422,29 +447,33 @@ export default function Meals({
         title={current?.data.name || 'Recipe'}
         wide
       >
-        {current && (
+        {currentRecipe && (
           <div className="stack recipe-detail">
-            {current.data.image && (
-              <img className="recipe-cover" src={current.data.image} alt={current.data.name} />
+            {currentRecipe.data.image && (
+              <img
+                className="recipe-cover"
+                src={currentRecipe.data.image}
+                alt={currentRecipe.data.name}
+              />
             )}
-            <p className="muted">{current.data.description}</p>
-            {current.data.photoCredit && (
+            <p className="muted">{currentRecipe.data.description}</p>
+            {currentRecipe.data.photoCredit && (
               <p className="fine">
                 Photo:{' '}
-                <a href={current.data.sourceUrl} target="_blank" rel="noreferrer">
-                  {current.data.photoCredit}
+                <a href={currentRecipe.data.sourceUrl} target="_blank" rel="noreferrer">
+                  {currentRecipe.data.photoCredit}
                 </a>
                 . Illustrative serving; nutrition comes from the ingredients below.
               </p>
             )}
             <div className="row wrap">
-              <button className="btn primary" onClick={() => schedule(current)}>
+              <button className="btn primary" onClick={() => schedule(currentRecipe)}>
                 Plan a meal
               </button>
               <button
                 className="btn"
                 onClick={() => {
-                  setDraft(structuredClone(current.data as Recipe));
+                  setDraft(structuredClone(currentRecipe.data));
                   setMode('edit');
                 }}
               >
@@ -453,7 +482,7 @@ export default function Meals({
               <button
                 className="link danger"
                 onClick={() => {
-                  remove(current);
+                  remove(currentRecipe);
                   setMode('');
                 }}
               >
@@ -477,10 +506,10 @@ export default function Meals({
             </label>
             <h3>Ingredients</h3>
             <div className="recipe-ingredients">
-              {(current.data.ingredients as RecipeIngredient[]).map((i) => (
+              {currentRecipe.data.ingredients.map((i) => (
                 <div key={i.id}>
                   <strong>
-                    {Math.round(((i.amount * portions) / current.data.servings) * 100) / 100}{' '}
+                    {Math.round(((i.amount * portions) / currentRecipe.data.servings) * 100) / 100}{' '}
                     {i.unit}
                   </strong>
                   <span>
@@ -504,23 +533,23 @@ export default function Meals({
             <button
               disabled={!portions || !lists.length}
               className="btn primary"
-              onClick={() => shopping([{ recipe: current.data as Recipe, servings: portions }])}
+              onClick={() => shopping([{ recipe: currentRecipe.data, servings: portions }])}
             >
               Review shopping ingredients <ArrowRight size={18} />
             </button>
             <h3>Make it together</h3>
             <ol className="recipe-steps">
-              {current.data.steps.map((step: string, i: number) => (
+              {currentRecipe.data.steps.map((step, i) => (
                 <li key={i}>{step}</li>
               ))}
             </ol>
             <NutritionPanel
-              summary={recipeNutrition(current.data as Recipe)}
+              summary={recipeNutrition(currentRecipe.data)}
               title="Nutrition per serving"
             />
             <details>
               <summary>Ingredient requirements & evidence</summary>
-              {current.data.ingredients.map((i: RecipeIngredient) => (
+              {currentRecipe.data.ingredients.map((i) => (
                 <div className="card" key={i.id}>
                   <h4>{i.name}</h4>
                   {i.product ? (
@@ -547,25 +576,25 @@ export default function Meals({
       <Modal
         open={mode === 'plan'}
         onClose={() => setMode('')}
-        title={current ? 'Edit this meal' : 'A place in the week.'}
+        title={currentMeal ? 'Edit this meal' : 'A place in the week.'}
       >
         <form
           className="stack"
           onSubmit={(e) => {
             e.preventDefault();
             const r = recipes.find((r) => r.id === plan.recipe);
-            if (!r && !current) return;
+            if (!r && !currentMeal) return;
             const data = {
               ...plan,
               recipeSnapshot:
-                current && current.data.recipe === plan.recipe
-                  ? current.data.recipeSnapshot
+                currentMeal && currentMeal.data.recipe === plan.recipe
+                  ? currentMeal.data.recipeSnapshot
                   : r?.data,
             };
-            s.mutate('meal', data, current);
+            s.mutate('meal', data, currentMeal);
             setMode('');
             setTab('week');
-            if (!dates.includes(plan.date)) setWeek(plan.date);
+            if (plan.date && !dates.includes(plan.date)) setWeek(plan.date);
             toast.success('Meal plan saved');
           }}
         >
@@ -578,11 +607,13 @@ export default function Meals({
               options={Object.fromEntries(
                 [
                   ...recipes,
-                  ...(current && !recipes.some((r) => r.id === plan.recipe)
+                  ...(currentMeal && !recipes.some((r) => r.id === plan.recipe)
                     ? [
                         {
                           id: plan.recipe,
-                          data: { name: current.data.recipeSnapshot?.name + ' (saved version)' },
+                          data: {
+                            name: currentMeal.data.recipeSnapshot?.name + ' (saved version)',
+                          },
                         },
                       ]
                     : []),
@@ -615,7 +646,7 @@ export default function Meals({
                 label="Meal member"
                 value={plan.member || s.user.id}
                 onChange={(v) => setPlan({ ...plan, member: v })}
-                options={Object.fromEntries(s.members.map((m) => [m.user, m.name]))}
+                options={Object.fromEntries(s.members.map((m) => [m.user, m.name ?? '']))}
               />
             </label>
             <label>
@@ -640,12 +671,12 @@ export default function Meals({
             />
           </label>
           <div className="row between">
-            {current && (
+            {currentMeal && (
               <button
                 type="button"
                 className="link danger"
                 onClick={() => {
-                  remove(current);
+                  remove(currentMeal);
                   setMode('');
                 }}
               >
@@ -676,7 +707,7 @@ export default function Meals({
             label="Destination shopping list"
             value={to}
             onChange={setTo}
-            options={Object.fromEntries(lists.map((l) => [l.id, l.data.name]))}
+            options={Object.fromEntries(lists.map((l) => [l.id, l.data.name ?? '']))}
           />
           {shop.map((i, index) => (
             <div className="shop-ingredient" key={index}>
@@ -749,8 +780,8 @@ export default function Meals({
               await s.boot();
               setMode('');
               toast.success('Your targets were saved');
-            } catch (e: any) {
-              toast.error(e.message);
+            } catch (e) {
+              toast.error(errorMessage(e));
             } finally {
               setBusy(false);
             }
@@ -789,6 +820,8 @@ export default function Meals({
     </div>
   );
 }
+let stepKeySeq = 0;
+const newStepKey = () => ++stepKeySeq;
 function RecipeEditor({
   s,
   value: r,
@@ -801,21 +834,25 @@ function RecipeEditor({
   onSave: () => void;
 }) {
   const [uploading, setUploading] = useState(false);
+  // Steps are stored as plain strings; stable per-row keys keep focus/IME state on the right
+  // textarea when a middle step is removed.
+  // The editor is keyed by recipe in the parent, so keys only need initialising once.
+  const [stepKeys, setStepKeys] = useState<number[]>(() => r.steps.map(() => newStepKey()));
   const [picker, setPicker] = useState(false),
     [q, setQ] = useState(''),
     [source, setSource] = useState('foods'),
     [results, setResults] = useState<Product[]>([]),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
-    [manual, setManual] = useState<any>({ name: '', nutrition: {}, basis: '100g' });
+    [manual, setManual] = useState<ManualIngredient>({ name: '', nutrition: {}, basis: '100g' });
+  // Private products and the product snapshots on items and favourites. (Observation and
+  // feedback records only hold a product id.)
   const saved = Array.from(
     new Map(
-      s.records
-        .filter((r) => r.kind === 'product' || r.data.product)
-        .map((r) => {
-          const p = (r.kind === 'product' ? r.data : r.data.product) as Product;
-          return [p.id, p];
-        }),
+      s.records.flatMap((r) => {
+        const p = isProductRecord(r) ? r.data : productSnapshot(r.data);
+        return p ? [[p.id, p] as const] : [];
+      }),
     ).values(),
   );
   function addProduct(p: Product) {
@@ -871,8 +908,8 @@ function RecipeEditor({
         setResults(data.products);
         setError(data.notice || '');
       }
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e) {
+      setError(errorMessage(e));
     } finally {
       setBusy(false);
     }
@@ -1036,7 +1073,7 @@ function RecipeEditor({
         ))}
         <h3>Method</h3>
         {r.steps.map((step, index) => (
-          <label key={index}>
+          <label key={stepKeys[index] ?? 'step-' + index}>
             Step {index + 1}
             <div className="row">
               <textarea
@@ -1055,7 +1092,10 @@ function RecipeEditor({
                   type="button"
                   className="iconbtn"
                   aria-label={'Remove step ' + (index + 1)}
-                  onClick={() => setValue({ ...r, steps: r.steps.filter((_, n) => n !== index) })}
+                  onClick={() => {
+                    setStepKeys(stepKeys.filter((_, n) => n !== index));
+                    setValue({ ...r, steps: r.steps.filter((_, n) => n !== index) });
+                  }}
                 >
                   <Trash2 size={17} />
                 </button>
@@ -1067,7 +1107,10 @@ function RecipeEditor({
           className="btn"
           type="button"
           disabled={r.steps.length >= 30}
-          onClick={() => setValue({ ...r, steps: [...r.steps, ''] })}
+          onClick={() => {
+            setStepKeys([...stepKeys, newStepKey()]);
+            setValue({ ...r, steps: [...r.steps, ''] });
+          }}
         >
           Add a step
         </button>
@@ -1138,7 +1181,7 @@ function RecipeEditor({
               <Choice
                 label="Nutrition basis"
                 value={manual.basis}
-                onChange={(v) => setManual({ ...manual, basis: v })}
+                onChange={(v) => setManual({ ...manual, basis: v === '100ml' ? '100ml' : '100g' })}
                 options={{ '100g': 'Per 100 g', '100ml': 'Per 100 ml' }}
               />
               <NutritionFields

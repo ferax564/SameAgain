@@ -1,5 +1,5 @@
 .app-side {
-  width: 250px !important;
+  width: 250px;
   min-height: 100dvh;
   padding: 30px 20px;
   background: var(--card);
@@ -8,7 +8,7 @@
   inset: 0 auto 0 0;
   z-index: 30;
 }
-.app-side [data-slot='sidebar-content'] {
+.app-side-content {
   gap: 0;
   overflow: visible;
   height: 100%;
@@ -46,7 +46,7 @@
   text-overflow: ellipsis;
 }
 .household-picker small {
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 1px;
 }
 .avatar {
@@ -100,7 +100,7 @@
   margin-top: 26px;
 }
 .eyebrow {
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 1.6px;
   font-weight: 650;
   color: var(--muted-foreground);
@@ -159,7 +159,7 @@
 }
 .profile small {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 400;
 }
 .app-body {
@@ -312,7 +312,7 @@ main {
 .category-label {
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted-foreground);
   font-weight: 700;
   display: flex;
@@ -325,7 +325,7 @@ main {
   background: var(--muted);
   padding: 1px 5px;
   border-radius: 4px;
-  font-size: 10px;
+  font-size: 12px;
 }
 .item-row {
   display: flex;
@@ -341,7 +341,7 @@ main {
   width: 25px !important;
   height: 25px !important;
   border-radius: 8px !important;
-  border-color: #bdc8bc !important;
+  border-color: #7d8c80 !important;
   flex-shrink: 0;
   margin-right: 3px;
   position: relative;
@@ -376,8 +376,8 @@ main {
   align-items: center;
   justify-content: center;
   border-radius: 7px;
-  background: #f4f5f0;
-  color: #9ba995;
+  background: var(--muted);
+  color: var(--muted-foreground);
   overflow: hidden;
   padding: 4px;
 }
@@ -400,7 +400,7 @@ main {
 }
 .photo-missing::after {
   content: 'Photo unavailable';
-  font-size: 11px;
+  font-size: 12px;
   text-align: center;
 }
 .item-info {
@@ -417,7 +417,7 @@ main {
 }
 .item-meta {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted-foreground);
   margin-top: 4px;
 }
@@ -438,7 +438,7 @@ main {
   margin-left: auto;
 }
 .quantity small {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted-foreground);
   font-weight: 400;
 }
@@ -454,7 +454,7 @@ main {
   background: var(--secondary);
 }
 .item-more {
-  min-width: 28px;
+  min-width: 44px;
   padding: 3px;
 }
 .completed-section {
@@ -476,6 +476,13 @@ main {
 }
 .completed-section .item-row {
   min-height: 70px;
+}
+.completed-section .item-title,
+.completed-section .item-meta,
+.completed-section .quantity {
+  color: var(--muted-foreground);
+}
+.completed-section .product-photo {
   opacity: 0.7;
 }
 .completed-section .item-title {
@@ -495,7 +502,7 @@ main {
   padding: 16px 23px;
   border-top: 1px solid var(--border);
   color: var(--muted-foreground);
-  font-size: 11px;
+  font-size: 12px;
 }
 .list-footer span {
   display: flex;
@@ -511,10 +518,10 @@ main {
   gap: 15px;
 }
 .travel-card .eyebrow {
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.3px;
   margin: 0;
-  color: #5f7154;
+  color: var(--muted-foreground);
   max-width: 155px;
 }
 .travel-card h2 {
@@ -530,8 +537,8 @@ main {
   color: #5c6d53;
 }
 .travel-card small {
-  font-size: 11px;
-  color: #66755b;
+  font-size: 12px;
+  color: #4f5d46;
   text-align: center;
   line-height: 1.5;
 }
@@ -586,7 +593,7 @@ main {
 }
 .usual small {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   margin-top: 2px;
 }
 .cost-card {
@@ -599,7 +606,7 @@ main {
   font-size: 12px;
 }
 .cost-card p {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
   margin: 10px 0 0;
 }
@@ -682,7 +689,28 @@ main {
   gap: 18px;
   margin: 40px 0 20px;
 }
-.welcome-products > div {
+.welcome-products {
+  list-style: none;
+  padding: 0;
+}
+.welcome-feature {
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+  background: var(--secondary);
+}
+.rejected-name {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+.notice {
+  overflow-wrap: anywhere;
+}
+.welcome-products > li {
   flex: 1;
   max-width: 190px;
   text-align: center;
@@ -1167,10 +1195,10 @@ main {
   }
   .demo-banner {
     padding: 7px 20px;
-    font-size: 11px;
+    font-size: 12px;
   }
   .demo-banner button {
-    font-size: 11px;
+    font-size: 12px;
   }
   .desktop-only {
     display: none;
@@ -1183,7 +1211,7 @@ main {
     margin-bottom: 20px;
   }
   .page-heading .eyebrow {
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: 1.4px;
   }
   .page-heading h1 {
@@ -1227,7 +1255,7 @@ main {
     gap: 8px;
   }
   .quick-add input {
-    font-size: 15px;
+    font-size: 16px;
   }
   .quick-add .btn {
     min-height: 42px;
@@ -1240,7 +1268,7 @@ main {
   }
   .category-label {
     padding: 22px 0 8px;
-    font-size: 10px;
+    font-size: 12px;
   }
   .item-row {
     gap: 8px;
@@ -1253,7 +1281,7 @@ main {
     font-size: 14px;
   }
   .item-info .item-meta {
-    font-size: 11px;
+    font-size: 12px;
   }
   .item-note {
     font-size: 12px;
@@ -1270,18 +1298,18 @@ main {
   }
   .quantity {
     font-size: 16px;
-    min-width: 28px;
+    min-width: 44px;
   }
   .quantity small {
-    font-size: 10px;
+    font-size: 12px;
   }
   .avatar.small {
     width: 27px;
     height: 27px;
-    font-size: 11px;
+    font-size: 12px;
   }
   .item-row > .avatar {
-    min-width: 28px;
+    min-width: 44px;
     min-height: 44px;
     border-radius: 9px;
     background: transparent;
@@ -1293,7 +1321,7 @@ main {
     margin-top: 16px;
   }
   .list-footer {
-    font-size: 10px;
+    font-size: 12px;
     padding: 14px;
   }
   .bottom-nav {
@@ -1321,7 +1349,7 @@ main {
     padding: 3px 7px;
     min-width: 58px;
     min-height: 48px;
-    font-size: 10px;
+    font-size: 12px;
   }
   .bottom-nav > button.active {
     color: var(--primary);
@@ -1379,7 +1407,7 @@ main {
     font-size: 14px;
   }
   .product-open .eyebrow {
-    font-size: 9px;
+    font-size: 12px;
   }
   .product-card > .row {
     flex-wrap: wrap;
@@ -1389,18 +1417,18 @@ main {
     flex: 1;
     padding: 8px;
     white-space: nowrap;
-    font-size: 11px;
+    font-size: 12px;
   }
   .product-card .iconbtn {
-    min-width: 30px;
+    min-width: 44px;
     padding: 5px;
   }
   .product-card > .muted,
   .product-open p {
-    font-size: 11px;
+    font-size: 12px;
   }
   .product-card .favourite-note {
-    font-size: 11px;
+    font-size: 12px;
   }
   .product-detail-heading {
     grid-template-columns: 100px 1fr;
@@ -1436,8 +1464,8 @@ main {
   .welcome-products .product-photo {
     height: 130px;
   }
-  .welcome-products > div {
-    font-size: 11px;
+  .welcome-products > li {
+    font-size: 12px;
   }
   .welcome-products {
     margin-top: 30px;
@@ -1466,7 +1494,7 @@ main {
     font-size: 22px;
   }
   .source-note {
-    font-size: 11px;
+    font-size: 12px;
   }
   .history-item {
     gap: 10px;
@@ -1497,7 +1525,7 @@ main {
     font-size: 29px;
   }
   .heading-actions .btn {
-    font-size: 11px;
+    font-size: 12px;
     padding: 10px 7px;
   }
   .modal .formgrid {
@@ -1590,7 +1618,7 @@ main {
     font-size: 14px;
   }
   .bottom-nav > button {
-    font-size: 11px;
+    font-size: 12px;
   }
   .product-card .btn {
     font-size: 12px;
@@ -1693,7 +1721,7 @@ main {
 }
 .evidence-tag {
   display: inline-block;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.6px;
   color: var(--muted-foreground);
@@ -1897,11 +1925,11 @@ main {
     grid-column: 1/-1;
   }
   .evidence-tag {
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: 0.3px;
   }
   .product-card .fine {
-    font-size: 11px;
+    font-size: 12px;
   }
   .product-card > .btn {
     width: 100%;

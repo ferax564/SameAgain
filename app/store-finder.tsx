@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { MapPin, ExternalLink, Loader2, Navigation } from 'lucide-react';
 import { inferRetailer } from '@/lib/retailers';
 import type { Place, Point } from '@/lib/places';
+import { errorMessage } from '@/lib/utils';
 export default function StoreFinder({
   demo,
   onChoose,
@@ -61,8 +62,8 @@ export default function StoreFinder({
         if (!d.places.length)
           setError('No location found. Try adding the country or a nearby city.');
       }
-    } catch (e: any) {
-      if (attempt === serial.current) setError(e.message);
+    } catch (e) {
+      if (attempt === serial.current) setError(errorMessage(e));
     } finally {
       if (attempt === serial.current) setBusy(false);
     }

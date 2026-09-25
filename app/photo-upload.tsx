@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { errorMessage } from '@/lib/utils';
 export default function PhotoUpload({
   household,
   demo,
@@ -64,8 +65,8 @@ export default function PhotoUpload({
               if (!r.ok) throw new Error(data.error);
               onChange(data.url);
               toast.success('Photo saved privately');
-            } catch (e: any) {
-              toast.error(e.message);
+            } catch (err) {
+              toast.error(errorMessage(err));
             } finally {
               setBusy(false);
               onBusy?.(false);

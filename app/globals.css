@@ -2,6 +2,7 @@
 @import 'tw-animate-css';
 @custom-variant dark (&:is(.dark *));
 :root {
+  color-scheme: light;
   --background: #f8f9f5;
   --foreground: #233c34;
   --card: #fff;
@@ -13,16 +14,17 @@
   --secondary: #eaf0e9;
   --secondary-foreground: #233c34;
   --muted: #f0f2ec;
-  --muted-foreground: #6a756e;
+  --muted-foreground: #5a655e;
   --accent: #eaf0e9;
   --accent-foreground: #233c34;
   --border: #e2e7df;
-  --input: #d9e0d7;
+  --input: #8a978d;
   --ring: #235b46;
   --radius: 1rem;
   --destructive: #a03932;
 }
 .dark {
+  color-scheme: dark;
   --background: #14241f;
   --foreground: #edf2e9;
   --card: #1d3029;
@@ -38,7 +40,7 @@
   --accent: #2c4137;
   --accent-foreground: #edf2e9;
   --border: #3b4b40;
-  --input: #3b4b40;
+  --input: #7f9486;
   --ring: #add0ac;
   --destructive: #ffa69b;
 }
@@ -252,4 +254,18 @@ small {
     transition: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Inputs must be at least 16px so iOS Safari does not zoom on focus. */
+input:not([type='checkbox']):not([type='radio']),
+select,
+textarea {
+  font-size: max(16px, 1em);
+}
+
+/* Toast action buttons (e.g. Undo) use the brand colours so they meet 4.5:1 contrast. */
+[data-sonner-toast] [data-button] {
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  font-size: 13px;
 }

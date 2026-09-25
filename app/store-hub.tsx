@@ -5,11 +5,32 @@ import { toast } from 'sonner';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useHousehold } from '@/lib/use-household';
 import { retailers, recordedAt, retailerSearch, offerState, inferRetailer } from '@/lib/retailers';
-import { countries, type Product, type RecordData } from '@/lib/domain';
+import { countries, type Product, type RecordData, type RecordFields } from '@/lib/domain';
 import { offerSchema } from '@/lib/meal-schema';
 import { localDate } from '@/lib/nutrition';
+import { isOfferRecord, productRef, type Offer } from '@/lib/record-types';
+import { errorMessage } from '@/lib/utils';
 import { Modal, Choice, Photo } from './ui';
 import StoreFinder from './store-finder';
+/** Current time for event handlers (kept out of render). */
+const timestamp = () => Date.now();
+/** The offer form: every field may still be blank, and the price is the raw input value. */
+type OfferDraft = Partial<Omit<Offer, 'price'>> & { price?: number | string };
+/** A shop to save: typed in by a member or chosen from a map listing. */
+type ShopDraft = {
+  name: string;
+  address: string;
+  sourceUrl?: string;
+  placeId?: string;
+  evidence?: 'map-listing' | 'household-entered';
+};
+/** Catalogue coverage summary returned with retailer searches. */
+type Coverage = {
+  coverageByRetailer?: Record<string, { records: number; withPhoto: number }>;
+  records?: number;
+  imported?: number;
+  pageDetails?: number;
+};
 export default function StoreHub({
   s,
   active,
@@ -19,10 +40,10 @@ export default function StoreHub({
   s: ReturnType<typeof useHousehold>;
   active?: RecordData;
   onProduct: (p: Product) => void;
-  onAdd: (d: any) => void;
+  onAdd: (d: RecordFields) => void;
 }) {
   const initial =
-    Object.keys(retailers).find((k) => retailers[k].country === s.household.settings.country) ||
+    Object.keys(retailers).find((k) => retailers[k].country === s.household?.settings.country) ||
     'coop-ch';
   const [selected, setSelected] = useState(active?.data.retailer || initial),
     [query, setQuery] = useState(''),
@@ -31,20 +52,21 @@ export default function StoreHub({
     [searched, setSearched] = useState(false),
     [busy, setBusy] = useState(false),
     [failed, setFailed] = useState(false),
-    [offer, setOffer] = useState<any>(),
+    [offer, setOffer] = useState<OfferDraft>(),
     [editing, setEditing] = useState<RecordData>(),
-    [shopDraft, setShopDraft] = useState<any>(),
+    [shopDraft, setShopDraft] = useState<ShopDraft>(),
     [source, setSource] = useState('community'),
     [page, setPage] = useState(1),
     [hasMore, setHasMore] = useState(false),
-    [coverage, setCoverage] = useState<any>();
+    [coverage, setCoverage] = useState<Coverage>();
   const searchSerial = useRef(0);
   const retailer = retailers[selected] || retailers[initial];
   const shops = s.records.filter((r) => r.kind === 'shop' && r.data.retailer === selected),
     chosenShop = shops.find((r) => r.id === active?.data.shopId);
   const observations = s.records.filter((r) => r.kind === 'observation'),
     offers = s.records
-      .filter((r) => r.kind === 'offer' && r.data.retailer === selected)
+      .filter(isOfferRecord)
+      .filter((r) => r.data.retailer === selected)
       .sort((a, b) => b.updated - a.updated),
     items = s.records.filter(
       (r) => r.kind === 'item' && r.data.list === active?.id && !r.data.done,
@@ -68,7 +90,7 @@ export default function StoreHub({
             q: query,
             country: retailer.country,
             retailer: selected,
-            household: s.household.id,
+            household: s.household?.id ?? '',
             page: String(nextPage),
             source: imported ? 'retailer' : 'community',
           }),
@@ -86,10 +108,12 @@ export default function StoreHub({
       setHasMore(!!d.hasMore);
       setCoverage(d.coverage);
       setNotice(d.notice || '');
-    } catch (e: any) {
+    } catch (e) {
       if (attempt === searchSerial.current) {
         setNotice(
-          e.name === 'TimeoutError' ? 'The catalogue took too long. Retry your search.' : e.message,
+          e instanceof Error && e.name === 'TimeoutError'
+            ? 'The catalogue took too long. Retry your search.'
+            : errorMessage(e),
         );
         setFailed(true);
       }
@@ -110,14 +134,14 @@ export default function StoreHub({
         retailer: selected,
         shopId: shop?.id,
         storeEvidence: sourceUrl
-          ? { sourceUrl, chosenAt: Date.now(), inventory: 'Unknown' }
+          ? { sourceUrl, chosenAt: timestamp(), inventory: 'Unknown' }
           : undefined,
       },
       active,
     );
     toast.success('Preferred shop saved for ' + active.data.name);
   }
-  function saveShop(d: any) {
+  function saveShop(d: ShopDraft) {
     const existing = s
       .currentRecords()
       .find(
@@ -387,11 +411,11 @@ export default function StoreHub({
           </div>
           {!items.length && <div className="empty card">Add items to an active list first.</div>}
           {items.map((item) => {
-            const p = item.data.product as Product | undefined;
+            const p = item.data.product ?? undefined;
             const reports = observations.filter(
               (o) =>
                 p &&
-                o.data.product === p.id &&
+                productRef(o.data) === p.id &&
                 (chosenShop
                   ? o.data.store === chosenShop.data.name + ', ' + chosenShop.data.address
                   : o.data.store?.toLowerCase().includes(retailer.tag)),
@@ -427,7 +451,7 @@ export default function StoreHub({
                 </div>
                 <a
                   className="btn"
-                  href={retailerSearch(selected, p?.barcode || item.data.name)}
+                  href={retailerSearch(selected, p?.barcode || item.data.name || '')}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -484,10 +508,10 @@ export default function StoreHub({
           <div className="offer-grid">
             {offers.map((r) => (
               <article className="card offer-card" key={r.id}>
-                <span className="pill">{offerState(r.data as any, localDate())}</span>
+                <span className="pill">{offerState(r.data, localDate())}</span>
                 <h3>{r.data.name}</h3>
                 <strong className="offer-price">
-                  {new Intl.NumberFormat('en', {
+                  {new Intl.NumberFormat(undefined, {
                     style: 'currency',
                     currency: r.data.currency,
                   }).format(r.data.price)}

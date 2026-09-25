@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Camera, Upload, ScanBarcode } from 'lucide-react';
 import { barcode } from '@/lib/domain';
 import { ScanSession, cameraError } from '@/lib/scan-session';
+import { errorMessage } from '@/lib/utils';
 export default function Scanner({
   onCode,
   onPrivate,
@@ -30,14 +31,17 @@ export default function Scanner({
   }
   useEffect(() => {
     alive.current = true;
+    // Both refs are created once; capture them so cleanup acts on the same objects.
+    const uploads = uploadSerial,
+      scan = session.current;
     const hidden = () => {
       if (document.hidden) stop();
     };
     document.addEventListener('visibilitychange', hidden);
     return () => {
       alive.current = false;
-      uploadSerial.current++;
-      session.current.stop();
+      uploads.current++;
+      scan.stop();
       document.removeEventListener('visibilitychange', hidden);
     };
   }, []);
@@ -124,10 +128,10 @@ export default function Scanner({
       const b = barcode(result);
       if (!b.valid) throw new Error();
       accept(b.code);
-    } catch (e: any) {
+    } catch (e) {
       if (alive.current && attempt === uploadSerial.current)
         setError(
-          e.message ||
+          errorMessage(e) ||
             'No readable barcode found. Try a sharp JPEG or PNG photo, or enter the digits.',
         );
     } finally {
