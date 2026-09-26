@@ -7,7 +7,7 @@ const ReceiptScanner = lazy(() => import('../receipt-scanner'));
 
 /** Scan a receipt and add its reviewed lines to a list. */
 export function ReceiptModal() {
-  const { household, hid, modal, setModal, lists, active, currency, addReceipt } = useApp();
+  const { s, household, hid, modal, setModal, lists, active, currency, addReceipt } = useApp();
   return (
     <Modal
       open={modal === 'receipt'}
@@ -24,6 +24,7 @@ export function ReceiptModal() {
             active={active?.id || ''}
             country={household.settings.country || ''}
             currency={currency}
+            demo={s.demo}
             onAdd={addReceipt}
           />
         </ErrorBoundary>

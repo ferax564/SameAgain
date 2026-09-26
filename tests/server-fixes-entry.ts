@@ -707,3 +707,41 @@ await test('photo quota is reserved atomically across concurrent uploads', async
     await run('DELETE FROM photos WHERE key=?', h + '/race-filler');
   }
 });
+await test('items naming a former member can still be ticked, deleted and repeated', async () => {
+  const created = await call('FormerOwner', { action: 'createHousehold', name: 'Former' });
+  const hh = created.household;
+  const snapshot = await (await read('FormerOwner', 'household=' + hh)).json();
+  const list = snapshot.records.find((r: any) => r.kind === 'list').id;
+  const inv = await call('FormerOwner', { action: 'invite', household: hh });
+  assert.equal((await call('FormerBob', { action: 'join', token: inv.token })).status, 200);
+  const mk = (data: any, old?: any, deleted = false) => ({
+    id: uid(),
+    record: old?.id || uid(),
+    kind: 'item',
+    version: old?.version || 0,
+    data,
+    ...(deleted ? { deleted: true } : {}),
+  });
+  const send = (o: unknown) => call('FormerOwner', { action: 'op', household: hh, op: o });
+  const a = await send(
+    mk({ name: 'Milk', list, quantity: 1, unit: 'pack', assigned: 'FormerBob' }),
+  );
+  const b = await send(
+    mk({ name: 'Cake', list, quantity: 1, unit: 'pack', intendedFor: 'FormerBob' }),
+  );
+  assert.equal(a.status, 200);
+  assert.equal(b.status, 200);
+  assert.equal((await call('FormerBob', { action: 'leave', household: hh })).status, 200);
+  const ticked = await send(mk({ ...a.record.data, done: true }, a.record));
+  assert.equal(ticked.status, 200);
+  assert.equal((await send(mk(b.record.data, b.record, true))).status, 200);
+  // A repeated item drops the former member rather than failing.
+  const repeat = await send(
+    mk({ name: 'Milk', list, quantity: 1, unit: 'pack', assigned: 'FormerBob' }),
+  );
+  assert.equal(repeat.status, 200);
+  assert.equal(repeat.record.data.assigned, undefined);
+  // Changing an item to name a non-member is still refused.
+  const changed = await send(mk({ ...ticked.record.data, intendedFor: 'Stranger' }, ticked.record));
+  assert.equal(changed.status, 400);
+});

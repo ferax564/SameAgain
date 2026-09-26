@@ -11,6 +11,7 @@ import { localDate } from '@/lib/nutrition';
 import { isOfferRecord, productRef, type Offer } from '@/lib/record-types';
 import { errorMessage } from '@/lib/utils';
 import { Modal, Choice, Photo } from './ui';
+import { ScoreBadge } from './health-panel';
 import StoreFinder from './store-finder';
 /** Current time for event handlers (kept out of render). */
 const timestamp = () => Date.now();
@@ -339,7 +340,9 @@ export default function StoreHub({
                   <Photo product={p} large />
                   <span className="eyebrow">{p.brand || retailer.name}</span>
                   <h3>{p.name}</h3>
-                  <p className="muted">{p.pack || 'Pack size unknown'}</p>
+                  <p className="muted">
+                    {p.pack || 'Pack size unknown'} <ScoreBadge product={p} />
+                  </p>
                   <span className="evidence-tag">
                     {p.evidence === 'retailer-page'
                       ? 'RETAILER PAGE'

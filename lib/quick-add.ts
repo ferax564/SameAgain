@@ -31,6 +31,14 @@ const WORD = '([\\p{L}]+\\.?)';
 const tidy = (s: string) => s.replace(/\s+/g, ' ').trim();
 const hasLetter = (s: string) => /\p{L}/u.test(s);
 const toNumber = (s: string) => Number(s.replace(',', '.'));
+/** "1.000 g" and "1,500 ml" use a thousands separator; "1.5 kg" does not. */
+const amount = (s: string, unit: QuickAddUnit) =>
+  (unit === 'g' || unit === 'ml') && /^\d{1,3}[.,]\d{3}$/.test(s)
+    ? Number(s.replace(/[.,]/, ''))
+    : toNumber(s);
+// Words whose trailing number is part of the name.
+const namedNumber =
+  /(?:^|\s)(?:\p{L}|omega|vitamin|vitamine|vitamina|typ|type|nr|no|size|grösse|größe|stufe|level)$/iu;
 function unitOf(word: string): [QuickAddUnit, number] | undefined {
   const w = word.toLowerCase().replace(/\.$/, '');
   return Object.hasOwn(unitWords, w) ? unitWords[w] : undefined;
@@ -61,10 +69,24 @@ export function parseQuickAdd(text: string): QuickAdd {
   if (!t) return fallback;
   let m: RegExpMatchArray | null;
   // "2 kg apples", "500g pasta", "1,5 l milk", "3 tins tomatoes", "2 packs of rice"
+  // "2 x 1.5 l water", "6x0.5l Cola": a count of packs whose size belongs to the name.
+  if (
+    (m = t.match(
+      new RegExp(
+        `^(\\d{1,3})\\s*[x×*]\\s*(${NUM.slice(1, -1)}\\s*${WORD.slice(1, -1)})\\s+(.+)$`,
+        'iu',
+      ),
+    ))
+  ) {
+    if (unitOf(m[2].replace(/^[\d.,\s]+/, ''))) {
+      const r = result(m[2].replace(/\s+/g, ' ') + ' ' + m[3], Number(m[1]), 'pack');
+      if (r) return r;
+    }
+  }
   if ((m = t.match(new RegExp(`^${NUM}\\s*${WORD}\\s+(.+)$`, 'u')))) {
     const u = unitOf(m[2]);
     if (u) {
-      const r = result(m[3], toNumber(m[1]) * u[1], u[0]);
+      const r = result(m[3], amount(m[1], u[0]) * u[1], u[0]);
       if (r) return r;
     }
   }
@@ -72,7 +94,7 @@ export function parseQuickAdd(text: string): QuickAdd {
   if ((m = t.match(new RegExp(`^(.+?)\\s+${NUM}\\s*${WORD}$`, 'u')))) {
     const u = unitOf(m[3]);
     if (u) {
-      const r = result(m[1], toNumber(m[2]) * u[1], u[0]);
+      const r = result(m[1], amount(m[2], u[0]) * u[1], u[0]);
       if (r) return r;
     }
   }
@@ -86,13 +108,13 @@ export function parseQuickAdd(text: string): QuickAdd {
     const r = result(m[1], Number(m[2]), 'piece');
     if (r) return r;
   }
-  // "12 eggs": a bare leading count followed by a word.
-  if ((m = t.match(/^(\d{1,2})\s+(\p{L}.*)$/u))) {
+  // "12 eggs": a bare leading count followed by a word ("7 up" and "2 x …" are not).
+  if ((m = t.match(/^(\d{1,2})\s+(\p{L}.*)$/u)) && !/^(?:[x×]\s|\p{L}{1,2}$)/iu.test(m[2])) {
     const r = result(m[2], Number(m[1]), 'piece');
     if (r) return r;
   }
-  // "eggs 12": a bare trailing count.
-  if ((m = t.match(/^(\p{L}.*?)\s+(\d{1,2})$/u))) {
+  // "eggs 12": a bare trailing count, but not "Omega 3" or "Vitamin B 12".
+  if ((m = t.match(/^(\p{L}.*?)\s+(\d{1,2})$/u)) && !namedNumber.test(m[1])) {
     const r = result(m[1], Number(m[2]), 'piece');
     if (r) return r;
   }
@@ -118,6 +140,10 @@ const keywordGroups: [string, string][] = [
     'Frozen',
     'frozen ice-cream ice-lolly gelato surgelat congelat tiefkühl tiefgekühl tk-pizza surgelé surgelés glace helado fish-fingers',
   ],
+  // Specific names that would otherwise match a shorter keyword inside them.
+  ['Fruit & vegetables', 'butternut pumpkin squash kürbis zucca courge calabaza'],
+  ['Frozen', 'eiscreme glacé'],
+  ['Pantry', 'pearl-barley barley gerste orzo rollmops'],
   [
     'Household',
     'toilet-paper kitchen-roll paper-towel detergent washing-up dish-soap dishwasher laundry bleach sponge bin-bags trash-bags soap shampoo toothpaste toothbrush deodorant tissues nappies diapers cleaner foil cling-film batteries ' +

@@ -289,8 +289,17 @@ export function useSameAgainController() {
         oldList?.data.currency !== newList?.data.currency ||
         (draft.priceCurrency && draft.priceCurrency !== (newList?.data.currency || currency))
       ) {
-        next = { ...draft, price: null, actualPrice: null, priceCurrency: newList?.data.currency };
-        toast('Prices cleared because the destination list uses another currency.');
+        // Only prices recorded in the old currency are cleared; newly typed ones are kept.
+        const stale = (k: 'price' | 'actualPrice') =>
+          draft[k] != null && draft[k] === editing.data[k];
+        if (stale('price') || stale('actualPrice')) {
+          next = {
+            ...draft,
+            price: stale('price') ? null : draft.price,
+            actualPrice: stale('actualPrice') ? null : draft.actualPrice,
+          };
+          toast('Earlier prices cleared because the list uses another currency.');
+        }
       }
       s.mutate('item', { ...next, priceCurrency: newList?.data.currency || currency }, editing);
       toast.success('Item updated');

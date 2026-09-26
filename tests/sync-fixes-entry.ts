@@ -541,3 +541,116 @@ await test('another tab sees queued changes and does not lose them', async () =>
   a.engine.stop();
   b.engine.stop();
 });
+function plainStorage() {
+  const mem = new Map<string, string>();
+  return {
+    mem,
+    storage: {
+      getItem: (k: string) => mem.get(k) ?? null,
+      setItem: (k: string, v: string) => void mem.set(k, v),
+      removeItem: (k: string) => void mem.delete(k),
+      key: (i: number) => [...mem.keys()][i] ?? null,
+      get length() {
+        return mem.size;
+      },
+    },
+  };
+}
+const quietEnv = (storage: unknown, fetch: unknown) =>
+  ({
+    storage,
+    fetch,
+    online: () => true,
+    hidden: () => false,
+    now: () => Date.now(),
+    lock: null,
+    channel: null,
+    notify: () => {},
+  }) as unknown as EngineEnv;
+const settle = () => new Promise((r) => setTimeout(r, 60));
+await test('pending invitations reappear after a reload even when the household is unchanged', async () => {
+  const { storage } = plainStorage();
+  const etag = 'W/"5.0.f.owner"';
+  const fetch = async (_url: string, init: { headers?: Record<string, string> }) =>
+    init?.headers?.['If-None-Match'] === etag
+      ? new Response(null, { status: 304, headers: { ETag: etag } })
+      : Response.json(
+          {
+            records: [],
+            members: [{ user: 'u', role: 'owner' }],
+            invites: [{ id: 'i1', expires: Date.now() + 1e9 }],
+            cursor: 5,
+            full: true,
+          },
+          { headers: { ETag: etag } },
+        );
+  let view: Partial<EngineView> = {};
+  const a = new HouseholdSync(
+    'u',
+    'h',
+    quietEnv(storage, fetch),
+    (p) => (view = { ...view, ...p }),
+  );
+  a.start();
+  await settle();
+  a.persistNow();
+  a.stop();
+  assert.equal(view.invites?.length, 1);
+  view = {};
+  const b = new HouseholdSync(
+    'u',
+    'h',
+    quietEnv(storage, fetch),
+    (p) => (view = { ...view, ...p }),
+  );
+  b.start();
+  await settle();
+  b.stop();
+  assert.equal(view.invites?.length, 1);
+});
+await test('a snapshot that could not prune deleted rows does not advance the cursor', async () => {
+  const { storage, mem } = plainStorage();
+  mem.set('same-again:u:h', JSON.stringify({ records: [row('A', 1), row('B', 1)] }));
+  mem.set(
+    'same-again:u:h:op:o1',
+    JSON.stringify({
+      id: 'o1',
+      record: 'C',
+      kind: 'item',
+      data: { name: 'C' },
+      version: 0,
+      seq: 1,
+      row: row('C', 1),
+    }),
+  );
+  const fetch = async (url: string, init: { method?: string }) => {
+    if (init?.method === 'POST') return Response.json({ record: row('C', 1), affected: [] });
+    if (!url.includes('since=')) {
+      await new Promise((r) => setTimeout(r, 30));
+      return Response.json({
+        records: [row('B', 1), row('C', 1)],
+        members: [],
+        invites: [],
+        cursor: 10,
+        full: true,
+      });
+    }
+    return Response.json({ records: [], members: [], invites: [], cursor: 10, full: false });
+  };
+  const s = new HouseholdSync('u', 'h', quietEnv(storage, fetch), () => {});
+  try {
+    s.start();
+    await new Promise((r) => setTimeout(r, 120));
+    await s.refresh({ force: true });
+    await s.refresh({ force: true });
+    assert.deepEqual(
+      s
+        .currentRows()
+        .map((r) => r.id)
+        .sort(),
+      ['B', 'C'],
+    );
+  } finally {
+    s.stop();
+  }
+});

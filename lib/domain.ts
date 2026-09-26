@@ -20,6 +20,16 @@ export type Product = {
   labels?: string[];
   nutrition?: Record<string, number>;
   basis?: '100g' | '100ml';
+  /** Nutri-Score as computed by the source (Open Food Facts), never user-entered. */
+  nutriscore?: { grade: 'a' | 'b' | 'c' | 'd' | 'e'; score?: number; source?: string };
+  /** NOVA processing group recorded by the source. */
+  nova?: 1 | 2 | 3 | 4;
+  /** Environmental (Green-Score/Eco-Score) grade recorded by the source. */
+  ecoscore?: string;
+  /** Set on compact search records whose full record has an ingredient list. */
+  ingredientsRecorded?: boolean;
+  /** Source ingredient analysis tags such as `en:vegan` or `en:palm-oil-free`. */
+  analysis?: string[];
   source: string;
   sourceUpdated?: number;
   indexedAt?: string;
@@ -119,6 +129,23 @@ export type Constraint = {
   value: string;
   owner?: string;
 };
+/** The currency printed on receipts and prices in each supported country. */
+export function countryCurrency(country: string) {
+  const own: Record<string, string> = {
+    US: 'USD',
+    GB: 'GBP',
+    CH: 'CHF',
+    DK: 'DKK',
+    SE: 'SEK',
+    NO: 'NOK',
+    PL: 'PLN',
+    CZ: 'CZK',
+    HU: 'HUF',
+    RO: 'RON',
+    IS: 'ISK',
+  };
+  return own[country] || 'EUR';
+}
 export const countries: Record<string, string> = {
   AT: 'Austria',
   BE: 'Belgium',

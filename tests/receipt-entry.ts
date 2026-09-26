@@ -196,3 +196,116 @@ await test('receipt interface exposes camera, photo and text fallbacks', async (
   assert.match(html, /capture="environment"/);
   assert.match(html, /stay on this device/);
 });
+
+// Layouts modelled on current Swiss till receipts (synthetic content).
+const sw_migros = `MIGROS
+Genossenschaft Migros Zürich
+MM Limmatplatz
+Limmatstrasse 152
+8005 Zürich
+CHF
+M-Classic Vollmilch 1l        1.60 1
+Bio Bananen                   2.35 1
+  0.785 kg x 2.99 CHF/kg
+Rüebli 1kg                    1.00 1
+Zweifel Chips Paprika 175g
+  2 x 4.95                    9.90 1
+Aproz Classic 6x1.5l          5.40 1
+Aktion Aproz                 -1.35
+M-Budget Toastbrot            1.40 1
+Cumulus-Rabatt               -0.50
+Total CHF                    19.80
+TWINT                        19.80
+MWST  Satz  Brutto   MWST  Netto
+1     2.6%  17.80    0.45  17.35
+Cumulus-Nummer 2099 1234 5678
+25.09.2026 17:43  Kasse 12  Bon 4567`;
+const sw_coop = `coop
+Coop Supermarkt Zürich Bahnhofbrücke
+Bahnhofquai 5, 8001 Zürich
+Artikel                 Menge   Preis  Aktion   Total Z
+Naturaplan Bio Vollmilch  1      1.95           1.95 1
+Rüebli 1kg                1      2.20           2.20 1
+Bananen Fairtrade       0.824    2.95           2.43 1
+Karma Tofu nature         2      3.95   3.16    6.32 1
+Prix Garantie Spaghetti   1      0.95           0.95 1
+Coca-Cola Zero 6x0.5l     1      8.95   6.70    6.70 1
+Tragtasche                1      0.05           0.05 2
+Total CHF                                      20.60
+TWINT                                          20.60
+Superpunkte                                       20
+MWST  Total   MWST
+1  2.60%  20.55  0.52
+2  8.10%   0.05  0.00
+25.09.26 17:43  0123/004/045/1234`;
+const sw_coopRound = `Coop
+Artikel Menge Preis Aktion Total Z
+Brot 1 3.23 3.23 1
+Käse 0.212 21.50 4.56 1
+Total CHF 7.80
+Rundung 0.01
+25.09.2026 10:00`;
+const sw_denner = `DENNER AG
+Denner Satellit Zürich
+Artikel         Anzahl Preis    Betrag
+Rivella rot 6x1.5l  1  9.95     9.95 A
+Chips Nature        2  1.95     3.90 A
+Mengenrabatt              -0.40
+Total CHF                  13.45
+Bar                        20.00
+Rückgeld                    6.55
+24.09.2026 18:01`;
+const sw_lidl = `Lidl Schweiz
+Milbona Joghurt Nature  0.65 A
+Bananen
+0,812 kg x 2,49 CHF/kg  2,02 A
+Butter 250g            3.29 A
+Summe                  5.96
+25.09.2026 09:12`;
+await test('Migros layout: one price per line, weight and count lines, discounts', () => {
+  const d = parseReceipt(sw_migros, { currency: 'CHF' });
+  assert.equal(d.store, 'Migros');
+  assert.deepEqual(d.warnings, []);
+  assert.equal(d.total, 19.8);
+  const byName = Object.fromEntries(d.items.map((i) => [i.name, i]));
+  assert.equal(byName['M-Classic Vollmilch 1l'].quantity, 1);
+  assert(byName['M-Classic Vollmilch 1l'].selected);
+  assert.equal(byName['Bio Bananen'].quantity, 0.785);
+  assert.equal(byName['Bio Bananen'].unit, 'kg');
+  assert.equal(byName['Bio Bananen'].unitPrice, 2.99);
+  assert.equal(byName['Zweifel Chips Paprika 175g'].quantity, 2);
+  assert.equal(byName['Aproz Classic 6x1.5l'].pack, '6x1.5l');
+  assert.equal(byName['Aproz Classic 6x1.5l'].lineTotal, 4.05);
+  assert.equal(byName['Aproz Classic 6x1.5l'].discount, 1.35);
+  assert.equal(byName['M-Budget Toastbrot'].lineTotal, 0.9);
+  assert(!d.items.some((i) => /Aktion|Cumulus|MWST|TWINT/.test(i.name)));
+});
+await test('Coop table layout with Aktion column and tax-code column', () => {
+  const d = parseReceipt(sw_coop, { currency: 'CHF' });
+  assert.equal(d.store, 'Coop');
+  assert.deepEqual(d.warnings, []);
+  assert.equal(d.items.length, 7);
+  assert.equal(d.items[3].name, 'Karma Tofu nature');
+  assert.equal(d.items[3].quantity, 2);
+  assert.equal(d.items[3].lineTotal, 6.32);
+  assert.equal(d.items[5].pack, '6x0.5l');
+  assert.equal(d.date, '2026-09-25');
+});
+await test('5-Rappen rounding, Denner quantity discounts and Lidl weight rows reconcile', () => {
+  assert.deepEqual(parseReceipt(sw_coopRound, { currency: 'CHF' }).warnings, []);
+  const denner = parseReceipt(sw_denner, { currency: 'CHF' });
+  assert.equal(denner.store, 'Denner');
+  assert.deepEqual(denner.warnings, []);
+  assert.equal(denner.items[1].lineTotal, 3.5);
+  const lidl = parseReceipt(sw_lidl, { currency: 'CHF' });
+  assert.equal(lidl.store, 'Lidl');
+  assert.deepEqual(lidl.warnings, []);
+  assert.equal(lidl.items[1].quantity, 0.812);
+});
+await test('a discount that fits no item is reported, never silently applied', () => {
+  const d = parseReceipt('Migros\nBrot 1.20\nRabatt -2.00\nTotal CHF -0.80', {
+    currency: 'CHF',
+  });
+  assert.equal(d.items[0].lineTotal, 1.2);
+  assert(d.warnings.some((w) => w.includes('could not be matched')));
+});

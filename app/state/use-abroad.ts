@@ -1,7 +1,14 @@
 import { type Dispatch, type SetStateAction, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import type { HouseholdState } from '@/lib/use-household';
-import { type Product, type RecordData, countries, rank, substituteItem } from '@/lib/domain';
+import {
+  type Product,
+  type RecordData,
+  countries,
+  countryCurrency,
+  rank,
+  substituteItem,
+} from '@/lib/domain';
 import { demoProducts } from '@/lib/demo';
 import { errorMessage } from '@/lib/utils';
 import type { Decision, Match } from './types';
@@ -136,14 +143,7 @@ export function useAbroad({
     const copy = s.mutate('list', {
       name: active.data.name + ' · ' + countries[destination],
       country: destination,
-      currency:
-        destination === 'US'
-          ? 'USD'
-          : destination === 'GB'
-            ? 'GBP'
-            : destination === 'CH'
-              ? 'CHF'
-              : 'EUR',
+      currency: countryCurrency(destination),
       originalList: active.id,
     });
     if (!copy) return;
@@ -156,6 +156,7 @@ export function useAbroad({
         done: false,
         price: null,
         actualPrice: null,
+        priceCurrency: countryCurrency(destination),
         originalItem: item.id,
         replacementReason: choice.reason,
       });

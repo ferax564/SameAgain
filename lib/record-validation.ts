@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { retailers } from './retailers';
 import { dateSchema, nutritionSchema, safeLink, safePhoto } from './meal-schema';
 // Records keep fields the client adds (list links, receipt metadata, retailer
 // details), but the size of undeclared fields is capped per object.
@@ -111,7 +112,7 @@ export function validateRecord(
       .object({
         name,
         address: z.string().trim().min(1).max(300),
-        retailer: z.enum(['coop-ch', 'migros-ch', 'tesco-gb', 'carrefour-fr', 'walmart-us']),
+        retailer: z.string().refine((r) => Object.hasOwn(retailers, r), 'Unsupported retailer'),
         country: z.string().length(2),
         sourceUrl: z.string().max(600).optional(),
         placeId: z.string().max(160).optional(),

@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-import { countries } from '@/lib/domain';
+import { countries, countryCurrency } from '@/lib/domain';
 import { Choice, Modal } from '../ui';
 import { useApp } from '../state/context';
 
@@ -97,7 +97,7 @@ export function ListFormModal() {
                   setDraft({
                     ...draft,
                     country: v,
-                    currency: v === 'US' ? 'USD' : v === 'GB' ? 'GBP' : v === 'CH' ? 'CHF' : 'EUR',
+                    currency: countryCurrency(v),
                   })
                 }
                 options={countries}

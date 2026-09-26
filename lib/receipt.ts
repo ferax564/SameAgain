@@ -1,3 +1,4 @@
+import type { Product } from './domain';
 // Receipt text is evidence of a past purchase, never a product identifier or stock feed.
 export type ReceiptItem = {
   key: string;
@@ -8,6 +9,12 @@ export type ReceiptItem = {
   lineTotal?: number;
   /** Price per piece or per kg/l when the receipt prints `qty x price`. */
   unitPrice?: number;
+  /** Promotion or loyalty discount printed on the following line, already deducted. */
+  discount?: number;
+  /** A catalogue product the reviewer linked to this line; never set automatically. */
+  product?: Product;
+  /** A saved-catalogue product whose name matches the line, offered for review. */
+  suggestion?: Product;
   raw: string;
   warnings: string[];
   selected: boolean;
@@ -160,6 +167,46 @@ const itemLine = (s: string, store: string) =>
   !footer.test(s) &&
   (!store || s.toLowerCase() !== store.toLowerCase());
 
+// Chains whose name appears in the receipt header. Earlier entries win (a Migros receipt
+// can mention Denner in an advert, never the reverse in its header).
+const stores: [RegExp, string][] = [
+  [/\bcoop\b/i, 'Coop'],
+  [/\bmigros\b/i, 'Migros'],
+  [/\bdenner\b/i, 'Denner'],
+  [/\baldi\b/i, 'Aldi'],
+  [/\blidl\b/i, 'Lidl'],
+  [/\bvolg\b/i, 'Volg'],
+  [/\bspar\b/i, 'Spar'],
+  [/\bmanor\b/i, 'Manor'],
+  [/\bglobus\b/i, 'Globus'],
+  [/\bcarrefour\b/i, 'Carrefour'],
+  [/\btesco\b/i, 'Tesco'],
+  [/\bwalmart\b/i, 'Walmart'],
+  [/\bedeka\b/i, 'Edeka'],
+  [/\brewe\b/i, 'Rewe'],
+  [/\besselunga\b/i, 'Esselunga'],
+  [/\bconad\b/i, 'Conad'],
+];
+/** The chain named in the first lines of the receipt (the header), else anywhere. */
+export function detectStore(text: string) {
+  const head = text.split(/\r?\n/).slice(0, 8).join('\n');
+  for (const part of [head, text]) for (const [re, name] of stores) if (re.test(part)) return name;
+  return '';
+}
+// Discounts printed under the article they reduce.
+const discountLine =
+  /^(?:aktion\w*|rabatt|\w*-?rabatt|cumulus\w*|mengenrabatt|sconto|remise|r[ée]duction|discount|promo\w*|action|preisreduktion|reduziert|superpunkte-?rabatt)\b/i;
+// "0.785 kg x 2.99 /kg" details a weighed article on the line above.
+const perUnit = /\s*\/\s*(?:kg|100\s?g|l|st|stk|pce)\.?\s*$/i;
+/** Package size in a name, including multipacks such as `6x1.5l` or `4 x 125 g`. */
+export function receiptPack(name: string) {
+  return (
+    name.match(
+      /(?<![\p{L}\d.,])(?:\d+\s*[x×]\s*)?\d+(?:[.,]\d+)?\s*(?:kg|g|ml|cl|dl|l)(?![\p{L}])/iu,
+    )?.[0] || ''
+  );
+}
+
 export function parseReceipt(text: string, options: ReceiptOptions = {}): ReceiptDraft {
   const source = text.slice(0, 40000);
   const lines = source
@@ -185,7 +232,7 @@ export function parseReceipt(text: string, options: ReceiptOptions = {}): Receip
     `^(.*?)(?:^|\\s)(\\d+(?:[.,]\\d{1,3})?)\\s*(kg|g|l|st|stk|stück|pz|pcs|pc|db)?\\.?\\s*[x×*@]\\s*(${M})(?:\\s+(${M}))?$`,
     'iu',
   );
-  const store = /\bcoop\b/i.test(source) ? 'Coop' : /\bmigros\b/i.test(source) ? 'Migros' : '';
+  const store = detectStore(source);
   const draft: ReceiptDraft = {
     store,
     date: purchaseDate(source, currency),
@@ -195,7 +242,9 @@ export function parseReceipt(text: string, options: ReceiptOptions = {}): Receip
   };
   let ended = false,
     pending = '',
-    table = false;
+    table = false,
+    lastLine = -2,
+    unattributed = 0;
   for (let i = 0; i < lines.length; i++) {
     const raw = lines[i];
     const previous = pending;
@@ -223,8 +272,56 @@ export function parseReceipt(text: string, options: ReceiptOptions = {}): Receip
       ended = true;
       continue;
     }
-    if (ended || ignored.test(raw) || !/[\p{L}]/u.test(clean) || draft.items.length >= 100)
+    if (ended) continue;
+    const last = draft.items.at(-1);
+    // A discount line reduces the article just above it, so totals still reconcile.
+    const off = clean.trim().match(new RegExp(`(-${M.replace(/^-\?/, '')})\\s*\\S?$`));
+    if (off && (discountLine.test(clean.trim()) || !/\p{L}{3}/u.test(clean.replace(off[0], '')))) {
+      const amount = -value(off[1]);
+      if (
+        last &&
+        lastLine >= i - 2 &&
+        last.lineTotal !== undefined &&
+        amount <= last.lineTotal + 0.001
+      ) {
+        last.lineTotal = round2(last.lineTotal - amount);
+        last.discount = round2((last.discount || 0) + amount);
+        last.warnings.push(`Discount of ${amount.toFixed(2)} from the next line was deducted.`);
+      } else {
+        unattributed = round2(unattributed + amount);
+        draft.warnings.push(
+          'A discount line could not be matched to an item; it is kept out of the items.',
+        );
+      }
       continue;
+    }
+    // Weight or count details printed under an article that already shows its total.
+    const detail = clean.replace(perUnit, '').trim().match(qtyTimes);
+    if (
+      detail &&
+      !detail[1].trim() &&
+      detail[5] === undefined &&
+      !previous &&
+      last &&
+      lastLine === i - 1
+    ) {
+      const q = value(detail[2]),
+        u = detail[3]?.toLowerCase(),
+        each = value(detail[4]);
+      const unitQ = u === 'g' ? q / 1000 : q;
+      if (last.lineTotal !== undefined && Math.abs(round2(unitQ * each) - last.lineTotal) <= 0.05) {
+        last.quantity = q;
+        last.unit =
+          u === 'kg' || u === 'g' || u === 'l' ? u : Number.isInteger(q) ? last.unit : 'kg';
+        last.unitPrice = each;
+        last.selected = true;
+        last.warnings = last.warnings.filter((w) => !/unclear|Only one price/.test(w));
+        last.raw = (last.raw + '\n' + raw).slice(0, 400);
+        lastLine = i;
+        continue;
+      }
+    }
+    if (ignored.test(raw) || !/[\p{L}]/u.test(clean) || draft.items.length >= 100) continue;
     // Till tax codes can touch the last amount (4.500A = 4.50, tax code 0A).
     if (store === 'Coop') clean = clean.replace(/(\d+[.,]\d{2})[01](?:[A-Z]|4)?(?=\s*$)/g, '$1');
     clean = clean.replace(trailingTax, '$1').replace(vatRate, ' ').trim();
@@ -236,9 +333,10 @@ export function parseReceipt(text: string, options: ReceiptOptions = {}): Receip
       quantityKnown = false,
       unitPrice: number | undefined,
       lineTotal: number | undefined,
-      amounts: string[] = [];
+      amounts: string[] = [],
+      singlePrice = false;
 
-    const times = clean.match(qtyTimes);
+    const times = clean.replace(perUnit, '').match(qtyTimes);
     if (times) {
       // "Gurke 2 x 0.95 1.90", "2 St x 0.95", "0,750 kg x 2,99 2,24"
       const q = value(times[2]),
@@ -328,6 +426,13 @@ export function parseReceipt(text: string, options: ReceiptOptions = {}): Receip
         warnings.push('Description joined from the previous line. Check the match.');
       }
       lineTotal = amounts.length ? value(amounts.at(-1)!) : undefined;
+      // Receipts without a quantity column (Migros, Lidl, Aldi, Denner) print one article
+      // per line and put counts or weights on their own line, so one price means one item.
+      if (!quantityKnown && !table && amounts.length === 1 && !weightRow) {
+        quantity = 1;
+        quantityKnown = true;
+        singlePrice = true;
+      }
       // "Olive oil 12.00 12.00": unit price and line total imply the count.
       if (!quantityKnown && amounts.length === 2 && lineTotal !== undefined) {
         const each = value(amounts[0]),
@@ -365,9 +470,9 @@ export function parseReceipt(text: string, options: ReceiptOptions = {}): Receip
     }
     if (!quantityKnown)
       warnings.push('Quantity was unclear. A placeholder of 1 needs your review.');
-    const pack = name.match(/\b\d+(?:[.,]\d+)?\s*(?:kg|g|ml|cl|dl|l)\b/i)?.[0] || '';
+    const pack = receiptPack(name);
     if (lineTotal === undefined) warnings.push('Line price could not be read.');
-    else if (amounts.length === 1 && !times)
+    else if (amounts.length === 1 && !times && !singlePrice)
       warnings.push('Only one price was recognised. Check the line total.');
     draft.items.push({
       key: String(i),
@@ -381,6 +486,7 @@ export function parseReceipt(text: string, options: ReceiptOptions = {}): Receip
       warnings,
       selected: quantityKnown,
     });
+    lastLine = i;
   }
   if (!draft.items.length)
     draft.warnings.push(
@@ -394,8 +500,10 @@ export function parseReceipt(text: string, options: ReceiptOptions = {}): Receip
         ? `Currency was not printed on the receipt. ${currency} from the list is assumed.`
         : 'Currency was not recognised. Choose the currency printed on the receipt.',
     );
-  const sum = draft.items.reduce((n, i) => n + (i.lineTotal || 0), 0);
-  if (draft.total !== undefined && Math.abs(sum - draft.total) > 0.02)
+  const sum = draft.items.reduce((n, i) => n + (i.lineTotal || 0), 0) - unattributed;
+  // CHF totals are rounded to 5 Rappen.
+  const tolerance = currency === 'CHF' ? 0.05 : 0.02;
+  if (draft.total !== undefined && Math.abs(sum - draft.total) > tolerance + 1e-9)
     draft.warnings.push(
       'Recognised line totals do not match the receipt total. Check for missing items, discounts or OCR errors.',
     );
@@ -435,7 +543,7 @@ export function receiptListItem(
     notes: '',
     store: meta.store,
     substitution: 'ask',
-    product: null,
+    product: item.product ?? null,
     list,
     done: false,
     price: null,

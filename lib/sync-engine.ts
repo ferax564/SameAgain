@@ -223,6 +223,8 @@ export class HouseholdSync {
   private rows: RecordData[] = [];
   private cursor?: number;
   private etag?: string;
+  /** Skip If-None-Match once after start: invitations are not part of the saved snapshot. */
+  private revalidate = false;
   private view: EngineView = emptyView;
   private membersKey = '';
   private invitesKey = '';
@@ -270,6 +272,8 @@ export class HouseholdSync {
     const members = readJson(storage, storageKeys.members(this.user, this.household), isMembers);
     this.membersKey = jsonKey(members ?? []);
     this.invitesKey = jsonKey([]);
+    // Invitations are not cached, so the first poll must not be answered with a 304.
+    this.revalidate = true;
     this.reloadQueue();
     this.rows = composeRows(this.server, this.queue, this.legacyRows);
     // Emit the whole view: the consumer may still hold another household's state.
@@ -499,7 +503,7 @@ export class HouseholdSync {
     let url = '/api/data?household=' + encodeURIComponent(this.household);
     if (this.cursor !== undefined) url += '&since=' + encodeURIComponent(String(this.cursor));
     const headers: Record<string, string> = {};
-    if (this.etag) headers['If-None-Match'] = this.etag;
+    if (this.etag && !this.revalidate) headers['If-None-Match'] = this.etag;
     try {
       const r = await requestJson(this.env.fetch, url, { headers });
       if (this.stopped) return;
@@ -529,8 +533,12 @@ export class HouseholdSync {
         removeMissing: full && startSerial === this.ackSerial,
         dropTombstones: !full,
       });
-      const cursor = typeof d.cursor === 'number' ? d.cursor : undefined;
-      const etag = r.headers.get('ETag') ?? undefined;
+      this.revalidate = false;
+      // A full snapshot that could not prune missing rows (an operation was acknowledged
+      // meanwhile) must not advance the cursor, or server deletions would never arrive.
+      const adopt = !full || startSerial === this.ackSerial;
+      const cursor = adopt && typeof d.cursor === 'number' ? d.cursor : undefined;
+      const etag = adopt ? (r.headers.get('ETag') ?? undefined) : undefined;
       if (merged.changed || cursor !== this.cursor || etag !== this.etag) {
         this.server = merged.rows;
         this.cursor = cursor;

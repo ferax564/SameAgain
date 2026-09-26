@@ -3,6 +3,7 @@ import { countries, barcode } from '@/lib/domain';
 import { productRef } from '@/lib/record-types';
 import { Modal, Photo } from '../ui';
 import { ProductNutrition, IngredientReview } from '../nutrition-panel';
+import { HealthPanel } from '../health-panel';
 import { useApp } from '../state/context';
 
 /** Product details, household feedback and add/save actions. */
@@ -159,6 +160,12 @@ export function ProductModal() {
             </p>
           )}
           {product.nutritionNote && <p className="fine">{product.nutritionNote}</p>}
+          <HealthPanel
+            product={product}
+            demo={s.demo}
+            household={household?.id}
+            onOpen={(p) => void openProduct(p)}
+          />
           <section>
             <h3>Ingredients</h3>
             <p className="muted">

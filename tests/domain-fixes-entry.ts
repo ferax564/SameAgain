@@ -31,8 +31,9 @@ await test('a price-shaped token is never taken as the quantity', () => {
   }
   const col = parseReceipt('Shop\nOLIO EVO     10,00 A\nTOTALE EUR 10,00').items[0];
   assert.equal(col.name, 'OLIO EVO');
+  // Without a quantity column, one price per line is one article (counts get their own line).
   assert.equal(col.quantity, 1);
-  assert.equal(col.selected, false);
+  assert.equal(col.selected, true);
   assert.equal(col.lineTotal, 10);
 });
 await test('Italian and German VAT letters, codes and percentages after or before the price', () => {
@@ -379,4 +380,21 @@ await test('country codes reject prototype keys', () => {
 await test('camera errors accept unknown values', () => {
   assert.match(cameraError({ name: 'NotAllowedError' }), /permission/);
   assert.match(cameraError(null), /Could not start/);
+});
+await test('quick-add keeps multipacks, thousands and named numbers intact', async () => {
+  const { parseQuickAdd, guessCategory } = await import('../lib/quick-add');
+  assert.deepEqual(parseQuickAdd('2 x 1.5 l water'), {
+    name: '1.5 l water',
+    quantity: 2,
+    unit: 'pack',
+  });
+  assert.deepEqual(parseQuickAdd('1.000 g Mehl'), { name: 'Mehl', quantity: 1000, unit: 'g' });
+  assert.deepEqual(parseQuickAdd('1,5 kg Äpfel'), { name: 'Äpfel', quantity: 1.5, unit: 'kg' });
+  for (const name of ['Omega 3', 'Vitamin B 12', '7 up'])
+    assert.deepEqual(parseQuickAdd(name), { name, quantity: 1, unit: 'piece' });
+  assert.equal(parseQuickAdd('eggs 12').quantity, 12);
+  assert.equal(guessCategory('Butternut squash'), 'Fruit & vegetables');
+  assert.equal(guessCategory('Pearl barley'), 'Pantry');
+  assert.equal(guessCategory('Eiscreme'), 'Frozen');
+  assert.equal(guessCategory('Vollmilch'), 'Dairy & alternatives');
 });

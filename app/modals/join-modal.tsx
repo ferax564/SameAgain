@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { Users } from 'lucide-react';
 import { Modal } from '../ui';
 import { useApp } from '../state/context';
@@ -20,6 +21,10 @@ export function JoinModal() {
           try {
             if (token?.startsWith('http')) token = new URL(token).searchParams.get('invite');
           } catch {}
+          if (!token) {
+            toast.error('This link has no invitation code. Paste the full invitation link.');
+            return;
+          }
           const r = await act('join', { token }, 'Welcome to the household');
           if (r) {
             s.exitDemo();

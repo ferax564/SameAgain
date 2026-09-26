@@ -3,7 +3,50 @@
 Notable changes to Same Again, newest first. The September 2026 code review and its
 open findings are in [`docs/REVIEW-2026-09.md`](docs/REVIEW-2026-09.md).
 
-## Unreleased
+## Unreleased — 25 September 2026 review
+
+Findings and measurements are in [`docs/REVIEW-2026-09-25.md`](docs/REVIEW-2026-09-25.md).
+
+### Catalogue
+
+- Rebuilt from the Open Food Facts nightly export (`scripts/import-off-dump.py`): 98,179
+  Swiss products found by barcode (85,611 with nutrition), 33,759 searchable retailer
+  products (Coop 12,986, Migros 16,831, plus Denner, Lidl, Aldi, Volg, Spar, Manor, Globus).
+- Compact search index plus 100 gzipped barcode shards; scans use the export for 30 days
+  before a live refresh. Live records now carry Nutri-Score, NOVA, Green-Score and ingredient
+  analysis. `scripts/import-swiss-catalogue.mjs` is replaced.
+
+### Health score
+
+- 0–100 product score (Nutri-Score 60, additives 30, organic 10) with a visible breakdown,
+  additive flags with sources, NOVA, and better-scoring alternatives at Coop or Migros.
+- Nutri-Score 2023 estimate for products without a recorded grade (90.9% grade agreement
+  with Open Food Facts on 40,857 products).
+
+### Receipts
+
+- Swiss layouts: one price per line is one article; weight and count lines above or below
+  the article; Aktion/Cumulus/Mengenrabatt deducted from the article; multipacks; 5-Rappen
+  rounding; Denner, Lidl, Aldi, Volg, Spar and Manor detected.
+- Review rows can link a matching saved-catalogue product; nothing is linked automatically.
+
+### Shops and guide
+
+- Denner, Lidl and Aldi can be chosen as Swiss shops: store hub search, branches, offers,
+  map matching, receipt suggestions and the alternatives filter.
+- The in-app guide is rewritten as structured user help covering the health score, the
+  catalogue and receipts.
+
+### Fixes
+
+- Items naming a former member no longer block ticking, editing, deleting or repeating.
+- Newly typed prices survive currency checks; country currencies for DK, SE, NO, PL, CZ, HU,
+  RO and IS.
+- Invitations survive reloads; server deletions during a resync are no longer lost.
+- Quantity inputs, search notices, abroad review count, local dates, invite links without a
+  code, and quick-add multipacks, thousands and named numbers.
+
+## Earlier unreleased: September 2026 review fixes
 
 Fixes for every finding in [`docs/REVIEW-2026-09.md`](docs/REVIEW-2026-09.md); its final
 section maps each finding to its resolution.

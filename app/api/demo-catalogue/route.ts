@@ -1,4 +1,10 @@
-import { swissSearch, swissBarcode, swissCoverage } from '@/lib/swiss-catalogue';
+import {
+  swissSearch,
+  swissBarcode,
+  swissCoverage,
+  swissBetter,
+  swissMatch,
+} from '@/lib/swiss-catalogue';
 import { rankSearch } from '@/lib/catalogue-search';
 import { barcode, countries } from '@/lib/domain';
 import { retailers } from '@/lib/retailers';
@@ -37,6 +43,35 @@ export async function GET(req: Request) {
     return Response.json({ error: 'Choose a matching retailer and country.' }, { status: 400 });
   const headers = { 'Cache-Control': 'public, max-age=300' };
   try {
+    if (p.has('match')) {
+      const labels = p
+        .getAll('match')
+        .slice(0, 60)
+        .map((v) => v.slice(0, 160));
+      return Response.json(
+        {
+          matches: await swissMatch(
+            labels,
+            retailer ? retailers[retailer].tag : undefined,
+            req.url,
+          ),
+        },
+        { headers },
+      );
+    }
+    if (p.get('better')) {
+      const b = barcode(p.get('better')!);
+      if (!b.valid) return Response.json({ error: b.error }, { status: 400 });
+      const product = await swissBarcode(b.code, req.url);
+      return Response.json(
+        {
+          alternatives: product
+            ? await swissBetter(product, retailer ? retailers[retailer].tag : undefined, req.url)
+            : [],
+        },
+        { headers },
+      );
+    }
     if (p.get('barcode')) {
       const b = barcode(p.get('barcode')!);
       if (!b.valid) return Response.json({ error: b.error }, { status: 400 });

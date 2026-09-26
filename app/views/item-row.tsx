@@ -1,4 +1,5 @@
 import { Flag, MoreHorizontal, UserRound } from 'lucide-react';
+import { localDate } from '@/lib/nutrition';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
@@ -103,7 +104,7 @@ export function ItemRow({ item }: { item: RecordData }) {
                 productId: d.product?.id,
                 name: d.name,
                 store: d.store || '',
-                date: new Date().toISOString().slice(0, 10),
+                date: localDate(),
                 price: null,
               })
             }

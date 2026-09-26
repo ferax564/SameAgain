@@ -4,6 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { countries, countryTag } from '@/lib/domain';
 import { demoProducts } from '@/lib/demo';
 import { Choice, Photo } from '../ui';
+import { ScoreBadge } from '../health-panel';
 import { useApp } from '../state/context';
 // Secondary areas load on demand so the shopping list starts faster.
 const StoreHub = lazy(() => import('../store-hub'));
@@ -30,6 +31,7 @@ export function DiscoverView() {
     searched,
     setSearched,
     searchError,
+    searchNotice,
     search,
     openProduct,
   } = useApp();
@@ -114,6 +116,11 @@ export function DiscoverView() {
               {searchError}
             </p>
           )}
+          {searchNotice && !searchError && (
+            <p className="notice" role="status">
+              {searchNotice}
+            </p>
+          )}
           <div className="row wrap" style={{ marginTop: 16 }}>
             <button className="link" onClick={() => openItem({ name: query })}>
               Add a generic item
@@ -146,7 +153,9 @@ export function DiscoverView() {
                     <Photo product={p} large />
                     <span className="eyebrow">{p.brand?.split(',')[0]}</span>
                     <h3>{p.name}</h3>
-                    <p className="muted">{p.pack || 'Pack size not recorded'}</p>
+                    <p className="muted">
+                      {p.pack || 'Pack size not recorded'} <ScoreBadge product={p} />
+                    </p>
                   </button>
                   <div className="row between">
                     <button

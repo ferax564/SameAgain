@@ -4,7 +4,7 @@ Your family’s favourites. One shared list. Find them—or a suitable alternati
 
 A TypeScript/React application on Vinext and Cloudflare Workers, with D1 shared persistence, authenticated R2 photos and platform-managed Sign in with ChatGPT. This source snapshot omits the original deployment project ID. Configure a new hosting project when deploying your own instance; do not reuse another household’s infrastructure.
 
-Release history is in [CHANGELOG.md](CHANGELOG.md). The September 2026 review is in [docs/REVIEW-2026-09.md](docs/REVIEW-2026-09.md).
+Release history is in [CHANGELOG.md](CHANGELOG.md). The September 2026 reviews are in [docs/REVIEW-2026-09.md](docs/REVIEW-2026-09.md) and [docs/REVIEW-2026-09-25.md](docs/REVIEW-2026-09-25.md).
 
 ## Start using it
 
@@ -109,19 +109,28 @@ The PWA caches the shell/static assets, not authenticated API responses. First v
 
 ## Catalogue coverage and photographs
 
-| Source snapshot | Records | Records with a front-photo URL | Scope |
-| --- | ---: | ---: | --- |
-| OFF, Switzerland, Coop tag | 3,534 | 3,470 | Partial community catalogue |
-| OFF, Switzerland, Migros tag | 9,759 | 9,230 | Partial community catalogue |
-| Unique Swiss OFF records | 13,249 | 12,658 | 44 records appear under both retailers |
-| Direct Coop pages/links | 31 | 0 imported | One page with verified factual details and nutrition |
-| Direct Migros pages/links | 182 | 0 imported | 28 detail records; six explicit nutrition tables |
+The Swiss catalogue is rebuilt from the Open Food Facts nightly CSV export of **25 September 2026** (one streamed download, no per-product API calls). Every named product tagged for Switzerland is kept; products with retailer evidence (a community store tag or a retailer own brand such as Naturaplan, Prix Garantie, M-Classic or M-Budget) also go into the search index.
 
-**591 Swiss source records still have no front photo.** The remaining photograph URLs are recorded coverage, not proof that every remote image always loads. The UI shows an honest fallback and lets households add their own pictures. It does not substitute generated packaging or another variant’s image. Direct retailer images are not copied without a reuse licence.
+| Retailer evidence | Records | With nutrition | With Nutri-Score | With ingredients | With photo |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Migros | 16,831 | 15,743 | 8,614 | 7,551 | 14,815 |
+| Coop | 12,986 | 12,076 | 6,529 | 5,795 | 10,794 |
+| Denner | 1,672 | 1,538 | 868 | 526 | 1,467 |
+| Lidl | 1,157 | 1,115 | 929 | 904 | 1,151 |
+| Aldi | 685 | 643 | 561 | 537 | 679 |
+| Volg, Spar, Manor, Globus | 715 | 658 | 437 | 326 | 663 |
+| **Search index (any retailer)** | **33,759** | | | | |
+| **All Swiss-tagged products (barcode lookup)** | **98,179** | 85,611 | 41,132 | 33,024 | 85,558 |
 
-The licensed Swiss index is `public/catalogue/swiss-retailer-products.json`; its licence is adjacent. Barcode/search matches persist in D1 on use. At most 48 local results are shown; refine the query. The original collection was capped at the public 10,000-hit Migros search window. Unnamed/nonmatching records were excluded. No full-assortment claim follows from these counts.
+The previous snapshot had 13,249 records (Coop 3,534, Migros 9,759) and nutrition for only six of them. `lib/swiss-retailer-report.json` records the export hash, date and these counts. Retailer evidence is community data, not a current assortment, price or branch stock claim, and no complete retailer catalogue is available to compare against: coop.ch and migros.ch were not reachable from the review environment, and their APIs need client keys.
 
-`node scripts/import-swiss-catalogue.mjs` resumes ignored import checkpoints with a minimum eight-second interval and stops a retailer’s run on failure. For large refreshes use OFF bulk exports/local indexing, not thousands of product requests. `scripts/import-retailer-pages.py INPUT_DIRECTORY lib/retailer-products.json` extracts factual fields from saved public pages/index results. No unattended scraping or refresh job runs. Reports record scope, provenance, dates and hashes.
+- `public/catalogue/swiss-retailer-products.json` (7.5 MB): compact search records; derivable fields (id, source URL, country, retrieval date, image folder) are restored by `lib/swiss-catalogue.ts`, and search text is computed once per Worker isolate.
+- `public/catalogue/barcodes/NN.json.gz` (100 shards, 18 MB): full records keyed by barcode, sharded by the last two digits (unchanged by zero-padding), decompressed on the server; a few shards stay cached per isolate.
+- Barcode scans are answered from the export for up to 30 days before a live Open Food Facts refresh, which keeps the shared 15-reads-per-minute quota for products the export lacks.
+
+Photograph URLs are recorded coverage, not proof that every remote image always loads. The UI shows an honest fallback and lets households add their own pictures. Direct retailer images are not copied without a reuse licence. At most 48 local results are shown; refine the query.
+
+`python3 scripts/import-off-dump.py` rebuilds all three outputs from the export (about 2 minutes of download and 15 seconds of processing; pass a local copy and `OFF_EXPORT_DATE` to reuse a download). `scripts/import-retailer-pages.py INPUT_DIRECTORY lib/retailer-products.json` extracts factual fields from saved public pages/index results. No unattended scraping or refresh job runs.
 
 Direct Migros API documentation describes products/offers/stores, but the unauthenticated API returned HTTP 401 for a missing client key. Earlier basic Coop retrieval failed; one bounded official bread page was accessible during this review and its facts were added. Neither result establishes an authorized full feed. No credentials, browser-session keys, robots exclusions or access controls were bypassed.
 
@@ -161,11 +170,27 @@ Daily totals distinguish planned from eaten portions for the selected member. Nu
 
 The [FSVO Swiss Food Composition Database v7.1, 1 July 2026](https://valeursnutritives.ch/en/downloads/) permits dataset integration/commercial reuse with acknowledgement. `python3 scripts/import-swiss-foods.py workbook.xlsx` rebuilds the bounded per-100-g edible-portion index (openpyxl required). `public/catalogue/swiss-provenance.json` records workbook hash, units, version and derivations. This licence does not authorize unrelated website imagery.
 
-Ingredient evidence covers four sweeteners, not a comprehensive hazard score: aspartame, acesulfame K, sucralose and steviol glycosides. It links source assessments and distinguishes them from dislikes, allergies and certifications. Missing concentrations prevent exposure estimates. No “allergy-safe”, personalized risk or universal “good/bad” label is issued. The corrected [EFSA acesulfame K assessment](https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2025.9317) is distinct from its aspartame assessment. Evidence is a versioned snapshot requiring periodic review; meal totals do not establish medical suitability.
+Ingredient evidence covers four sweeteners, not a comprehensive hazard score: aspartame, acesulfame K, sucralose and steviol glycosides. It links source assessments and distinguishes them from dislikes, allergies and certifications. Missing concentrations prevent exposure estimates. No “allergy-safe” or personalized risk label is issued; the product health score below is a documented comparison aid. The corrected [EFSA acesulfame K assessment](https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2025.9317) is distinct from its aspartame assessment. Evidence is a versioned snapshot requiring periodic review; meal totals do not establish medical suitability.
+
+## Product health score
+
+Every product page shows a 0–100 **health score** with its breakdown, in the spirit of Yuka but with each input visible (`lib/health-score.ts`, `app/health-panel.tsx`):
+
+| Part | Points | Source |
+| --- | ---: | --- |
+| Nutrition | 60 | Nutri-Score grade A 60, B 48, C 33, D 18, E 5 |
+| Additives | 30 | minus 15 / 8 / 3 per additive with a high / moderate / limited flag |
+| Organic | 10 | a recorded organic certification (EU organic, Bio Suisse, Demeter …) |
+
+- The Nutri-Score computed by Open Food Facts is used when recorded. Otherwise it is estimated from declared per-100 g/ml values with the 2023 algorithm (general foods, beverages, cheese, fats/oils/nut butters, red meat, water) and labelled as an estimate. Against 40,857 Swiss products that have an Open Food Facts grade, the estimate gives the same grade for 90.9% and is within one grade for 97.3%; most differences come from fruit/vegetable content, which labels do not declare.
+- Additive flags summarise regulatory evidence reviewed on 25 September 2026: EU withdrawal (E171), EFSA nitrosamine concern (nitrites), the EU children’s-attention warning for six colours, IARC 2B classifications (aspartame, BHA), sulphite sensitivity, and EFSA intake or data-gap notes (glutamates, phosphates, carrageenan, caramel colours, some emulsifiers, non-sugar sweeteners). Each flag links its source. An additive without a flag is listed as such; that is not a safety finding. When a product has no ingredient list, its additives are unknown and earn no points, so incomplete records never outrank complete ones.
+- A high flag caps the score at 49. NOVA processing is shown but not scored. Products without energy, sugars, saturated fat and salt are **not scored** rather than guessed, and alcohol and baby foods are out of scope even when a source record carries a grade.
+- **Better-scoring alternatives** come from the same specific category in the saved Swiss index, at least 10 points higher, optionally at one retailer (Coop, Migros, Denner, Lidl or Aldi). Allergens, taste and stock are not compared.
+- Search results show the score as a badge. The score is a comparison aid, not medical or allergy advice.
 
 ## Individual shops, observations and offers
 
-Store discovery distinguishes exact catalogue identity, country alternatives and nearby shops. Coop, Migros, Tesco GB, Carrefour France and Walmart US have provider configurations; country support does not imply equal catalogue coverage. Save an address-specific branch manually or choose a matching mapped place. Server checks reject another household’s branch or a mismatched retailer. A list remembers the branch, and selecting a catalogue product there retains its shop context. Branch edit/deletion is not included.
+Store discovery distinguishes exact catalogue identity, country alternatives and nearby shops. Coop, Migros, Denner, Lidl and Aldi (Switzerland), Tesco GB, Carrefour France and Walmart US have provider configurations; Denner, Lidl and Aldi offer links open the retailer home page because no offers page was verified; country support does not imply equal catalogue coverage. Save an address-specific branch manually or choose a matching mapped place. Server checks reject another household’s branch or a mismatched retailer. A list remembers the branch, and selecting a catalogue product there retains its shop context. Branch edit/deletion is not included.
 
 Nearby places use [Photon](https://photon.komoot.io/) / [OpenStreetMap contributors, ODbL](https://www.openstreetmap.org/copyright), with manual city/postcode or a one-time location request. Coordinates are rounded to three decimals before transmission; no background location tracking or durable location history is stored. The provider receives the selected area. Up to 12 relevant stores within roughly 3 km have approximate straight-line distances. Global limits are 12/minute and 300/day, plus 8/minute/account, with a bounded one-hour cache. Maps/web links remain useful when the provider is unavailable.
 
@@ -175,7 +200,7 @@ Nearby places use [Photon](https://photon.komoot.io/) / [OpenStreetMap contribut
 
 Open **Lists → Scan receipt**. Take/upload a photo or paste text; adjust the suggested crop, rotate and choose German, English, French, Italian, Spanish, Portuguese or Dutch. Correct names, quantities, units and pack sizes, deselect unwanted rows, add missed rows and confirm review before adding.
 
-Receipt abbreviations become **generic groceries**. They do not establish an exact barcode, photo, ingredients, nutrition or stock. Unclear quantities start deselected and fractional units carry review warnings. Only reviewed metadata is shared through the normal authenticated operation queue. Past receipt totals do not become prices for the next shop. The same image fingerprint/row already outstanding on the target list is skipped; a different photo of the same receipt is not necessarily detected. Operation retries remain idempotent.
+Receipt abbreviations become **generic groceries** unless the reviewer links a product. When every word of a line matches a product in the saved Swiss index (at the receipt’s retailer when it is Coop or Migros), the row offers “Link this product”; nothing is linked automatically, and abbreviations usually match nothing. The parser handles the common Swiss layouts: Coop tables with Menge/Preis/Aktion/Total and tax-code columns; Migros, Lidl, Aldi and Denner lines with one price per article, count (`2 x 4.95`) and weight (`0.785 kg x 2.99 CHF/kg`) lines above or below the article; Aktion, Cumulus and Mengenrabatt lines, which are deducted from the article above; multipacks such as `6x1.5l`; and 5-Rappen rounding. Rows with one price and no quantity column are one article. Unclear quantities start deselected and fractional units carry review warnings. Only reviewed metadata is shared through the normal authenticated operation queue. Past receipt totals do not become prices for the next shop. The same image fingerprint/row already outstanding on the target list is skipped; a different photo of the same receipt is not necessarily detected. Operation retries remain idempotent.
 
 OCR runs locally in a browser worker. Receipt photos and full text are not uploaded or saved in household records; temporary data is discarded on close. Only reviewed item metadata, optional store/date/currency and past line totals persist. Personal receipt photos and raw OCR output are excluded from this source distribution.
 
@@ -187,7 +212,7 @@ Tesseract.js/core use Apache-2.0. Pinned `@tesseract.js-data/*@1.0.0` packages s
 
 - Physical iPhone camera/autofocus, OS permissions/photo picker, PWA install and secure-context airplane-mode reconnection still need device testing. `/device-check` provides capability readouts and a concrete two-device checklist; it never marks these passed automatically.
 - Hosted sign-in, Site access and sharing with actual invited accounts need those users’ participation. Deterministic identities are not real ChatGPT accounts. No household permissions or Site audience were weakened for preview tests.
-- Catalogue/ingredients/nutrition/photographs, translations, certification data and retailer coverage are incomplete. There is no live inventory, automatic offers, comprehensive ingredient safety database or automatic source-refresh service.
+- Catalogue/ingredients/nutrition/photographs, translations, certification data and retailer coverage are incomplete. There is no live inventory, automatic offers, comprehensive ingredient safety database or automatic source-refresh service; the catalogue is refreshed by running `scripts/import-off-dump.py`.
 - UI is English. Saved language preference and OCR language selection do not imply a translated interface.
 - Upload UI re-encodes supported images to metadata-free JPEG, maximum 1,600-pixel edge. The API accepts signature-checked JPEG/PNG up to 3 MB; direct API uploads do not receive server-side EXIF stripping or malware scanning. Orphan uploads persist until household deletion. Existing list/recipe/history snapshots retain earlier product data when a private master product changes.
 - Larger rollout needs cache/rate/operation cleanup, orphan-image retention, database pagination/push sync, monitoring, backup/recovery and load testing. These are not simulated by the current small-household release.

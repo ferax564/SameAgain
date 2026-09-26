@@ -1,7 +1,13 @@
 import { savedCatalogueCandidates, savedCategoryCandidates } from '@/lib/catalogue-cache-search';
 import { rankSearch, searchTerms } from '@/lib/catalogue-search';
 import { lookupBarcode } from '@/lib/barcode-lookup';
-import { swissSearch, persistSwiss, swissCoverage } from '@/lib/swiss-catalogue';
+import {
+  swissSearch,
+  persistSwiss,
+  swissCoverage,
+  swissBetter,
+  swissMatch,
+} from '@/lib/swiss-catalogue';
 import { identity, member, one, query, fail, responseError, rate, DAY } from '@/lib/server';
 import { off } from '@/lib/catalogue';
 import { ensureRetailerCatalogue } from '@/lib/retailer-catalogue';
@@ -26,6 +32,42 @@ export async function GET(req: Request) {
           req.url,
         ),
       );
+    if (p.has('match')) {
+      const retailer = p.get('retailer') || undefined;
+      if (retailer && !Object.hasOwn(retailers, retailer)) fail('Choose a supported retailer.');
+      const labels = p
+        .getAll('match')
+        .slice(0, 60)
+        .map((v) => v.slice(0, 160));
+      return Response.json({
+        matches: await swissMatch(
+          labels,
+          retailer ? retailers[retailer].tag : undefined,
+          req.url,
+        ).catch(() => labels.map(() => null)),
+      });
+    }
+    if (p.get('better')) {
+      const retailer = p.get('retailer') || undefined;
+      if (retailer && !Object.hasOwn(retailers, retailer)) fail('Choose a supported retailer.');
+      const { product } = await lookupBarcode(
+        p.get('better')!,
+        u.id,
+        p.get('household') || undefined,
+        false,
+        req.url,
+      );
+      if (!product) return Response.json({ alternatives: [] });
+      return Response.json({
+        alternatives: await swissBetter(
+          product,
+          retailer ? retailers[retailer].tag : undefined,
+          req.url,
+        ).catch(() => []),
+        notice:
+          'Same category, clearly higher score, from the saved Swiss catalogue. Retailer tags are community evidence, not current stock; check allergens on the package.',
+      });
+    }
     if (p.get('original')) {
       const h = p.get('household') || '';
       await member(h, u.id);
@@ -47,9 +89,16 @@ export async function GET(req: Request) {
       const hh = await one('SELECT settings FROM households WHERE id=?', h);
       const settings = JSON.parse(hh.settings);
       let constraints = settings.constraints || [];
-      const target = d.intendedFor || u.id;
+      // A former member's preferences are no longer available; use the requester's.
+      const intended =
+        d.intendedFor &&
+        (await one(
+          'SELECT 1 AS ok FROM memberships WHERE household=? AND user=?',
+          h,
+          d.intendedFor,
+        ));
+      const target = intended ? d.intendedFor : u.id;
       if (target) {
-        await member(h, target);
         const profile = await one('SELECT preferences FROM users WHERE id=?', target);
         constraints = [...constraints, ...(JSON.parse(profile.preferences).constraints || [])];
       }

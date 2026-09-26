@@ -14,6 +14,8 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Choice } from './ui';
 import { receiptFingerprint, receiptTextFingerprint } from '@/lib/receipt-fingerprint';
+import type { Product } from '@/lib/domain';
+import { retailers } from '@/lib/retailers';
 import {
   parseReceipt,
   receiptListItem,
@@ -62,12 +64,14 @@ export default function ReceiptScanner({
   active,
   country,
   currency,
+  demo,
   onAdd,
 }: {
   lists: RecordData[];
   active: string;
   country: string;
   currency: string;
+  demo?: boolean;
   onAdd: (items: ReceiptListItem[], list: string) => number;
 }) {
   const [photo, setPhoto] = useState<HTMLImageElement>(),
@@ -99,6 +103,7 @@ export default function ReceiptScanner({
   const worker = useRef<Worker | null>(null),
     serial = useRef(0),
     adding = useRef(false),
+    suggestions = useRef(0),
     mounted = useRef(true),
     fileInput = useRef<HTMLInputElement>(null),
     cameraInput = useRef<HTMLInputElement>(null),
@@ -175,6 +180,45 @@ export default function ReceiptScanner({
     setDraft(parsed);
     setFinished(null);
     adding.current = false;
+    void suggest(parsed);
+  }
+  /** Looks up saved-catalogue products for the parsed labels; suggestions need approval. */
+  async function suggest(parsed: ReceiptDraft) {
+    // Each review gets its own generation: a slower earlier lookup must not land on a newer
+    // receipt, and a suggestion only applies while the row still has the label it matched.
+    const generation = ++suggestions.current;
+    const labels = parsed.items.map((i) => i.name);
+    if (!labels.length) return;
+    const params = new URLSearchParams();
+    for (const l of labels) params.append('match', l);
+    const retailer = Object.keys(retailers).find(
+      (id) => retailers[id].country === 'CH' && retailers[id].tag === parsed.store.toLowerCase(),
+    );
+    if (retailer) {
+      params.set('retailer', retailer);
+      params.set('country', 'CH');
+    }
+    try {
+      const r = await fetch((demo ? '/api/demo-catalogue?' : '/api/catalogue?') + params, {
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!r.ok) return;
+      const { matches } = (await r.json()) as { matches: (Product | null)[] };
+      if (!mounted.current || suggestions.current !== generation) return;
+      setDraft(
+        (d) =>
+          d && {
+            ...d,
+            items: d.items.map((i) => {
+              const k = parsed.items.findIndex((p) => p.key === i.key);
+              const m = k >= 0 && i.name === labels[k] ? matches[k] : null;
+              return m && !i.product ? { ...i, suggestion: m } : i;
+            }),
+          },
+      );
+    } catch {
+      // Suggestions are optional; the reviewed receipt rows remain usable without them.
+    }
   }
   async function read() {
     if (!canvas.current) return;
@@ -247,7 +291,18 @@ export default function ReceiptScanner({
   function edit(key: string, patch: Partial<ReceiptItem>) {
     setReviewed(false);
     setDraft(
-      (d) => d && { ...d, items: d.items.map((i) => (i.key === key ? { ...i, ...patch } : i)) },
+      (d) =>
+        d && {
+          ...d,
+          items: d.items.map((i) =>
+            i.key !== key
+              ? i
+              : // A renamed row drops a suggestion made for its old label.
+                patch.name !== undefined && patch.name !== i.name
+                ? { ...i, ...patch, suggestion: undefined }
+                : { ...i, ...patch },
+          ),
+        },
     );
   }
   function addSelected() {
@@ -491,8 +546,8 @@ export default function ReceiptScanner({
               )}
               <div className="notice">
                 Receipt abbreviations do not identify exact products. Items are added as generic
-                groceries, with no inferred barcode, ingredients or nutrition. Rows with unclear
-                quantities start deselected.
+                groceries unless you link a suggested catalogue product; nothing is linked
+                automatically. Rows with unclear quantities start deselected.
               </div>
               {draft.warnings.map((w, i) => (
                 <p className="fine" key={i}>
@@ -612,6 +667,37 @@ export default function ReceiptScanner({
                           />
                         </label>
                       </div>
+                      {i.product ? (
+                        <p className="receipt-link fine">
+                          Linked to {i.product.name}
+                          {i.product.brand ? ' · ' + i.product.brand.split(',')[0] : ''}{' '}
+                          <button
+                            className="link"
+                            onClick={() => edit(i.key, { product: undefined })}
+                          >
+                            Unlink
+                          </button>
+                        </p>
+                      ) : (
+                        i.suggestion && (
+                          <p className="receipt-link fine">
+                            Possible match: {i.suggestion.name}
+                            {i.suggestion.brand ? ' · ' + i.suggestion.brand.split(',')[0] : ''}
+                            {i.suggestion.pack ? ' · ' + i.suggestion.pack : ''}{' '}
+                            <button
+                              className="link"
+                              onClick={() =>
+                                edit(i.key, {
+                                  product: i.suggestion,
+                                  pack: i.pack || i.suggestion!.pack || '',
+                                })
+                              }
+                            >
+                              Link this product
+                            </button>
+                          </p>
+                        )
+                      )}
                       {i.warnings.map((w, k) => (
                         <p className="fine" key={k}>
                           Check: {w}

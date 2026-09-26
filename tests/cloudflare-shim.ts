@@ -8,7 +8,8 @@ export const env = {
       if (
         !['/catalogue/swiss-retailer-products.json', '/catalogue/swiss-provenance.json'].includes(
           path,
-        )
+        ) &&
+        !/^\/catalogue\/barcodes\/\d\d\.json\.gz$/.test(path)
       )
         return new Response('', { status: 404 });
       return new Response(await readFile('public' + path));

@@ -55,7 +55,7 @@ export function AboutModal() {
         </p>
         <h3>Imported retailer records</h3>
         <p>
-          Coop and Migros imports are partial. Indexed page titles are labelled separately from
+          Coop and Migros page imports are partial. Indexed page titles are labelled separately from
           successfully scraped product facts. Each record links its source; no barcode, missing
           nutrient or branch stock is inferred. Retailer content is not covered by the Open Food
           Facts licence. Retailer photos and promotional descriptions have not been copied.
