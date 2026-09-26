@@ -15,6 +15,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Choice } from './ui';
 import { receiptFingerprint, receiptTextFingerprint } from '@/lib/receipt-fingerprint';
 import type { Product } from '@/lib/domain';
+import { retailers } from '@/lib/retailers';
 import {
   parseReceipt,
   receiptListItem,
@@ -186,7 +187,9 @@ export default function ReceiptScanner({
     if (!labels.length) return;
     const params = new URLSearchParams();
     for (const l of labels) params.append('match', l);
-    const retailer = { Coop: 'coop-ch', Migros: 'migros-ch' }[parsed.store];
+    const retailer = Object.keys(retailers).find(
+      (id) => retailers[id].country === 'CH' && retailers[id].tag === parsed.store.toLowerCase(),
+    );
     if (retailer) {
       params.set('retailer', retailer);
       params.set('country', 'CH');
@@ -528,8 +531,8 @@ export default function ReceiptScanner({
               )}
               <div className="notice">
                 Receipt abbreviations do not identify exact products. Items are added as generic
-                groceries, with no inferred barcode, ingredients or nutrition. Rows with unclear
-                quantities start deselected.
+                groceries unless you link a suggested catalogue product; nothing is linked
+                automatically. Rows with unclear quantities start deselected.
               </div>
               {draft.warnings.map((w, i) => (
                 <p className="fine" key={i}>

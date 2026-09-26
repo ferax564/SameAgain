@@ -218,3 +218,51 @@ await test('a reviewer-linked receipt product is kept on the list item', async (
   assert.equal(row.product?.barcode, '16137127');
   assert.doesNotThrow(() => validateRecord('item', row, 'h1'));
 });
+await test('Denner, Lidl and Aldi are Swiss retailers across search, shops and receipts', async () => {
+  const { retailers, inferRetailer, recordedAt } = await import('../lib/retailers');
+  const { validateRecord } = await import('../lib/record-validation');
+  for (const [id, tag] of [
+    ['denner-ch', 'denner'],
+    ['lidl-ch', 'lidl'],
+    ['aldi-ch', 'aldi'],
+  ]) {
+    assert.equal(retailers[id].country, 'CH');
+    assert.equal(retailers[id].tag, tag);
+    const r = await demo(
+      new Request(`https://same.test/api/demo-catalogue?q=chips&country=CH&retailer=${id}`),
+    );
+    assert.equal(r.status, 200);
+    const { products } = await r.json();
+    assert(products.length > 0, id + ' has indexed products');
+    assert(products.every((p: Product) => recordedAt(p.stores, id)));
+    assert.doesNotThrow(() =>
+      validateRecord(
+        'shop',
+        {
+          name: 'Branch',
+          address: 'Bahnhofstrasse 1, Zürich',
+          retailer: id,
+          country: 'CH',
+          evidence: 'household-entered',
+        },
+        'h1',
+      ),
+    );
+  }
+  assert.equal(inferRetailer('ALDI SUISSE', 'CH'), 'aldi-ch');
+  assert.equal(inferRetailer('Denner Satellit', 'CH'), 'denner-ch');
+  assert.equal(inferRetailer('Lidl', 'CH'), 'lidl-ch');
+  assert.throws(() =>
+    validateRecord(
+      'shop',
+      {
+        name: 'X',
+        address: 'Y',
+        retailer: 'constructor',
+        country: 'CH',
+        evidence: 'household-entered',
+      },
+      'h1',
+    ),
+  );
+});

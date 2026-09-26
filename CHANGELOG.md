@@ -30,6 +30,13 @@ Findings and measurements are in [`docs/REVIEW-2026-09-25.md`](docs/REVIEW-2026-
   rounding; Denner, Lidl, Aldi, Volg, Spar and Manor detected.
 - Review rows can link a matching saved-catalogue product; nothing is linked automatically.
 
+### Shops and guide
+
+- Denner, Lidl and Aldi can be chosen as Swiss shops: store hub search, branches, offers,
+  map matching, receipt suggestions and the alternatives filter.
+- The in-app guide is rewritten as structured user help covering the health score, the
+  catalogue and receipts.
+
 ### Fixes
 
 - Items naming a former member no longer block ticking, editing, deleting or repeating.

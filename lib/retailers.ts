@@ -16,6 +16,28 @@ export const retailers: Record<
     home: 'https://www.migros.ch/en',
     offers: 'https://www.migros.ch/en/offers/home',
   },
+  // No verified offers pages: the offers link opens the retailer home page.
+  'denner-ch': {
+    name: 'Denner',
+    country: 'CH',
+    tag: 'denner',
+    home: 'https://www.denner.ch/',
+    offers: 'https://www.denner.ch/',
+  },
+  'lidl-ch': {
+    name: 'Lidl Switzerland',
+    country: 'CH',
+    tag: 'lidl',
+    home: 'https://www.lidl.ch/',
+    offers: 'https://www.lidl.ch/',
+  },
+  'aldi-ch': {
+    name: 'Aldi Suisse',
+    country: 'CH',
+    tag: 'aldi',
+    home: 'https://www.aldi-suisse.ch/',
+    offers: 'https://www.aldi-suisse.ch/',
+  },
   'tesco-gb': {
     name: 'Tesco',
     country: 'GB',

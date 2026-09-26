@@ -144,7 +144,90 @@ test('a product shows its health score, breakdown and better alternatives', asyn
     'true',
   );
   await expect(panel.locator('.alternative, p.fine').first()).toBeVisible();
-  await panel.scrollIntoViewIfNeeded();
-  await page.screenshot({ path: test.info().outputPath('health-panel.png'), fullPage: false });
+  await panel.screenshot({ path: test.info().outputPath('health-panel.png') });
+  await expectAccessible(page);
+});
+
+const shot = (page: Page, name: string) =>
+  page.screenshot({ path: test.info().outputPath(name + '.png') });
+
+test('a receipt line can be linked to a catalogue product before adding it', async ({ page }) => {
+  await page.route(/openfoodfacts\.org/, (route) => route.abort());
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Explore the demo' }).first().click();
+  await expect(page.getByText('Demo household')).toBeVisible();
+  await page.getByRole('button', { name: 'Scan receipt' }).click();
+  await page.getByText('Paste or type receipt text').click();
+  await page
+    .getByLabel('Item rows')
+    .fill(
+      'MIGROS\nChili-Chips M-Budget          1.95 1\nMCL VLM 1L                    1.60 1\nTotal CHF 3.55',
+    );
+  await page.getByRole('button', { name: 'Review text' }).click();
+  await expect(page.getByText('2 rows to review')).toBeVisible();
+  const chips = page.locator('.receipt-row').first();
+  await expect(chips.getByText(/Possible match: .*Chili/i)).toBeVisible({ timeout: 20_000 });
+  // An abbreviation matches nothing and stays a generic grocery.
+  await expect(page.locator('.receipt-row').nth(1).getByText('Possible match')).toHaveCount(0);
+  // Frame the suggestion above the dialog's sticky footer.
+  await chips.getByText(/Possible match/).evaluate((e) => e.scrollIntoView({ block: 'center' }));
+  await shot(page, 'receipt-suggestion');
+  await chips.getByRole('button', { name: 'Link this product' }).click();
+  await expect(chips.getByText(/Linked to .*Chili/i)).toBeVisible();
+  await chips.getByText(/Linked to/).evaluate((e) => e.scrollIntoView({ block: 'center' }));
+  await shot(page, 'receipt-linked');
+  await page.getByRole('checkbox', { name: 'I checked the selected items' }).click();
+  await page.getByRole('button', { name: /Add 2 to list/ }).click();
+  await expect(page.getByText('2 items added')).toBeVisible();
+  await expectAccessible(page);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  const row = page.locator('article.item-row', { hasText: 'Chili-Chips M-Budget' });
+  await expect(row).toBeVisible();
+  // The linked row carries the product's brand and pack; the abbreviation stays generic.
+  await expect(row.getByText(/^M-Budget · /)).toBeVisible();
+  await expect(
+    page.locator('article.item-row', { hasText: 'MCL VLM 1L' }).getByText(/^Other · /),
+  ).toBeVisible();
+  await row.scrollIntoViewIfNeeded();
+  await page
+    .locator('article.item-row', { hasText: /Chili-Chips M-Budget|MCL VLM 1L/ })
+    .last()
+    .scrollIntoViewIfNeeded();
+  await shot(page, 'receipt-list');
+});
+
+test('Denner, Lidl and Aldi can be chosen as shops and searched', async ({ page }) => {
+  await page.route(/openfoodfacts\.org/, (route) => route.abort());
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Explore the demo' }).first().click();
+  await expect(page.getByText('Demo household')).toBeVisible();
+  await openNav(page, 'Discover');
+  await page.getByRole('tab', { name: 'Stores & offers' }).click();
+  for (const [option, label] of [
+    ['Denner · Switzerland', 'Denner'],
+    ['Lidl Switzerland · Switzerland', 'Lidl Switzerland'],
+    ['Aldi Suisse · Switzerland', 'Aldi Suisse'],
+  ]) {
+    await page.getByRole('combobox', { name: 'Retailer and country' }).click();
+    await page.getByRole('option', { name: option }).click();
+    await page.getByLabel('Search selected retailer catalogue').fill('chips');
+    await page.getByRole('button', { name: 'Search', exact: true }).last().click();
+    await expect(page.locator('.store-hub .product-card').first()).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText(new RegExp(`[\\d,’']+ ${label} records`))).toBeVisible();
+    await page.locator('.store-hub .product-card').first().scrollIntoViewIfNeeded();
+    await shot(page, 'shop-' + label.split(' ')[0].toLowerCase());
+  }
+  await expectAccessible(page);
+});
+
+test('the guide explains the health score and catalogue', async ({ page }) => {
+  await page.goto('/guide');
+  await expect(page.getByRole('heading', { name: 'How Same Again works' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Health score' })).toBeVisible();
+  await expect(page.getByText(/98,179 products/)).toBeVisible();
+  await expect(page.getByText(/Denner 1,672/)).toBeVisible();
+  await page.getByRole('link', { name: 'Health score' }).click();
+  await shot(page, 'guide');
   await expectAccessible(page);
 });

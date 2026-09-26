@@ -39,6 +39,9 @@ const shops = [
   ['', 'Any Swiss shop'],
   ['coop-ch', 'Coop'],
   ['migros-ch', 'Migros'],
+  ['denner-ch', 'Denner'],
+  ['lidl-ch', 'Lidl'],
+  ['aldi-ch', 'Aldi'],
 ] as const;
 
 /**
