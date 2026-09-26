@@ -37,7 +37,7 @@
       ],
       "bullets": [
         "Nutrition, up to 60 points, from the Nutri-Score grade: A 60, B 48, C 33, D 18, E 5. The grade computed by Open Food Facts is used when available; otherwise it is estimated from the label and marked as an estimate.",
-        "Additives, up to 30 points, minus 15, 8 or 3 for each additive with a high, moderate or limited flag. Each flag names its source (EU, EFSA, WHO/IARC). A high flag caps the score at 49. An additive without a flag is not a safety finding.",
+        "Additives, up to 30 points, minus 15, 8 or 3 for each additive with a high, moderate or limited flag. Each flag names its source (EU, EFSA, WHO/IARC). A high flag caps the score at 49. An additive without a flag is not a safety finding. Without an ingredient list, additives are unknown and earn no points.",
         "Organic, 10 points, when a recognised organic label is recorded (EU organic, Bio Suisse, Demeter and others).",
         "Processing level (NOVA 1–4) is shown but not scored.",
         "Products without energy, sugars, saturated fat and salt are shown as “Not scored” instead of guessed.",

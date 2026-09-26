@@ -103,6 +103,7 @@ export default function ReceiptScanner({
   const worker = useRef<Worker | null>(null),
     serial = useRef(0),
     adding = useRef(false),
+    suggestions = useRef(0),
     mounted = useRef(true),
     fileInput = useRef<HTMLInputElement>(null),
     cameraInput = useRef<HTMLInputElement>(null),
@@ -179,10 +180,13 @@ export default function ReceiptScanner({
     setDraft(parsed);
     setFinished(null);
     adding.current = false;
-    void suggest(parsed, n);
+    void suggest(parsed);
   }
   /** Looks up saved-catalogue products for the parsed labels; suggestions need approval. */
-  async function suggest(parsed: ReceiptDraft, n: number) {
+  async function suggest(parsed: ReceiptDraft) {
+    // Each review gets its own generation: a slower earlier lookup must not land on a newer
+    // receipt, and a suggestion only applies while the row still has the label it matched.
+    const generation = ++suggestions.current;
     const labels = parsed.items.map((i) => i.name);
     if (!labels.length) return;
     const params = new URLSearchParams();
@@ -200,14 +204,14 @@ export default function ReceiptScanner({
       });
       if (!r.ok) return;
       const { matches } = (await r.json()) as { matches: (Product | null)[] };
-      if (!mounted.current || serial.current !== n) return;
+      if (!mounted.current || suggestions.current !== generation) return;
       setDraft(
         (d) =>
           d && {
             ...d,
             items: d.items.map((i) => {
               const k = parsed.items.findIndex((p) => p.key === i.key);
-              const m = k >= 0 ? matches[k] : null;
+              const m = k >= 0 && i.name === labels[k] ? matches[k] : null;
               return m && !i.product ? { ...i, suggestion: m } : i;
             }),
           },
@@ -287,7 +291,18 @@ export default function ReceiptScanner({
   function edit(key: string, patch: Partial<ReceiptItem>) {
     setReviewed(false);
     setDraft(
-      (d) => d && { ...d, items: d.items.map((i) => (i.key === key ? { ...i, ...patch } : i)) },
+      (d) =>
+        d && {
+          ...d,
+          items: d.items.map((i) =>
+            i.key !== key
+              ? i
+              : // A renamed row drops a suggestion made for its old label.
+                patch.name !== undefined && patch.name !== i.name
+                ? { ...i, ...patch, suggestion: undefined }
+                : { ...i, ...patch },
+          ),
+        },
     );
   }
   function addSelected() {

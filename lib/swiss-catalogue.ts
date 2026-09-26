@@ -23,6 +23,8 @@ type Compact = {
   /** Nutri-Score grade, optionally followed by the score: `c7`, `a-2`. */
   g?: string;
   v?: 1 | 2 | 3 | 4;
+  /** 1 when the full record has an ingredient list (so no additives means none). */
+  k?: 1;
 };
 type Index = { format: 2; retrieved: number; products: Compact[] };
 const assets = () =>
@@ -63,6 +65,7 @@ export function expandCompact(r: Compact, retrieved: number): Product {
       source: 'Open Food Facts',
     };
   if (r.v) p.nova = r.v;
+  if (r.k) p.ingredientsRecorded = true;
   return p;
 }
 // Load the licensed data asset on the server, rather than compiling tens of thousands

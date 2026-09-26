@@ -231,3 +231,29 @@ test('the guide explains the health score and catalogue', async ({ page }) => {
   await shot(page, 'guide');
   await expectAccessible(page);
 });
+
+test('a suggestion for a label the user has since edited is dropped', async ({ page }) => {
+  await page.route(/openfoodfacts\.org/, (route) => route.abort());
+  // Hold the catalogue lookup until the row has been renamed.
+  let release!: () => void;
+  const held = new Promise<void>((r) => (release = r));
+  await page.route(/\/api\/demo-catalogue\?match=/, async (route) => {
+    await held;
+    await route.continue();
+  });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Explore the demo' }).first().click();
+  await page.getByRole('button', { name: 'Scan receipt' }).click();
+  await page.getByText('Paste or type receipt text').click();
+  await page
+    .getByLabel('Item rows')
+    .fill('MIGROS\nChili-Chips M-Budget          1.95 1\nTotal CHF 1.95');
+  await page.getByRole('button', { name: 'Review text' }).click();
+  const row = page.locator('.receipt-row').first();
+  await row.getByLabel('Item name').fill('Tortilla chips');
+  const lookup = page.waitForResponse(/\/api\/demo-catalogue\?match=/);
+  release();
+  await lookup;
+  await page.waitForTimeout(300);
+  await expect(row.getByText('Possible match')).toHaveCount(0);
+});

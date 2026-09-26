@@ -26,6 +26,8 @@ export type Product = {
   nova?: 1 | 2 | 3 | 4;
   /** Environmental (Green-Score/Eco-Score) grade recorded by the source. */
   ecoscore?: string;
+  /** Set on compact search records whose full record has an ingredient list. */
+  ingredientsRecorded?: boolean;
   /** Source ingredient analysis tags such as `en:vegan` or `en:palm-oil-free`. */
   analysis?: string[];
   source: string;

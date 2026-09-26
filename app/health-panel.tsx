@@ -154,9 +154,9 @@ export function HealthPanel({
             {h.additivePoints} points ·{' '}
             {h.additives.length
               ? `${h.additives.length} recorded, ${h.additives.filter((a) => a.flag).length} flagged`
-              : product.ingredients || product.additives?.length
-                ? 'none recorded'
-                : 'unknown'}
+              : h.additivesKnown
+                ? 'none in the ingredients'
+                : 'unknown (no ingredients recorded)'}
           </dd>
         </div>
         <div>

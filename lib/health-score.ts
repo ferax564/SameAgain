@@ -34,6 +34,8 @@ export type HealthScore = {
   nutritionPoints?: number;
   additives: { code: string; flag?: AdditiveFlag }[];
   additivePoints: number;
+  /** False when neither ingredients nor additives are recorded. */
+  additivesKnown: boolean;
   organic: boolean;
   organicPoints: number;
   nova?: 1 | 2 | 3 | 4;
@@ -313,6 +315,9 @@ export function estimateNutriScore(p: Product): NutriScore | undefined {
   return { grade, score, kind, origin: 'estimate', notes };
 }
 export function nutriScore(p: Product): NutriScore | undefined {
+  // Out-of-scope products (alcohol, baby food, additives) stay unscored even when a source
+  // record carries a grade.
+  if (!nutriKind(p)) return undefined;
   if (p.nutriscore && /^[a-e]$/.test(p.nutriscore.grade))
     return {
       grade: p.nutriscore.grade,
@@ -334,13 +339,18 @@ export function healthScore(p: Product): HealthScore {
   const codes = [...new Set((p.additives || []).map(additiveCode).filter(Boolean))];
   const additives = codes.map((code) => ({ code, flag: additiveFlag(code) }));
   const penalty = additives.reduce((n, a) => n + (a.flag ? ADDITIVE_PENALTY[a.flag.risk] : 0), 0);
-  const additivePoints = Math.max(0, 30 - penalty);
+  // An empty additive list only means "none" when the ingredients were recorded; otherwise
+  // the additives are unknown and earn no points, so incomplete records never outrank
+  // complete ones.
+  const additivesKnown = additives.length > 0 || !!p.ingredients?.trim() || !!p.ingredientsRecorded;
+  const additivePoints = additivesKnown ? Math.max(0, 30 - penalty) : 0;
   const organic = isOrganic(p);
   const organicPoints = organic ? 10 : 0;
   const base = {
     nutrition,
     additives,
     additivePoints,
+    additivesKnown,
     organic,
     organicPoints,
     ...(p.nova ? { nova: p.nova } : {}),
@@ -353,8 +363,8 @@ export function healthScore(p: Product): HealthScore {
     );
     return { ...base, notes };
   }
-  if (!p.additives && !p.ingredients)
-    notes.push('Ingredients are not recorded, so additives may be missing.');
+  if (!additivesKnown)
+    notes.push('Ingredients are not recorded, so additives are unknown and earn no points.');
   let value = GRADE_POINTS[nutrition.grade] + additivePoints + organicPoints;
   if (additives.some((a) => a.flag?.risk === 'high')) {
     value = Math.min(value, 49);

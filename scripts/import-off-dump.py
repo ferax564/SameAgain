@@ -250,6 +250,8 @@ def index_record(p):
         r["g"] = p["nutriscore"]["grade"] + (str(p["nutriscore"]["score"]) if "score" in p["nutriscore"] else "")
     if p.get("nova"):
         r["v"] = p["nova"]
+    if p.get("ingredients"):
+        r["k"] = 1
     return r
 
 

@@ -75,7 +75,9 @@ await test('Nutri-Score 2023 estimate matches reference products', () => {
   );
 });
 await test('the source Nutri-Score is preferred and labelled', () => {
-  const h = healthScore(base({ nutriscore: { grade: 'b', score: 1 }, additives: [] }));
+  const h = healthScore(
+    base({ nutriscore: { grade: 'b', score: 1 }, additives: [], ingredients: 'Oats.' }),
+  );
   assert.equal(h.nutrition?.origin, 'source');
   assert.equal(h.value, 48 + 30);
   assert.equal(h.band, 'excellent');
@@ -265,4 +267,44 @@ await test('Denner, Lidl and Aldi are Swiss retailers across search, shops and r
       'h1',
     ),
   );
+});
+await test('missing ingredients earn no additive points and out-of-scope grades are ignored', () => {
+  const complete = healthScore(
+    base({ nutriscore: { grade: 'c' }, additives: [], ingredients: 'Potatoes, oil, salt.' }),
+  );
+  const unknown = healthScore(base({ nutriscore: { grade: 'c' }, additives: [] }));
+  assert.equal(complete.value, 33 + 30);
+  assert.equal(unknown.additivesKnown, false);
+  assert.equal(unknown.value, 33);
+  assert(unknown.notes.some((n) => n.includes('additives are unknown')));
+  // A compact index record knows whether its full record lists ingredients.
+  const indexed = healthScore(
+    expandCompact({ b: '7610200337310', n: 'Chips', c: ['en:crisps'], g: 'c', k: 1 }, 1),
+  );
+  assert.equal(indexed.value, 63);
+  // An incomplete record is never suggested over a complete one with the same grade.
+  const original = base({
+    id: 'o',
+    categories: ['en:crisps'],
+    nutriscore: { grade: 'c' },
+    ingredients: 'x',
+  });
+  assert.deepEqual(
+    betterAlternatives(original, [
+      base({ id: 'u', categories: ['en:crisps'], nutriscore: { grade: 'b' } }),
+    ]),
+    [],
+  );
+  for (const category of ['en:alcoholic-beverages', 'en:baby-foods']) {
+    const h = healthScore(
+      base({
+        categories: ['en:beverages', category],
+        nutriscore: { grade: 'a' },
+        ingredients: 'x',
+      }),
+    );
+    assert.equal(h.value, undefined);
+    assert.equal(h.nutrition, undefined);
+    assert(h.notes[0].includes('does not apply'));
+  }
 });
